@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "geometallurgy"
+version = "0.1.0"
+description = ""
+authors = ["Greg <11791585+elphick@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+plotly = "^5.22.0"
+omfvista = "^0.3.0"
+pandas = "^2.2.2"
+fastparquet = "^2024.5.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.1"
+sphinx = "^7.3.7"
+sphinx-gallery = "^0.16.0"
+sphinx-rtd-theme = "^2.0.0"
+ydata-profiling = "^4.8.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
