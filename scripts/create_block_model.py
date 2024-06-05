@@ -77,7 +77,9 @@ p.add_mesh(
     color="orange",
     opacity=0.6,
 )
-p.add_mesh(thresh_vol, cmap="coolwarm", clim=vol.get_data_range())
+# p.add_mesh(thresh_vol, cmap="coolwarm", clim=vol.get_data_range())
+p.add_mesh_threshold(vol, scalars="CU_pct", show_edges=True)
+
 
 # Add the assay logs: use a tube filter that varius the radius by an attribute
 p.add_mesh(assay.tube(radius=3), cmap="viridis")

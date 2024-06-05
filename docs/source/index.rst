@@ -9,6 +9,10 @@ Welcome to geometallurgy's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+   :glob:
 
+   scope
+   user_guide
    auto_examples/examples/index
    auto_examples/scripts/index
+   todo

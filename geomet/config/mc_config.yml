@@ -1,0 +1,31 @@
+MC:
+  vars:
+    mass_wet:
+      default_name: 'mass_wet'
+      search_regex: '(mass_wet)|(wet_mass)|(wmt)'  # case in-sensitive regex
+      format: '%.0f'  # cannot use %d, use %.0f
+    mass_dry:
+      default_name: 'mass_dry'
+      search_regex: '(mass_dry)|(dry_mass)|(dmt)'
+      format: '%.0f'
+    moisture:
+      default_name: 'h2o'
+      search_regex: '(h2o)|(moisture)|(moist)'
+      format: '%.1f'
+    chemistry:
+      ignore: ['Y']  # ignore anything in this list when detecting chemistry components
+      format: '%.2f'
+  constraints:
+    mass: [0.0, .inf]
+    composition: [0.0, 100.0]
+  intervals:
+    closed: left
+    suffixes:
+      - [from, to]
+      - [retained, passing]
+      - [sink, float]
+  comparisons:
+    recovery: 'rec'
+    difference: 'diff'
+    divide: 'ur'
+

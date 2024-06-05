@@ -35,14 +35,16 @@ pyvista.global_theme.window_size = np.array([1024, 768]) * 2
 
 extensions = [
     'sphinx_gallery.gen_gallery',
-]
+    'sphinx.ext.todo']
+
+todo_include_todos = True
 
 examples_dirs: list[str] = ['../../examples', '../../scripts']
 gallery_dirs: list[str] = [str(Path('auto_examples') / Path(d).stem) for d in examples_dirs]
 
 sphinx_gallery_conf = {
     'filename_pattern': r'\.py',
-    'ignore_pattern': r'(__init__)\.py',
+    'ignore_pattern': r'(__init__)|(debug.*)|(pv.*)\.py',
     'examples_dirs': examples_dirs,
     'gallery_dirs': gallery_dirs,
     'nested_sections': False,
