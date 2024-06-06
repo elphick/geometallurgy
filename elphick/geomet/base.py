@@ -7,12 +7,12 @@ from typing import Optional, Union, Literal
 
 import pandas as pd
 
-from geomet.config import read_yaml
-from geomet.utils.components import get_components, is_compositional
-from geomet.utils.moisture import solve_mass_moisture
-from geomet.utils.pandas import mass_to_composition, composition_to_mass, composition_factors
-from geomet.utils.sampling import random_int
-from geomet.utils.timer import log_timer
+from elphick.geomet.config import read_yaml
+from elphick.geomet.utils.components import get_components, is_compositional
+from elphick.geomet.utils.moisture import solve_mass_moisture
+from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, composition_factors
+from elphick.geomet.utils.sampling import random_int
+from elphick.geomet.utils.timer import log_timer
 
 
 class MassComposition(ABC):
@@ -339,6 +339,24 @@ class MassComposition(ABC):
         new_obj._mass_data = self._mass_data - other._mass_data
         return new_obj
 
+    def div(self, other: 'MassComposition', name: Optional[str] = None,
+            include_supplementary_data: bool = False) -> 'MassComposition':
+        """Divide two objects
+
+        Divides self by other, with optional name of the returned object
+        Args:
+            other: the denominator (or reference) object
+            name: name of the returned object
+            include_supplementary_data: Whether to include the supplementary data
+
+        Returns:
+
+        """
+        new_obj = self.create_congruent_object(name=name, include_mc_data=True,
+                                               include_supp_data=include_supplementary_data)
+        new_obj._mass_data = self._mass_data / other._mass_data
+        return new_obj
+
     @abstractmethod
     def __str__(self):
         # return f"{self.name}\n{self.aggregate.to_dict()}"
@@ -349,3 +367,48 @@ class MassComposition(ABC):
                                 include_mc_data: bool = False,
                                 include_supp_data: bool = False) -> 'MassComposition':
         pass
+
+    def __add__(self, other: 'MassComposition') -> 'MassComposition':
+        """Add two objects
+
+        Perform the addition with the mass-composition variables only and then append any attribute variables.
+        Presently ignores any attribute vars in other
+        Args:
+            other: object to add to self
+
+        Returns:
+
+        """
+
+        return self.add(other, include_supplementary_data=True)
+
+    def __sub__(self, other: 'MassComposition') -> 'MassComposition':
+        """Subtract the supplied object from self
+
+        Perform the subtraction with the mass-composition variables only and then append any attribute variables.
+        Args:
+            other: object to subtract from self
+
+        Returns:
+
+        """
+
+        return self.sub(other, include_supplementary_data=True)
+
+    def __truediv__(self, other: 'MassComposition') -> 'MassComposition':
+        """Divide self by the supplied object
+
+        Perform the division with the mass-composition variables only and then append any attribute variables.
+        Args:
+            other: denominator object, self will be divided by this object
+
+        Returns:
+
+        """
+
+        return self.div(other, include_supplementary_data=True)
+
+    def __eq__(self, other):
+        if isinstance(other, MassComposition):
+            return self.__dict__ == other.__dict__
+        return False

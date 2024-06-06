@@ -1,4 +1,4 @@
-from geomet.utils.components import is_oxide, is_element, is_compositional
+from elphick.geomet.utils.components import is_oxide, is_element, is_compositional
 
 
 def test_is_element():

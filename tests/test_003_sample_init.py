@@ -3,9 +3,9 @@ import copy
 import pandas as pd
 import pytest
 
-from geomet import Sample
-from geomet.utils.components import is_compositional
-from geomet.utils.data import sample_data
+from elphick.geomet import Sample
+from elphick.geomet.utils.components import is_compositional
+from elphick.geomet.utils.data import sample_data
 
 
 @pytest.fixture

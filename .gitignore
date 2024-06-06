@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 /docs/source/auto_examples/
 /towncrier/newsfragments/
+/docs/source/api/_autosummary/

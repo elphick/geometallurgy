@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from geomet.utils.data import sample_data
-from geomet.utils.pandas import mass_to_composition, composition_to_mass, weight_average
+from elphick.geomet.utils.data import sample_data
+from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, weight_average
 from fixtures import sample_data as test_data
 
 

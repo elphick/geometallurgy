@@ -1,6 +1,6 @@
 import pandas as pd
 
-from geomet.sample import Sample
+from elphick.geomet.sample import Sample
 
 
 class IntervalSample(Sample):

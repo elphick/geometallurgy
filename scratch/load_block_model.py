@@ -12,8 +12,8 @@ import numpy as np
 import pandas as pd
 import pyvista as pv
 
-from geomet import Sample
-from geomet.block_model import BlockModel
+from elphick.geomet import Sample
+from elphick.geomet.block_model import BlockModel
 
 logging.basicConfig(level=logging.DEBUG)
 # %%
@@ -51,7 +51,7 @@ bm.data.head()
 # Plot the block model
 # --------------------
 
-bm.plot('cu').show()
+bm.plot('Cu').show()
 
 # %%
 # Filter the data
@@ -67,5 +67,5 @@ bm2: BlockModel = BlockModel(data=df_filtered.rename(columns={'CU_pct': 'Cu'}).a
 bm2._mass_data.shape
 
 # %%
-bm2.plot('cu').show()
+bm2.plot('Cu').show()
 

@@ -1,8 +1,8 @@
 import pandas as pd
 import pytest
 
-from geomet import Sample
-from geomet.utils.data import sample_data
+from elphick.geomet import Sample
+from elphick.geomet.utils.data import sample_data
 
 
 @pytest.fixture

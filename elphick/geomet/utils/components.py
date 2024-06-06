@@ -114,7 +114,7 @@ def is_compositional(candidates: List[str], strict: bool = True) -> Union[List[s
     Args:
         candidates: list of string candidates
         strict: If True, the candidates must be in the list of known compositional components (elements or oxides)
-         as chemical symbols.
+        as chemical symbols.
 
     Returns:
         If strict, a list of compositional components, otherwise a dict of the original candidates (keys) and

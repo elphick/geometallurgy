@@ -33,13 +33,20 @@ pyvista.global_theme.window_size = np.array([1024, 768]) * 2
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    'sphinx_gallery.gen_gallery',
-    'sphinx.ext.todo']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',  # to document the api
+              'sphinx.ext.viewcode',  # to add view code links
+              'sphinx.ext.coverage',
+              'sphinx.ext.napoleon',  # for parsing numpy/google docstrings
+              'sphinx_gallery.gen_gallery',  # to generate a gallery of examples
+              'sphinx_autodoc_typehints',
+              'myst_parser',  # for parsing md files
+              'sphinx.ext.todo'
+              ]
 
 todo_include_todos = True
+autosummary_generate = True
 
-examples_dirs: list[str] = ['../../examples', '../../scripts']
+examples_dirs: list[str] = ['../../examples']
 gallery_dirs: list[str] = [str(Path('auto_examples') / Path(d).stem) for d in examples_dirs]
 
 sphinx_gallery_conf = {

@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from fixtures import sample_data
-from geomet.utils.moisture import solve_mass_moisture, detect_moisture_column
+from elphick.geomet.utils.moisture import solve_mass_moisture, detect_moisture_column
 
 
 def test_moisture_solver(sample_data):

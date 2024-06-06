@@ -5,8 +5,8 @@ Create Sample
 The base object is a `Sample`, so let's create one
 """
 import pandas as pd
-from geomet.utils.data import sample_data
-from geomet import Sample
+from elphick.geomet.utils.data import sample_data
+from elphick.geomet import Sample
 
 # %%
 # Load Data

@@ -9,9 +9,9 @@ import pandas as pd
 from pandas import DataFrame
 from pandas.core.dtypes.common import is_float_dtype
 
-from geomet.utils.components import is_compositional, get_components
-from geomet.utils.moisture import solve_mass_moisture, detect_moisture_column
-from geomet.utils.size import mean_size
+from elphick.geomet.utils.components import is_compositional, get_components
+from elphick.geomet.utils.moisture import solve_mass_moisture, detect_moisture_column
+from elphick.geomet.utils.size import mean_size
 
 composition_factors: dict[str, int] = {'%': 100, 'ppm': 1e6, 'ppb': 1e9}
 
@@ -164,10 +164,7 @@ def weight_average(df: pd.DataFrame,
                                      moisture_column_name=moisture_column_name,
                                      component_columns=component_columns,
                                      composition_units=composition_units).sum(axis="index").to_frame().T
-    if mass_wet is not None:
-        moisture: pd.Series = solve_mass_moisture(mass_wet=mass_sum[mass_wet],
-                                                  mass_dry=mass_sum[mass_dry],
-                                                  moisture_column_name=moisture_column_name)
+
     component_cols = [col for col in component_cols if
                       col.lower() not in [mass_wet, mass_dry, 'h2o', 'moisture']]
 

@@ -24,6 +24,8 @@ sphinx-rtd-theme = "^2.0.0"
 ydata-profiling = "^4.8.3"
 coverage = "^7.5.3"
 towncrier = "^23.11.0"
+myst-parser = "^3.0.1"
+sphinx-autodoc-typehints = "^2.1.1"
 
 [build-system]
 requires = ["poetry-core"]

@@ -1,19 +1,16 @@
 import copy
 import logging
-from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional, Union
+from typing import Optional, Union, Literal
 
-import PVGeo
+import numpy as np
 import pandas as pd
 import pyvista as pv
-import numpy as np
-import vtk
 from pyvista import CellType
 from scipy import stats
 
-from geomet import Sample, MassComposition
-from geomet.utils.timer import log_timer
+from elphick.geomet import MassComposition
+from elphick.geomet.utils.timer import log_timer
 
 
 class BlockModel(MassComposition):
@@ -24,9 +21,9 @@ class BlockModel(MassComposition):
                  mass_wet_var: Optional[str] = None,
                  mass_dry_var: Optional[str] = None,
                  moisture_var: Optional[str] = None,
-                 chem_vars: Optional[list[str]] = None,
-                 mass_units: Optional[str] = None,
-                 composition_units: Optional[str] = None,
+                 component_vars: Optional[list[str]] = None,
+                 composition_units: Literal['%', 'ppm', 'ppb'] = '%',
+                 components_as_symbols: bool = True,
                  constraints: Optional[dict[str, list]] = None,
                  config_file: Optional[Path] = None):
 
@@ -43,8 +40,8 @@ class BlockModel(MassComposition):
 
         super().__init__(data=data, name=name, moisture_in_scope=moisture_in_scope,
                          mass_wet_var=mass_wet_var, mass_dry_var=mass_dry_var,
-                         moisture_var=moisture_var, chem_vars=chem_vars,
-                         mass_units=mass_units, composition_units=composition_units,
+                         moisture_var=moisture_var, component_vars=component_vars,
+                         composition_units=composition_units, components_as_symbols=components_as_symbols,
                          constraints=constraints, config_file=config_file)
 
     @log_timer
@@ -65,8 +62,10 @@ class BlockModel(MassComposition):
         # Create a PyVista plotter
         plotter = pv.Plotter()
 
+        mesh = self.get_blocks()
+
         # Add a thresholded mesh to the plotter
-        plotter.add_mesh_threshold(self.get_blocks(), scalars=scalar, show_edges=show_edges)
+        plotter.add_mesh_threshold(mesh, scalars=scalar, show_edges=show_edges)
 
         return plotter
 
@@ -194,6 +193,10 @@ class BlockModel(MassComposition):
     def voxelise(blocks):
 
         logger = logging.getLogger(__name__)
+        msg = "Voxelising blocks requires PVGeo package."
+        logger.error(msg)
+        raise NotImplementedError(msg)
+
         # vtkpoints = PVGeo.points_to_poly_data(centroid_data)
 
         x_values = blocks.index.get_level_values('x').values
