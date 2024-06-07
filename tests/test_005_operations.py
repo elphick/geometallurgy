@@ -24,7 +24,7 @@ def test_operation_split(expected_data):
     op_node: Operation = Operation(name='split')
     op_node.input_streams = [smpl]
     op_node.output_streams = [ref, comp]
-    assert op_node.is_balanced()
+    assert op_node.is_balanced
 
 
 def test_operation_add(expected_data):
@@ -37,7 +37,7 @@ def test_operation_add(expected_data):
     op_node: Operation = Operation(name='add')
     op_node.input_streams = [smpl]
     op_node.output_streams = [smpl_new]
-    assert op_node.is_balanced()
+    assert op_node.is_balanced
 
 
 def test_operation_sub(expected_data):
@@ -50,7 +50,7 @@ def test_operation_sub(expected_data):
     op_node: Operation = Operation(name='add')
     op_node.input_streams = [ref]
     op_node.output_streams = [ref_new]
-    assert op_node.is_balanced()
+    assert op_node.is_balanced
 
 
 def test_operation_imbalance_split(expected_data):
@@ -70,10 +70,12 @@ def test_operation_imbalance_split(expected_data):
     op_node.input_streams = [smpl]
     op_node.output_streams = [ref, comp]
     with pytest.raises(AssertionError):
-        assert op_node.is_balanced()
+        assert op_node.is_balanced
 
-    df_imbalance: pd.DataFrame = op_node.get_failed_records()
-    print(df_imbalance)
+    expected: pd.DataFrame = pd.DataFrame(
+        {'wet_mass': {0: -950.0}, 'mass_dry': {0: 0.0}, 'Fe': {0: 0.0}, 'SiO2': {0: 0.0}, 'Al2O3': {0: 0.0},
+         'LOI': {0: 0.0}}, index=op_node.unbalanced_records.index)
+    pd.testing.assert_frame_equal(op_node.unbalanced_records, expected)
 
 
 def test_operation_solve(expected_data):
@@ -91,7 +93,7 @@ def test_operation_solve(expected_data):
     op_node.input_streams = [smpl]
     op_node.output_streams = [ref, comp]
     with pytest.raises(AssertionError):
-        assert op_node.is_balanced()
+        assert op_node.is_balanced
 
     df_imbalance: pd.DataFrame = op_node.get_failed_records()
     print(df_imbalance)

@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Optional, Union, Literal
 
+import numpy as np
 import pandas as pd
 
 from elphick.geomet.config import read_yaml
@@ -13,6 +14,9 @@ from elphick.geomet.utils.moisture import solve_mass_moisture
 from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, composition_factors
 from elphick.geomet.utils.sampling import random_int
 from elphick.geomet.utils.timer import log_timer
+from .plot import parallel_plot, comparison_plot
+import plotly.express as px
+import plotly.graph_objects as go
 
 
 class MassComposition(ABC):
@@ -151,6 +155,140 @@ class MassComposition(ABC):
                 res = list(self._mass_data.columns)[1:]
         return res
 
+    @property
+    def supplementary_columns(self) -> Optional[list[str]]:
+        res = None
+        if self._supplementary_data is not None:
+            res = list(self._supplementary_data.columns)
+        return res
+
+
+    def plot_parallel(self, color: Optional[str] = None,
+                      vars_include: Optional[list[str]] = None,
+                      vars_exclude: Optional[list[str]] = None,
+                      title: Optional[str] = None,
+                      include_dims: Optional[Union[bool, list[str]]] = True,
+                      plot_interval_edges: bool = False) -> go.Figure:
+        """Create an interactive parallel plot
+
+        Useful to explore multidimensional data like mass-composition data
+
+        Args:
+            color: Optional color variable
+            vars_include: Optional list of variables to include in the plot
+            vars_exclude: Optional list of variables to exclude in the plot
+            title: Optional plot title
+            include_dims: Optional boolean or list of dimension to include in the plot.  True will show all dims.
+            plot_interval_edges: If True, interval edges will be plotted instead of interval mid
+
+        Returns:
+
+        """
+
+        if not title and hasattr(self, 'name'):
+            title = self.name
+
+        fig = parallel_plot(data=self.data, color=color, vars_include=vars_include, vars_exclude=vars_exclude,
+                            title=title,
+                            include_dims=include_dims, plot_interval_edges=plot_interval_edges)
+        return fig
+
+
+    def plot_comparison(self, other: 'MassComposition',
+                        color: Optional[str] = None,
+                        vars_include: Optional[list[str]] = None,
+                        vars_exclude: Optional[list[str]] = None,
+                        facet_col_wrap: int = 3,
+                        trendline: bool = False,
+                        trendline_kwargs: Optional[dict] = None,
+                        title: Optional[str] = None) -> go.Figure:
+        """Create an interactive parallel plot
+
+        Useful to compare the difference in component values between two objects.
+
+        Args:
+            other: the object to compare with self.
+            color: Optional color variable
+            vars_include: Optional List of variables to include in the plot
+            vars_exclude: Optional List of variables to exclude in the plot
+            trendline: If True and trendlines
+            trendline_kwargs: Allows customising the trendline: ref: https://plotly.com/python/linear-fits/
+            title: Optional plot title
+            facet_col_wrap: The number of subplot columns per row.
+
+        Returns:
+
+        """
+        df_self: pd.DataFrame = self.data.to_dataframe()
+        df_other: pd.DataFrame = other.data.to_dataframe()
+
+        if vars_include is not None:
+            missing_vars = set(vars_include).difference(set(df_self.columns))
+            if len(missing_vars) > 0:
+                raise KeyError(f'var_subset provided contains variable not found in the data: {missing_vars}')
+            df_self = df_self[vars_include]
+        if vars_exclude:
+            df_self = df_self[[col for col in df_self.columns if col not in vars_exclude]]
+        df_other = df_other[df_self.columns]
+        # Supplementary variables are the same for each stream and so will be unstacked.
+        supp_cols: list[str] = self.supplementary_columns
+        if supp_cols:
+            df_self.set_index(supp_cols, append=True, inplace=True)
+            df_other.set_index(supp_cols, append=True, inplace=True)
+
+        index_names = list(df_self.index.names)
+        cols = list(df_self.columns).copy()
+
+        df_self = df_self[cols].assign(name=self.name).reset_index().melt(id_vars=index_names + ['name'])
+        df_other = df_other[cols].assign(name=other.name).reset_index().melt(id_vars=index_names + ['name'])
+
+        df_plot: pd.DataFrame = pd.concat([df_self, df_other])
+        df_plot = df_plot.set_index(index_names + ['name', 'variable'], drop=True).unstack(['name'])
+        df_plot.columns = df_plot.columns.droplevel(0)
+        df_plot.reset_index(level=list(np.arange(-1, -len(index_names) - 1, -1)), inplace=True)
+
+        # set variables back to standard order
+        variable_order: dict = {col: i for i, col in enumerate(cols)}
+        df_plot = df_plot.sort_values(by=['variable'], key=lambda x: x.map(variable_order))
+
+        fig: go.Figure = comparison_plot(data=df_plot, x=self.name, y=other.name, facet_col_wrap=facet_col_wrap,
+                                         color=color, trendline=trendline, trendline_kwargs=trendline_kwargs)
+        fig.update_layout(title=title)
+        return fig
+
+
+    def plot_ternary(self, variables: list[str], color: Optional[str] = None,
+                     title: Optional[str] = None) -> go.Figure:
+        """Plot a ternary diagram
+
+            variables: List of 3 components to plot
+            color: Optional color variable
+            title: Optional plot title
+
+        """
+
+        df = self.data
+        vars_missing: list[str] = [v for v in variables if v not in df.columns]
+        if vars_missing:
+            raise KeyError(f'Variable/s not found in the dataset: {vars_missing}')
+
+        cols: list[str] = variables
+        if color is not None:
+            cols.append(color)
+
+        if color:
+            fig = px.scatter_ternary(df[cols], a=variables[0], b=variables[1], c=variables[2], color=color)
+        else:
+            fig = px.scatter_ternary(df[cols], a=variables[0], b=variables[1], c=variables[2])
+
+        if not title and hasattr(self, 'name'):
+            title = self.name
+
+        fig.update_layout(title=title)
+
+        return fig
+
+
     def _weight_average(self):
         composition: pd.DataFrame = pd.DataFrame(
             self._mass_data[self.composition_columns].sum(axis=0) / self._mass_data[
@@ -167,6 +305,7 @@ class MassComposition(ABC):
         weighted_averages_df = pd.concat([mass_sum, composition], axis=1)
 
         return weighted_averages_df
+
 
     def _solve_mass(self, value) -> pd.DataFrame:
         """Solve mass_wet and mass_dry from the provided columns.
@@ -214,7 +353,9 @@ class MassComposition(ABC):
 
         return mass_totals
 
-    # Helper method to extract column
+        # Helper method to extract column
+
+
     def _extract_column(self, value, var_type):
         var = getattr(self, f"{var_type}_var")
         if var is None:
@@ -222,6 +363,7 @@ class MassComposition(ABC):
                         re.search(self.config['vars'][var_type]['search_regex'], col,
                                   re.IGNORECASE)), self.config['vars'][var_type]['default_name'])
         return var
+
 
     def _extract_mass_moisture_columns(self, value):
         if self.mass_wet_var is None:
@@ -234,6 +376,7 @@ class MassComposition(ABC):
         mass_dry = value.get(self.mass_dry_var)
         moisture = value.get(self.moisture_var)
         return mass_dry, mass_wet, moisture
+
 
     def _get_non_mass_data(self, value: Optional[pd.DataFrame]) -> (Optional[pd.DataFrame], Optional[pd.DataFrame]):
         """
@@ -260,6 +403,7 @@ class MassComposition(ABC):
 
         return composition, supplementary
 
+
     def __deepcopy__(self, memo):
         # Create a new instance of our class
         new_obj = self.__class__()
@@ -270,6 +414,7 @@ class MassComposition(ABC):
             setattr(new_obj, attr, copy.deepcopy(value, memo))
 
         return new_obj
+
 
     def split(self,
               fraction: float,
@@ -296,14 +441,15 @@ class MassComposition(ABC):
         name_2 = name_2 if name_2 is not None else f"{self.name}_2"
 
         out: MassComposition = self.create_congruent_object(name=name_1, include_mc_data=True,
-                                                            include_supp_data=include_supplementary_data)
+                                                   include_supp_data=include_supplementary_data)
         out._mass_data = self._mass_data * fraction
 
         comp: MassComposition = self.create_congruent_object(name=name_2, include_mc_data=True,
-                                                             include_supp_data=include_supplementary_data)
+                                                    include_supp_data=include_supplementary_data)
         comp._mass_data = self._mass_data * (1 - fraction)
 
         return out, comp
+
 
     def add(self, other: 'MassComposition', name: Optional[str] = None,
             include_supplementary_data: bool = False) -> 'MassComposition':
@@ -322,6 +468,7 @@ class MassComposition(ABC):
         new_obj._mass_data = self._mass_data + other._mass_data
         return new_obj
 
+
     def sub(self, other: 'MassComposition', name: Optional[str] = None,
             include_supplementary_data: bool = False) -> 'MassComposition':
         """Subtract other from self
@@ -338,6 +485,7 @@ class MassComposition(ABC):
                                                include_supp_data=include_supplementary_data)
         new_obj._mass_data = self._mass_data - other._mass_data
         return new_obj
+
 
     def div(self, other: 'MassComposition', name: Optional[str] = None,
             include_supplementary_data: bool = False) -> 'MassComposition':
@@ -357,16 +505,19 @@ class MassComposition(ABC):
         new_obj._mass_data = self._mass_data / other._mass_data
         return new_obj
 
+
     @abstractmethod
     def __str__(self):
         # return f"{self.name}\n{self.aggregate.to_dict()}"
         pass
+
 
     @abstractmethod
     def create_congruent_object(self, name: str,
                                 include_mc_data: bool = False,
                                 include_supp_data: bool = False) -> 'MassComposition':
         pass
+
 
     def __add__(self, other: 'MassComposition') -> 'MassComposition':
         """Add two objects
@@ -382,6 +533,7 @@ class MassComposition(ABC):
 
         return self.add(other, include_supplementary_data=True)
 
+
     def __sub__(self, other: 'MassComposition') -> 'MassComposition':
         """Subtract the supplied object from self
 
@@ -395,6 +547,7 @@ class MassComposition(ABC):
 
         return self.sub(other, include_supplementary_data=True)
 
+
     def __truediv__(self, other: 'MassComposition') -> 'MassComposition':
         """Divide self by the supplied object
 
@@ -407,6 +560,7 @@ class MassComposition(ABC):
         """
 
         return self.div(other, include_supplementary_data=True)
+
 
     def __eq__(self, other):
         if isinstance(other, MassComposition):

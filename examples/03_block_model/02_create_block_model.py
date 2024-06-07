@@ -56,7 +56,7 @@ assay.set_active_scalars("DENSITY")
 p = pv.Plotter()
 p.add_mesh(assay.tube(radius=3))
 p.add_mesh(topo, opacity=0.5)
-p.show()
+p.show(auto_close=False)
 
 # %%
 # Threshold the volumetric data
@@ -84,7 +84,7 @@ p.add_mesh_threshold(vol, scalars="CU_pct", show_edges=True)
 # Add the assay logs: use a tube filter that varius the radius by an attribute
 p.add_mesh(assay.tube(radius=3), cmap="viridis")
 
-p.show()
+p.show(auto_close=False)
 
 # %%
 # Export the model data

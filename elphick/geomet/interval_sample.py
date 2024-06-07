@@ -1,9 +1,9 @@
 import pandas as pd
 
-from elphick.geomet.sample import Sample
+from elphick.geomet import MassComposition
 
 
-class IntervalSample(Sample):
+class IntervalSample(MassComposition):
     """
     A class to represent a sample of data with an interval index.
     This exposes methods to split the sample by a partition definition.

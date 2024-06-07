@@ -226,7 +226,7 @@ class BlockModel(MassComposition):
 
     def create_congruent_object(self, name: str,
                                 include_mc_data: bool = False,
-                                include_supp_data: bool = False) -> 'MassComposition':
+                                include_supp_data: bool = False) -> 'Sample':
         """Create an object with the same attributes"""
         # Create a new instance of our class
         new_obj = self.__class__()

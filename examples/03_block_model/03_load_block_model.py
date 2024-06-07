@@ -51,7 +51,7 @@ bm.data.head()
 # Plot the block model
 # --------------------
 
-bm.plot('Cu').show()
+bm.plot('Cu').show(auto_close=False)
 
 # %%
 # Filter the data
@@ -67,5 +67,5 @@ bm2: BlockModel = BlockModel(data=df_filtered.rename(columns={'CU_pct': 'Cu'}).a
 bm2._mass_data.shape
 
 # %%
-bm2.plot('Cu').show()
+bm2.plot('Cu').show(auto_close=False)
 

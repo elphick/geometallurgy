@@ -8,6 +8,10 @@ import sys
 
 import numpy as np
 import pyvista
+import plotly
+from plotly.io._sg_scraper import plotly_sg_scraper
+
+plotly.io.renderers.default = 'sphinx_gallery_png'
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -56,7 +60,7 @@ sphinx_gallery_conf = {
     'gallery_dirs': gallery_dirs,
     'nested_sections': False,
     'download_all_examples': False,
-    "image_scrapers": (pyvista.Scraper(), "matplotlib"),
+    "image_scrapers": (pyvista.Scraper(), "matplotlib", plotly_sg_scraper),
 }
 
 templates_path = ['_templates']
