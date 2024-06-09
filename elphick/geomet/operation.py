@@ -1,58 +1,90 @@
+from copy import copy
+from enum import Enum
 from functools import reduce
-from typing import Optional
+from typing import Optional, TypeVar
 
 import numpy as np
 import pandas as pd
+
+from elphick.geomet.base import MC
+
+# generic type variable, used for type hinting that play nicely with subclasses
+OP = TypeVar('OP', bound='Operation')
+
+
+class NodeType(Enum):
+    SOURCE = 'input'
+    SINK = 'output'
+    BALANCE = 'degree 2+'
 
 
 class Operation:
     def __init__(self, name):
         self.name = name
-        self._input_streams = []
-        self._output_streams = []
+        self._inputs = []
+        self._outputs = []
         self._is_balanced: Optional[bool] = None
         self._unbalanced_records: Optional[pd.DataFrame] = None
 
     @property
-    def input_streams(self):
-        return self._input_streams
+    def inputs(self):
+        return self._inputs
 
-    @input_streams.setter
-    def input_streams(self, streams):
-        self._input_streams = streams
-        self._is_balanced = self.check_balance()
+    @inputs.setter
+    def inputs(self, value: list[MC]):
+        self._inputs = value
+        self.check_balance()
 
     @property
-    def output_streams(self):
-        return self._output_streams
+    def outputs(self):
+        return self._outputs
 
-    @output_streams.setter
-    def output_streams(self, streams):
-        self._output_streams = streams
-        self._is_balanced = self.check_balance()
+    @outputs.setter
+    def outputs(self, value: list[MC]):
+        self._outputs = value
+        self.check_balance()
 
-    def check_balance(self) -> Optional[bool]:
-        """Checks if the mass and chemistry of the input and output streams are balanced"""
-        if not self.input_streams or not self.output_streams:
+    @property
+    def node_type(self) -> Optional[NodeType]:
+        if self.inputs and not self.outputs:
+            res = NodeType.SINK
+        elif self.outputs and not self.inputs:
+            res = NodeType.SOURCE
+        elif self.inputs and self.outputs:
+            res = NodeType.BALANCE
+        else:
+            res = None
+        return res
+
+    def get_input_mass(self) -> pd.DataFrame:
+        inputs = [i for i in self.inputs if i is not None]
+
+        if not inputs:
+            return self._create_zero_mass()
+        elif len(inputs) == 1:
+            return inputs[0].mass_data
+        else:
+            return reduce(lambda a, b: a.add(b, fill_value=0), [stream.mass_data for stream in inputs])
+
+    def get_output_mass(self) -> pd.DataFrame:
+        outputs = [o for o in self.outputs if o is not None]
+
+        if not outputs:
+            return self._create_zero_mass()
+        elif len(outputs) == 1:
+            return outputs[0].mass_data
+        else:
+            return reduce(lambda a, b: a.add(b, fill_value=0), [output.mass_data for output in outputs])
+
+    def check_balance(self):
+        """Checks if the mass and chemistry of the input and output are balanced"""
+        if not self.inputs or not self.outputs:
             return None
 
-        # Calculate the mass of the inputs and outputs
-        if len(self.input_streams) == 1:
-            input_mass = self.input_streams[0]._mass_data
-        else:
-            input_mass = reduce(lambda a, b: a.add(b, fill_value=0),
-                                [stream._mass_data for stream in self.input_streams])
-
-        if len(self.output_streams) == 1:
-            output_mass = self.output_streams[0]._mass_data
-        else:
-            output_mass = reduce(lambda a, b: a.add(b, fill_value=0),
-                                 [stream._mass_data for stream in self.output_streams])
-
+        input_mass, output_mass = self.get_input_mass(), self.get_output_mass()
         is_balanced = np.all(np.isclose(input_mass, output_mass))
-        self._unbalanced_records = (input_mass - output_mass).iloc[np.where(~np.isclose(input_mass, output_mass))[0]]
-
-        return is_balanced
+        self._unbalanced_records = (input_mass - output_mass).loc[~np.isclose(input_mass, output_mass).any(axis=1)]
+        self._is_balanced = is_balanced
 
     @property
     def is_balanced(self) -> Optional[bool]:
@@ -62,18 +94,95 @@ class Operation:
     def unbalanced_records(self) -> Optional[pd.DataFrame]:
         return self._unbalanced_records
 
+    def solve(self):
+        """Solves the operation
 
-class InputOperation(Operation):
+        Missing data is represented by None in the input and output streams.
+        Solve will replace None with an object that balances the mass and chemistry of the input and output streams.
+        """
+
+        # Check the number of missing inputs and outputs
+        missing_count: int = self.inputs.count(None) + self.outputs.count(None)
+        if missing_count > 1:
+            raise ValueError("The operation cannot be solved - too many degrees of freedom")
+
+        if missing_count == 0 and self.is_balanced:
+            return
+        else:
+            if None in self.inputs:
+                ref_object = self.outputs[0]
+                # Find the index of None in inputs
+                none_index = self.inputs.index(None)
+
+                # Calculate the None object
+                new_input_mass: pd.DataFrame = self.get_output_mass() - self.get_input_mass()
+                # Create a new object from the mass dataframe
+                new_input = type(ref_object).from_mass_dataframe(new_input_mass, mass_wet=ref_object.mass_wet_var,
+                                                                 mass_dry=ref_object.mass_dry_var,
+                                                                 moisture_column_name=ref_object.moisture_column,
+                                                                 component_columns=ref_object.composition_columns,
+                                                                 composition_units=ref_object.composition_units)
+                # Replace None with the new input
+                self.inputs[none_index] = new_input
+
+            elif None in self.outputs:
+                ref_object = self.inputs[0]
+                # Find the index of None in outputs
+                none_index = self.outputs.index(None)
+
+                # Calculate the None object
+                if len(self.outputs) == 1 and len(self.inputs) == 1:
+                    # passthrough, no need to calculate.  Shallow copy to minimise memory.
+                    new_output = copy(self.inputs[0])
+                    new_output.name = None
+                else:
+                    new_output_mass: pd.DataFrame = self.get_input_mass() - self.get_output_mass()
+                    # Create a new object from the mass dataframe
+                    new_output = type(ref_object).from_mass_dataframe(new_output_mass, mass_wet=ref_object.mass_wet_var,
+                                                                      mass_dry=ref_object.mass_dry_var,
+                                                                      moisture_column_name=ref_object.moisture_column,
+                                                                      component_columns=ref_object.composition_columns,
+                                                                      composition_units=ref_object.composition_units)
+
+                # Replace None with the new output
+                self.outputs[none_index] = new_output
+
+            # update the balance related attributes
+            self.check_balance()
+
+    def _create_zero_mass(self) -> pd.DataFrame:
+        """Creates a zero mass dataframe with the same columns and index as the mass data"""
+        # get the firstan object with the mass data
+        obj = self._get_object()
+        return pd.DataFrame(data=0, columns=obj.mass_data.columns, index=obj.mass_data.index)
+
+    def _get_object(self, name: Optional[str] = None) -> MC:
+        """Returns an object from inputs or outputs"""
+        if name is None:
+            if self.outputs[0] is not None:
+                return self.outputs[0]
+            elif self.inputs[0] is not None:
+                return self.inputs[0]
+            else:
+                raise ValueError("No object found")
+        else:
+            for obj in self.inputs + self.outputs:
+                if obj is not None and obj.name == name:
+                    return obj
+            raise ValueError(f"No object found with name {name}")
+
+
+class Input(Operation):
     def __init__(self, name):
         super().__init__(name)
 
 
-class OutputOperation(Operation):
+class Output(Operation):
     def __init__(self, name):
         super().__init__(name)
 
 
-class PassthroughOperation(Operation):
+class Passthrough(Operation):
     def __init__(self, name):
         super().__init__(name)
 

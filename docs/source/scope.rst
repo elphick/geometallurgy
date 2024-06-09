@@ -114,3 +114,12 @@ To Do
    but it returns a reduced list of matches.
    Additionally, is_compositional with strict=True the returned list order may vary due to the use of sets in the
    method.  This is not ideal for testing.
+
+.. todo::
+   Cleanup the flowsheet module, locating static methods to utils where appropriate
+
+.. todo::
+   sankey_width_var - default to none but resolve to mass_dry using var_map.
+
+.. todo::
+   Create new repo open-geomet-data that contains the data for examples and case studies.

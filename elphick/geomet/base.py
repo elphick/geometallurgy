@@ -3,7 +3,7 @@ import logging
 import re
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, TypeVar
 
 import numpy as np
 import pandas as pd
@@ -14,9 +14,13 @@ from elphick.geomet.utils.moisture import solve_mass_moisture
 from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, composition_factors
 from elphick.geomet.utils.sampling import random_int
 from elphick.geomet.utils.timer import log_timer
+from .config.config_read import get_column_config
 from .plot import parallel_plot, comparison_plot
 import plotly.express as px
 import plotly.graph_objects as go
+
+# generic type variable, used for type hinting, to indicate that the type is a subclass of MassComposition
+MC = TypeVar('MC', bound='MassComposition')
 
 
 class MassComposition(ABC):
@@ -30,7 +34,7 @@ class MassComposition(ABC):
                  component_vars: Optional[list[str]] = None,
                  composition_units: Literal['%', 'ppm', 'ppb'] = '%',
                  components_as_symbols: bool = True,
-                 constraints: Optional[dict[str, list]] = None,
+                 ranges: Optional[dict[str, list]] = None,
                  config_file: Optional[Path] = None):
         """
 
@@ -43,7 +47,7 @@ class MassComposition(ABC):
             moisture_var: The name of the moisture column
             component_vars: The names of the chemical columns
             components_as_symbols: If True, convert the composition variables to symbols, e.g. Fe
-            constraints: The constraints, or bounds for the columns
+            ranges: The range of valid data for each column in the data
             config_file: The configuration file
         """
 
@@ -72,6 +76,9 @@ class MassComposition(ABC):
 
         # set the data
         self.data = data
+
+        # add the OOR status object
+        self.status = OutOfRangeStatus(self, ranges)
 
     @property
     @log_timer
@@ -117,6 +124,10 @@ class MassComposition(ABC):
             self._mass_data = None
 
     @property
+    def mass_data(self):
+        return self._mass_data
+
+    @property
     def aggregate(self):
         if self._aggregate is None:
             self._aggregate = self._weight_average()
@@ -125,6 +136,27 @@ class MassComposition(ABC):
     @aggregate.setter
     def aggregate(self, value):
         self._aggregate = value
+
+    @property
+    def variable_map(self) -> Optional[dict[str, str]]:
+        """A map from lower case standard names to the actual column names"""
+        if self._mass_data is not None:
+            existing_columns = list(self._mass_data.columns)
+            res = {}
+            if self.moisture_in_scope and self.mass_wet_var in existing_columns:
+                res['mass_wet'] = self.mass_wet_var
+            if self.mass_dry_var in existing_columns:
+                res['mass_dry'] = self.mass_dry_var
+            if self.moisture_in_scope:
+                res['moisture'] = self.moisture_var
+                if self.components_as_symbols:
+                    res['moisture'] = is_compositional([self.moisture_var], strict=False).get(self.moisture_var,
+                                                                                              self.moisture_var)
+            if self.composition_columns:
+                for col in self.composition_columns:
+                    res[col.lower()] = col
+            return res
+        return None
 
     @property
     def mass_columns(self) -> Optional[list[str]]:
@@ -143,6 +175,8 @@ class MassComposition(ABC):
         res = 'h2o'
         if self.moisture_in_scope:
             res = self.moisture_var
+            if self.components_as_symbols:
+                res = is_compositional([res], strict=False).get(res, res)
         return res
 
     @property
@@ -161,7 +195,6 @@ class MassComposition(ABC):
         if self._supplementary_data is not None:
             res = list(self._supplementary_data.columns)
         return res
-
 
     def plot_parallel(self, color: Optional[str] = None,
                       vars_include: Optional[list[str]] = None,
@@ -193,8 +226,7 @@ class MassComposition(ABC):
                             include_dims=include_dims, plot_interval_edges=plot_interval_edges)
         return fig
 
-
-    def plot_comparison(self, other: 'MassComposition',
+    def plot_comparison(self, other: MC,
                         color: Optional[str] = None,
                         vars_include: Optional[list[str]] = None,
                         vars_exclude: Optional[list[str]] = None,
@@ -256,7 +288,6 @@ class MassComposition(ABC):
         fig.update_layout(title=title)
         return fig
 
-
     def plot_ternary(self, variables: list[str], color: Optional[str] = None,
                      title: Optional[str] = None) -> go.Figure:
         """Plot a ternary diagram
@@ -288,7 +319,6 @@ class MassComposition(ABC):
 
         return fig
 
-
     def _weight_average(self):
         composition: pd.DataFrame = pd.DataFrame(
             self._mass_data[self.composition_columns].sum(axis=0) / self._mass_data[
@@ -305,7 +335,6 @@ class MassComposition(ABC):
         weighted_averages_df = pd.concat([mass_sum, composition], axis=1)
 
         return weighted_averages_df
-
 
     def _solve_mass(self, value) -> pd.DataFrame:
         """Solve mass_wet and mass_dry from the provided columns.
@@ -355,7 +384,6 @@ class MassComposition(ABC):
 
         # Helper method to extract column
 
-
     def _extract_column(self, value, var_type):
         var = getattr(self, f"{var_type}_var")
         if var is None:
@@ -363,7 +391,6 @@ class MassComposition(ABC):
                         re.search(self.config['vars'][var_type]['search_regex'], col,
                                   re.IGNORECASE)), self.config['vars'][var_type]['default_name'])
         return var
-
 
     def _extract_mass_moisture_columns(self, value):
         if self.mass_wet_var is None:
@@ -376,7 +403,6 @@ class MassComposition(ABC):
         mass_dry = value.get(self.mass_dry_var)
         moisture = value.get(self.moisture_var)
         return mass_dry, mass_wet, moisture
-
 
     def _get_non_mass_data(self, value: Optional[pd.DataFrame]) -> (Optional[pd.DataFrame], Optional[pd.DataFrame]):
         """
@@ -403,7 +429,6 @@ class MassComposition(ABC):
 
         return composition, supplementary
 
-
     def __deepcopy__(self, memo):
         # Create a new instance of our class
         new_obj = self.__class__()
@@ -415,12 +440,15 @@ class MassComposition(ABC):
 
         return new_obj
 
+    def update_mass_data(self, value: pd.DataFrame):
+        self._mass_data = value
+        self.aggregate = self._weight_average()
 
     def split(self,
               fraction: float,
               name_1: Optional[str] = None,
               name_2: Optional[str] = None,
-              include_supplementary_data: bool = False) -> tuple['MassComposition', 'MassComposition']:
+              include_supplementary_data: bool = False) -> tuple[MC, MC]:
         """Split the object by mass
 
         A simple mass split maintaining the same composition
@@ -440,19 +468,22 @@ class MassComposition(ABC):
         name_1 = name_1 if name_1 is not None else f"{self.name}_1"
         name_2 = name_2 if name_2 is not None else f"{self.name}_2"
 
-        out: MassComposition = self.create_congruent_object(name=name_1, include_mc_data=True,
-                                                   include_supp_data=include_supplementary_data)
-        out._mass_data = self._mass_data * fraction
+        ref: MassComposition = self.create_congruent_object(name=name_1, include_mc_data=True,
+                                                            include_supp_data=include_supplementary_data)
+        ref.update_mass_data(self._mass_data * fraction)
 
         comp: MassComposition = self.create_congruent_object(name=name_2, include_mc_data=True,
-                                                    include_supp_data=include_supplementary_data)
-        comp._mass_data = self._mass_data * (1 - fraction)
+                                                             include_supp_data=include_supplementary_data)
+        comp.update_mass_data(self._mass_data * (1 - fraction))
 
-        return out, comp
+        # create the relationships
+        ref._nodes = [self._nodes[1], random_int()]
+        comp._nodes = [self._nodes[1], random_int()]
 
+        return ref, comp
 
-    def add(self, other: 'MassComposition', name: Optional[str] = None,
-            include_supplementary_data: bool = False) -> 'MassComposition':
+    def add(self, other: MC, name: Optional[str] = None,
+            include_supplementary_data: bool = False) -> MC:
         """Add two objects together
 
         Args:
@@ -463,14 +494,18 @@ class MassComposition(ABC):
         Returns:
             The new object
         """
-        new_obj = self.create_congruent_object(name=name, include_mc_data=True,
-                                               include_supp_data=include_supplementary_data)
-        new_obj._mass_data = self._mass_data + other._mass_data
-        return new_obj
+        res = self.create_congruent_object(name=name, include_mc_data=True,
+                                           include_supp_data=include_supplementary_data)
+        res.update_mass_data(self._mass_data + other._mass_data)
 
+        # create the relationships
+        other._nodes = [other._nodes[0], self._nodes[1]]
+        res._nodes = [self._nodes[1], random_int()]
 
-    def sub(self, other: 'MassComposition', name: Optional[str] = None,
-            include_supplementary_data: bool = False) -> 'MassComposition':
+        return res
+
+    def sub(self, other: MC, name: Optional[str] = None,
+            include_supplementary_data: bool = False) -> MC:
         """Subtract other from self
 
         Args:
@@ -481,14 +516,17 @@ class MassComposition(ABC):
         Returns:
             The new object
         """
-        new_obj = self.create_congruent_object(name=name, include_mc_data=True,
-                                               include_supp_data=include_supplementary_data)
-        new_obj._mass_data = self._mass_data - other._mass_data
-        return new_obj
+        res = self.create_congruent_object(name=name, include_mc_data=True,
+                                           include_supp_data=include_supplementary_data)
+        res.update_mass_data(self._mass_data - other._mass_data)
 
+        # create the relationships
+        res._nodes = [self._nodes[1], random_int()]
 
-    def div(self, other: 'MassComposition', name: Optional[str] = None,
-            include_supplementary_data: bool = False) -> 'MassComposition':
+        return res
+
+    def div(self, other: MC, name: Optional[str] = None,
+            include_supplementary_data: bool = False) -> MC:
         """Divide two objects
 
         Divides self by other, with optional name of the returned object
@@ -502,24 +540,30 @@ class MassComposition(ABC):
         """
         new_obj = self.create_congruent_object(name=name, include_mc_data=True,
                                                include_supp_data=include_supplementary_data)
-        new_obj._mass_data = self._mass_data / other._mass_data
+        new_obj.update_mass_data(self._mass_data / other._mass_data)
         return new_obj
 
-
-    @abstractmethod
     def __str__(self):
-        # return f"{self.name}\n{self.aggregate.to_dict()}"
-        pass
+        return f"{self.__class__.__name__}: {self.name}\n{self.aggregate.to_dict()}"
 
-
-    @abstractmethod
     def create_congruent_object(self, name: str,
                                 include_mc_data: bool = False,
-                                include_supp_data: bool = False) -> 'MassComposition':
-        pass
+                                include_supp_data: bool = False) -> 'Sample':
+        """Create an object with the same attributes"""
+        # Create a new instance of our class
+        new_obj = self.__class__()
 
+        # Copy each attribute
+        for attr, value in self.__dict__.items():
+            if attr == '_mass_data' and not include_mc_data:
+                continue
+            if attr == '_supplementary_data' and not include_supp_data:
+                continue
+            setattr(new_obj, attr, copy.deepcopy(value))
+        new_obj.name = name
+        return new_obj
 
-    def __add__(self, other: 'MassComposition') -> 'MassComposition':
+    def __add__(self, other: MC) -> MC:
         """Add two objects
 
         Perform the addition with the mass-composition variables only and then append any attribute variables.
@@ -533,8 +577,7 @@ class MassComposition(ABC):
 
         return self.add(other, include_supplementary_data=True)
 
-
-    def __sub__(self, other: 'MassComposition') -> 'MassComposition':
+    def __sub__(self, other: MC) -> MC:
         """Subtract the supplied object from self
 
         Perform the subtraction with the mass-composition variables only and then append any attribute variables.
@@ -547,8 +590,7 @@ class MassComposition(ABC):
 
         return self.sub(other, include_supplementary_data=True)
 
-
-    def __truediv__(self, other: 'MassComposition') -> 'MassComposition':
+    def __truediv__(self, other: MC) -> MC:
         """Divide self by the supplied object
 
         Perform the division with the mass-composition variables only and then append any attribute variables.
@@ -561,8 +603,110 @@ class MassComposition(ABC):
 
         return self.div(other, include_supplementary_data=True)
 
-
     def __eq__(self, other):
         if isinstance(other, MassComposition):
             return self.__dict__ == other.__dict__
         return False
+
+    @classmethod
+    def from_mass_dataframe(cls, mass_df: pd.DataFrame,
+                            mass_wet: Optional[str] = 'mass_wet',
+                            mass_dry: str = 'mass_dry',
+                            moisture_column_name: Optional[str] = None,
+                            component_columns: Optional[list[str]] = None,
+                            composition_units: Literal['%', 'ppm', 'ppb'] = '%',
+                            **kwargs):
+        """
+        Class method to create a MassComposition object from a mass dataframe.
+
+        Args:
+            mass_df: DataFrame with mass data.
+            **kwargs: Additional arguments to pass to the MassComposition constructor.
+
+        Returns:
+            A new MassComposition object.
+        """
+        # Convert mass to composition using the function from the pandas module
+        composition_df = mass_to_composition(mass_df, mass_wet=mass_wet, mass_dry=mass_dry,
+                                             moisture_column_name=moisture_column_name,
+                                             component_columns=component_columns,
+                                             composition_units=composition_units)
+
+        # Create a new instance of the MassComposition class
+        return cls(data=composition_df, **kwargs)
+
+    def set_parent_node(self, parent: MC) -> MC:
+        self._nodes = [parent._nodes[1], self._nodes[1]]
+        return self
+
+    def set_child_node(self, child: MC) -> MC:
+        self._nodes = [self._nodes[0], child._nodes[0]]
+        return self
+
+    def set_nodes(self, nodes: list) -> 'MassComposition':
+        self._nodes = nodes
+        return self
+
+
+class OutOfRangeStatus:
+    """A class to check and report out-of-range records in an MC object."""
+
+    def __init__(self, mc: 'MC', ranges: dict[str, list]):
+        """Initialize with an MC object."""
+        self._logger = logging.getLogger(__name__)
+        self.mc: 'MC' = mc
+        self.ranges: Optional[dict[str, list]] = None
+        self.oor: Optional[pd.DataFrame] = None
+        self.num_oor: Optional[int] = None
+        self.failing_components: Optional[list[str]] = None
+
+        if mc.mass_data is not None:
+            self.ranges = self.get_ranges(ranges)
+            self.oor: pd.DataFrame = self._check_range()
+            self.num_oor: int = len(self.oor)
+            self.failing_components: Optional[list[str]] = list(
+                self.oor.dropna(axis=1).columns) if self.num_oor > 0 else None
+
+    def get_ranges(self, ranges: dict[str, list]) -> dict[str, list]:
+
+        d_ranges: dict = get_column_config(config_dict=self.mc.config, var_map=self.mc.variable_map,
+                                           config_key='range')
+
+        # modify the default dict based on any user passed constraints
+        if ranges:
+            for k, v in ranges.items():
+                d_ranges[k] = v
+
+        return d_ranges
+
+    def _check_range(self) -> pd.DataFrame:
+        """Check if all records are within the constraints."""
+        if self.mc._mass_data is not None:
+            df: pd.DataFrame = self.mc.data[self.ranges.keys()]
+            chunks = []
+            for variable, bounds in self.ranges.items():
+                chunks.append(df.loc[(df[variable] < bounds[0]) | (df[variable] > bounds[1]), variable])
+            oor: pd.DataFrame = pd.concat(chunks, axis='columns')
+        else:  # An empty object will have ok status
+            oor: pd.DataFrame = pd.DataFrame(columns=list(self.ranges.keys()))
+        return oor
+
+    @property
+    def ok(self) -> bool:
+        """Return True if all records are within range, False otherwise."""
+        if self.num_oor > 0:
+            self._logger.warning(f'{self.num_oor} out of range records exist.')
+        return True if self.num_oor == 0 else False
+
+    def __str__(self) -> str:
+        """Return a string representation of the status."""
+        res: str = f'status.ok: {self.ok}\n'
+        res += f'num_oor: {self.num_oor}'
+        return res
+
+    def __eq__(self, other: object) -> bool:
+        """Return True if other Status has the same out-of-range records."""
+        if isinstance(other, OutOfRangeStatus):
+            return self.oor.equals(other.oor)
+        return False
+

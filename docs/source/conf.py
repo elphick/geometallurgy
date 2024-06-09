@@ -10,6 +10,7 @@ import numpy as np
 import pyvista
 import plotly
 from plotly.io._sg_scraper import plotly_sg_scraper
+from sphinx_gallery.sorting import FileNameSortKey
 
 plotly.io.renderers.default = 'sphinx_gallery_png'
 
@@ -60,6 +61,7 @@ sphinx_gallery_conf = {
     'gallery_dirs': gallery_dirs,
     'nested_sections': False,
     'download_all_examples': False,
+    'within_subsection_order': FileNameSortKey,
     "image_scrapers": (pyvista.Scraper(), "matplotlib", plotly_sg_scraper),
 }
 

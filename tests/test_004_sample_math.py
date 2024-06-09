@@ -21,6 +21,14 @@ def test_sample_split(expected_data):
     ref, comp = smpl.split(fraction=0.5)
     pd.testing.assert_frame_equal(ref.data, comp.data)
 
+    # test that the _node tuple values have preserved the relationship.
+    # the first element of the tuple is the parent node, the second element is the child node.
+    assert smpl._nodes[1] == ref._nodes[0]
+    assert smpl._nodes[1] == comp._nodes[0]
+    assert ref._nodes[0] == comp._nodes[0]
+    assert ref._nodes[1] != comp._nodes[1]
+
+
 
 def test_sample_add(expected_data):
     data = sample_data()

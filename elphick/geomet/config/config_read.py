@@ -22,3 +22,18 @@ def read_flowsheet_yaml(file_path):
             logging.error(msg)
             raise KeyError(msg)
         return d_config['FLOWSHEET']
+
+
+def get_column_config(config_dict: dict, var_map: dict, config_key: str = 'range') -> dict:
+    res: dict = {}
+    # populate from the config
+    # var_map only includes mass-composition columns, no supplementary. vars are keys, cols are values
+    composition_cols = [v for k, v in var_map.items() if k not in ['mass_wet', 'mass_dry', 'moisture']]
+
+    for k, v in config_dict['vars'].items():
+        if k == 'composition':
+            for col in composition_cols:
+                res[col] = v[config_key]
+        elif k in list(var_map.keys()) and v.get(config_key):
+            res[var_map[k]] = v[config_key]
+    return res

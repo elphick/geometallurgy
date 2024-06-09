@@ -53,3 +53,4 @@ def plot_parallel(data: pd.DataFrame, color: Optional[str] = None, title: Option
     fig.update_layout(title=title)
 
     return fig
+
