@@ -1,20 +1,15 @@
 import logging
-import webbrowser
-from copy import deepcopy
-from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union, TypeVar
 
 import matplotlib
+import matplotlib.cm as cm
 import networkx as nx
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+import seaborn as sns
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-import matplotlib.cm as cm
-import seaborn as sns
-from networkx import cytoscape_data
-
 from plotly.subplots import make_subplots
 
 from elphick.geomet import Stream, Sample, Operation
@@ -66,7 +61,7 @@ class Flowsheet:
             nodes = mc._nodes
 
             # add the objects to the edges
-            bunch_of_edges.append((nodes[0], nodes[1], {'mc': mc}))
+            bunch_of_edges.append((nodes[0], nodes[1], {'mc': mc, 'name': mc.name}))
 
         graph = nx.DiGraph(name=name)
         graph.add_edges_from(bunch_of_edges)
@@ -108,6 +103,28 @@ class Flowsheet:
         """
         streams: list[Sample] = streams_from_dataframe(df=df, mc_name_col=mc_name_col, n_jobs=n_jobs)
         return cls().from_objects(objects=streams, name=name)
+
+    def solve(self):
+        """Solve missing streams"""
+
+        # Check the number of missing mc's on edges in the network
+        missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
+        prev_missing_count = missing_count + 1  # Initialize with a value greater than missing_count
+
+        while 0 < missing_count < prev_missing_count:
+            prev_missing_count = missing_count
+            for node in self.graph.nodes:
+                if self.graph.nodes[node]['mc'].node_type == NodeType.BALANCE:
+                    if self.graph.nodes[node]['mc'].has_empty_input or self.graph.nodes[node]['mc'].has_empty_output:
+                        mc: MC = self.graph.nodes[node]['mc'].solve()
+                        # copy the solved object to the empty edge
+                        for u, v, d in self.graph.edges(data=True):
+                            if d['mc'] is None and u == node:
+                                d['mc'] = mc
+                                # set the mc name to match the edge name
+                                d['mc'].name = d['name']
+
+            missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
     def get_input_streams(self) -> list[MC]:
         """Get the input (feed) streams (edge objects)
@@ -709,20 +726,24 @@ class Flowsheet:
             if ('mc' in self.graph.nodes[node].keys()) and (node in node_names.keys()):
                 self.graph.nodes[node]['mc'].name = node_names[node]
 
-    def set_stream_data(self, stream_data: Dict[str, MC]):
+    def set_stream_data(self, stream_data: dict[str, Optional[MC]]):
         """Set the data (MassComposition) of network edges (streams) with a Dict
         """
         for stream_name, stream_data in stream_data.items():
+            stream_found = False
             for u, v, data in self.graph.edges(data=True):
                 if ('mc' in data.keys()) and (data['mc'].name == stream_name):
                     self._logger.info(f'Setting data on stream {stream_name}')
                     data['mc'] = stream_data
+                    stream_found = True
                     # refresh the node status
                     for node in [u, v]:
                         self.graph.nodes[node]['mc'].inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
                                                                self.graph.in_edges(node)]
                         self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
                                                                 self.graph.out_edges(node)]
+            if not stream_found:
+                self._logger.warning(f'Stream {stream_name} not found in graph')
 
     def streams_to_dict(self) -> Dict[str, MC]:
         """Export the Stream objects to a Dict
@@ -824,7 +845,6 @@ class Flowsheet:
         mc: MC = self.get_edge_by_name(stream)
         mc.set_child_node(self.get_edge_by_name(child))
         self._update_graph(mc)
-
 
     def reset_stream_nodes(self, stream: Optional[str] = None):
 

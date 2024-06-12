@@ -19,6 +19,7 @@ from matplotlib import pyplot as plt
 
 from elphick.geomet import Sample, IntervalSample
 from elphick.geomet.data.downloader import Downloader
+from elphick.geomet.utils.pandas import weight_average
 
 # %%
 logging.basicConfig(level=logging.INFO,
@@ -49,10 +50,11 @@ obj_mc.aggregate
 
 # %%
 #
-# .. todo::
-#    Develop and demonstrate groupby.weight_average() method
+# Use the normal pandas groupby-apply as needed.  Here we leverage the weight_average function
+# from utils.pandas
 
-# obj_mc.data.groupby('DHID').aggregate
+hole_average: pd.DataFrame = obj_mc.data.groupby('DHID').apply(weight_average)
+hole_average
 
 # %%
 #

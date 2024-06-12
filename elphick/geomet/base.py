@@ -196,6 +196,12 @@ class MassComposition(ABC):
             res = list(self._supplementary_data.columns)
         return res
 
+    @property
+    def data_columns(self) -> list[str]:
+        return [col for col in
+                (self.mass_columns + [self.moisture_column] + self.composition_columns + self.supplementary_columns) if
+                col is not None]
+
     def plot_parallel(self, color: Optional[str] = None,
                       vars_include: Optional[list[str]] = None,
                       vars_exclude: Optional[list[str]] = None,
@@ -709,4 +715,3 @@ class OutOfRangeStatus:
         if isinstance(other, OutOfRangeStatus):
             return self.oor.equals(other.oor)
         return False
-

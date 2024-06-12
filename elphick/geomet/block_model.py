@@ -4,12 +4,15 @@ from pathlib import Path
 from typing import Optional, Union, Literal
 
 import numpy as np
+import omf
+import omfvista
 import pandas as pd
 import pyvista as pv
 from pyvista import CellType
 from scipy import stats
 
 from elphick.geomet import MassComposition
+from elphick.geomet.utils.block_model_converter import volume_to_vtk
 from elphick.geomet.utils.timer import log_timer
 
 
@@ -38,11 +41,113 @@ class BlockModel(MassComposition):
             raise ValueError("The index must be a pd.MultiIndex with names ['x', 'y', 'z'] "
                              "or [['x', 'y', 'z', 'dx', 'dy', 'dz'].")
 
+        # sort the data to ensure consistent with pyvista
+        data.sort_index(level=['z', 'y', 'x'], ascending=[True, True, True], inplace=True)
+
         super().__init__(data=data, name=name, moisture_in_scope=moisture_in_scope,
                          mass_wet_var=mass_wet_var, mass_dry_var=mass_dry_var,
                          moisture_var=moisture_var, component_vars=component_vars,
                          composition_units=composition_units, components_as_symbols=components_as_symbols,
                          ranges=ranges, config_file=config_file)
+
+    @classmethod
+    def from_omf(cls, omf_filepath: Path,
+                 name: Optional[str] = None,
+                 columns: Optional[list[str]] = None) -> 'BlockModel':
+        reader = omf.OMFReader(str(omf_filepath))
+        project: omf.Project = reader.get_project()
+        # get the first block model detected in the omf project
+        block_model_candidates = [obj for obj in project.elements if isinstance(obj, omf.volume.VolumeElement)]
+        if name:
+            omf_bm = [obj for obj in block_model_candidates if obj.name == name]
+            if len(omf_bm) == 0:
+                raise ValueError(f"No block model named '{name}' found in the OMF file.")
+            else:
+                omf_bm = omf_bm[0]
+        elif len(block_model_candidates) > 1:
+            names: list[str] = [obj.name for obj in block_model_candidates]
+            raise ValueError(f"Multiple block models detected in the OMF file - provide a name argument from: {names}")
+        else:
+            omf_bm = block_model_candidates[0]
+
+        origin = np.array(project.origin)
+        bm = volume_to_vtk(omf_bm, origin=origin, columns=columns)
+
+        # Create DataFrame
+        df = pd.DataFrame(bm.cell_centers().points, columns=['x', 'y', 'z'])
+
+        # set the index to the cell centroids
+        df.set_index(['x', 'y', 'z'], drop=True, inplace=True)
+
+        if not isinstance(bm, pv.RectilinearGrid):
+            for d, t in zip(['dx', 'dy', 'dz'], ['tensor_u', 'tensor_v', 'tensor_w']):
+                # todo: fix - wrong shape
+                df[d] = eval(f"omf_bm.geometry.{t}")
+            df.set_index(['dx', 'dy', 'dz'], append=True, inplace=True)
+
+        # Add the array data to the DataFrame
+        for name in bm.array_names:
+            df[name] = bm.get_array(name)
+
+        # temporary workaround for no mass
+        df['DMT'] = 2000
+        moisture_in_scope = False
+
+        return cls(data=df, name=omf_bm.name, moisture_in_scope=moisture_in_scope)
+
+    def to_omf(self, omf_filepath: Path, name: str = 'Block Model', description: str = 'A block model'):
+
+        # Create a Project instance
+        project = omf.Project(name=name, description=description)
+
+        # Create a VolumeElement instance for the block model
+        block_model = omf.VolumeElement(name=name, description=description, geometry=omf.VolumeGridGeometry())
+
+        # Set the geometry of the block model
+        block_model.geometry.origin = self.data.index.get_level_values('x').min(), \
+            self.data.index.get_level_values('y').min(), \
+            self.data.index.get_level_values('z').min()
+
+        # Set the axis directions
+        block_model.geometry.axis_u = [1, 0, 0]  # Set the u-axis to point along the x-axis
+        block_model.geometry.axis_v = [0, 1, 0]  # Set the v-axis to point along the y-axis
+        block_model.geometry.axis_w = [0, 0, 1]  # Set the w-axis to point along the z-axis
+
+        # Set the tensor locations and dimensions
+        if 'dx' not in self.data.index.names:
+            # Calculate the dimensions of the cells
+            x_dims = np.diff(self.data.index.get_level_values('x').unique())
+            y_dims = np.diff(self.data.index.get_level_values('y').unique())
+            z_dims = np.diff(self.data.index.get_level_values('z').unique())
+
+            # Append an extra value to the end of the dimensions arrays
+            x_dims = np.append(x_dims, x_dims[-1])
+            y_dims = np.append(y_dims, y_dims[-1])
+            z_dims = np.append(z_dims, z_dims[-1])
+
+            # Assign the dimensions to the tensor attributes
+            block_model.geometry.tensor_u = x_dims
+            block_model.geometry.tensor_v = y_dims
+            block_model.geometry.tensor_w = z_dims
+        else:
+            block_model.geometry.tensor_u = self.data.index.get_level_values('dx').unique().tolist()
+            block_model.geometry.tensor_v = self.data.index.get_level_values('dy').unique().tolist()
+            block_model.geometry.tensor_w = self.data.index.get_level_values('dz').unique().tolist()
+
+        # Sort the blocks by their x, y, and z coordinates
+        blocks: pd.DataFrame = self.data.sort_index()
+
+        # Add the data to the block model
+        data = [omf.ScalarData(name=col, location='cells', array=blocks[col].values) for col in blocks.columns]
+        block_model.data = data
+
+        # Add the block model to the project
+        project.elements = [block_model]
+
+        assert project.validate()
+
+        # Write the project to a file
+        omf.OMFWriter(project, str(omf_filepath))
 
     @log_timer
     def get_blocks(self) -> Union[pv.StructuredGrid, pv.UnstructuredGrid]:
@@ -58,6 +163,9 @@ class BlockModel(MassComposition):
 
     @log_timer
     def plot(self, scalar: str, show_edges: bool = True) -> pv.Plotter:
+
+        if scalar not in self.data_columns:
+            raise ValueError(f"Column '{scalar}' not found in the DataFrame.")
 
         # Create a PyVista plotter
         plotter = pv.Plotter()

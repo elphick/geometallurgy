@@ -13,47 +13,45 @@ from elphick.geomet.utils.data import sample_data
 
 # %%
 #
-# Create a Sample object
-# ----------------------
+# Load Data
+# ---------
 #
 # We get some demo data in the form of a pandas DataFrame
 
 df_data: pd.DataFrame = sample_data()
-print(df_data.head())
+df_data.head()
 
 # %%
 #
-# Construct a Sample object and standardise the chemistry variables
+# Create Sample
+# -------------
 
 obj_smpl: Sample = Sample(df_data)
 print(obj_smpl)
 
 # %%
 #
-# Create an interactive parallel plot
+# Parallel Plots
+# --------------
+# Create an interactive parallel plot.  Great for visualising and interactively filtering mass-composition data.
 
 fig: Figure = obj_smpl.plot_parallel()
 fig
 
 # %%
 #
-# Create an interactive parallel plot with only the components
+# Create a parallel plot with only selected components and color
 
-fig2 = obj_smpl.plot_parallel(vars_include=['wet_mass', 'H2O', 'Fe'])
+fig2 = obj_smpl.plot_parallel(vars_include=['wet_mass', 'H2O', 'Fe', 'group'], color='group')
 fig2
 
 # %%
+# Ternary Diagram
+# ---------------
 #
-# Create a parallel plot with color
+# Create a ternary diagram for any 3 composition variables.
 
-fig3 = obj_smpl.plot_parallel(color='group')
-fig3
-
-# %%
-#
-# Create a ternary diagram for 3 composition variables
-
-fig4 = obj_smpl.plot_ternary(variables=['SiO2', 'Al2O3', 'LOI'], color='group')
+fig3 = obj_smpl.plot_ternary(variables=['SiO2', 'Al2O3', 'LOI'], color='group')
 # noinspection PyTypeChecker
-plotly.io.show(fig4)  # this call to show will set the thumbnail for use in the gallery
+plotly.io.show(fig3)  # this call to show will set the thumbnail for use in the gallery
 

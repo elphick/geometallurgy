@@ -27,6 +27,14 @@ class Operation:
         self._unbalanced_records: Optional[pd.DataFrame] = None
 
     @property
+    def has_empty_input(self) -> bool:
+        return None in self.inputs
+
+    @property
+    def has_empty_output(self) -> bool:
+        return None in self.outputs
+
+    @property
     def inputs(self):
         return self._inputs
 
@@ -94,20 +102,22 @@ class Operation:
     def unbalanced_records(self) -> Optional[pd.DataFrame]:
         return self._unbalanced_records
 
-    def solve(self):
+    def solve(self) -> Optional[MC]:
         """Solves the operation
 
         Missing data is represented by None in the input and output streams.
         Solve will replace None with an object that balances the mass and chemistry of the input and output streams.
+        Returns
+        The back-calculated mc object
         """
 
         # Check the number of missing inputs and outputs
         missing_count: int = self.inputs.count(None) + self.outputs.count(None)
         if missing_count > 1:
             raise ValueError("The operation cannot be solved - too many degrees of freedom")
-
+        mc = None
         if missing_count == 0 and self.is_balanced:
-            return
+            return mc
         else:
             if None in self.inputs:
                 ref_object = self.outputs[0]
@@ -117,13 +127,13 @@ class Operation:
                 # Calculate the None object
                 new_input_mass: pd.DataFrame = self.get_output_mass() - self.get_input_mass()
                 # Create a new object from the mass dataframe
-                new_input = type(ref_object).from_mass_dataframe(new_input_mass, mass_wet=ref_object.mass_wet_var,
-                                                                 mass_dry=ref_object.mass_dry_var,
-                                                                 moisture_column_name=ref_object.moisture_column,
-                                                                 component_columns=ref_object.composition_columns,
-                                                                 composition_units=ref_object.composition_units)
+                mc = type(ref_object).from_mass_dataframe(new_input_mass, mass_wet=ref_object.mass_wet_var,
+                                                          mass_dry=ref_object.mass_dry_var,
+                                                          moisture_column_name=ref_object.moisture_column,
+                                                          component_columns=ref_object.composition_columns,
+                                                          composition_units=ref_object.composition_units)
                 # Replace None with the new input
-                self.inputs[none_index] = new_input
+                self.inputs[none_index] = mc
 
             elif None in self.outputs:
                 ref_object = self.inputs[0]
@@ -133,22 +143,23 @@ class Operation:
                 # Calculate the None object
                 if len(self.outputs) == 1 and len(self.inputs) == 1:
                     # passthrough, no need to calculate.  Shallow copy to minimise memory.
-                    new_output = copy(self.inputs[0])
-                    new_output.name = None
+                    mc = copy(self.inputs[0])
+                    mc.name = None
                 else:
                     new_output_mass: pd.DataFrame = self.get_input_mass() - self.get_output_mass()
                     # Create a new object from the mass dataframe
-                    new_output = type(ref_object).from_mass_dataframe(new_output_mass, mass_wet=ref_object.mass_wet_var,
-                                                                      mass_dry=ref_object.mass_dry_var,
-                                                                      moisture_column_name=ref_object.moisture_column,
-                                                                      component_columns=ref_object.composition_columns,
-                                                                      composition_units=ref_object.composition_units)
+                    mc = type(ref_object).from_mass_dataframe(new_output_mass, mass_wet=ref_object.mass_wet_var,
+                                                              mass_dry=ref_object.mass_dry_var,
+                                                              moisture_column_name=ref_object.moisture_column,
+                                                              component_columns=ref_object.composition_columns,
+                                                              composition_units=ref_object.composition_units)
 
                 # Replace None with the new output
-                self.outputs[none_index] = new_output
+                self.outputs[none_index] = mc
 
             # update the balance related attributes
             self.check_balance()
+            return mc
 
     def _create_zero_mass(self) -> pd.DataFrame:
         """Creates a zero mass dataframe with the same columns and index as the mass data"""

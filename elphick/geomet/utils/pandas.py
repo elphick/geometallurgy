@@ -6,8 +6,7 @@ import logging
 from typing import List, Dict, Optional, Literal
 
 import pandas as pd
-from pandas import DataFrame
-from pandas.core.dtypes.common import is_float_dtype
+from scipy.stats import gmean
 
 from elphick.geomet.utils.components import is_compositional, get_components
 from elphick.geomet.utils.moisture import solve_mass_moisture, detect_moisture_column
@@ -139,14 +138,14 @@ def weight_average(df: pd.DataFrame,
                    mass_dry: str = 'mass_dry',
                    moisture_column_name: Optional[str] = None,
                    component_columns: Optional[list[str]] = None,
-                   composition_units: Literal['%', 'ppm', 'ppb'] = '%') -> DataFrame:
+                   composition_units: Literal['%', 'ppm', 'ppb'] = '%') -> pd.Series:
     """Weight Average a DataFrame containing mass-composition
 
     Args:
         df: The pd.DataFrame containing mass-composition.  H2O if provided will be ignored.  All columns other than the
          mass_wet and mass_dry are assumed to be `additive`, that is, dry mass weighting is valid.
          Assumes composition is in %w/w units.
-        mass_wet: The wet mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
+        mass_wet: The optional wet mass column.
         mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
         moisture_column_name: if mass_wet is provided, the resultant moisture will be returned with this column name.
          If None, and moisture is detected in the input, that column name will be used instead.
@@ -173,9 +172,10 @@ def weight_average(df: pd.DataFrame,
 
     if mass_wet and (mass_wet in df.columns):
         moisture: pd.Series = solve_mass_moisture(mass_wet=mass_sum[mass_wet], mass_dry=mass_sum[mass_dry])
-        return pd.concat([mass_sum[[mass_wet, mass_dry]], moisture, weighted_composition], axis=1)
+        return pd.concat([mass_sum[[mass_wet, mass_dry]], moisture, weighted_composition], axis=1).iloc[0].rename(
+            'weight_average')
     else:
-        return pd.concat([mass_sum[[mass_dry]], weighted_composition], axis=1)
+        return pd.concat([mass_sum[[mass_dry]], weighted_composition], axis=1).iloc[0].rename('weight_average')
 
 
 def calculate_recovery(df: pd.DataFrame,
@@ -188,6 +188,7 @@ def calculate_recovery(df: pd.DataFrame,
         df: The pd.DataFrame containing mass-composition.  H2O if provided will be ignored.  All columns other than the
          mass_wet and mass_dry are assumed to be `additive`, that is, dry mass weighting is valid.
          Assumes composition is in %w/w units.
+        df_ref: The stream that df will be divided by to calculate the recovery.  Often the feed stream.
         mass_wet: The wet mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
         mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
 
@@ -245,3 +246,49 @@ def _detect_non_component_columns(df):
     if len(non_float_cols) > 0:
         _logger.info(f"The following columns are not float columns and will be ignored: {non_float_cols}")
     return non_float_cols
+
+
+class MeanIntervalIndex(pd.IntervalIndex):
+    """MeanIntervalIndex is a subclass of pd.IntervalIndex that calculates the mean of the interval bounds."""
+
+    def __new__(cls, data, mean_values=None):
+        obj = pd.IntervalIndex.__new__(cls, data)
+        return obj
+
+    def __init__(self, data, mean_values=None):
+        self.mean_values = mean_values
+
+    @property
+    def mean(self):
+        if self.mean_values is not None:
+            return self.mean_values
+        elif self.name == 'size':
+            # Calculate geometric mean
+            return gmean([self.right, self.left], axis=0)
+        else:
+            # Calculate arithmetic mean
+            return (self.right + self.left) / 2
+
+
+class MeanIntervalArray(pd.arrays.IntervalArray):
+
+    def __new__(cls, data, mean_values=None):
+        obj = pd.arrays.IntervalArray.__new__(cls, data)
+        return obj
+
+    def __init__(self, data, mean_values=None):
+        super().__init__(data)
+        self.mean_values = mean_values
+
+    @property
+    def mean(self):
+        if self.mean_values is not None:
+            return self.mean_values
+        else:
+            # Calculate arithmetic mean
+            return (self.right + self.left) / 2
+
+    @classmethod
+    def from_tuples(cls, data, mean_values=None):
+        intervals = pd.arrays.IntervalArray.from_tuples(data, closed='left')
+        return cls(intervals, mean_values=mean_values)

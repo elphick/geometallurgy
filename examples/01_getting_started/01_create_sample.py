@@ -24,6 +24,6 @@ sample: Sample = Sample(data=df, name='sample')
 sample.data
 
 # %%
-# The `Sample` object has a `data` attribute that is a pandas DataFrame.  The column names are standardized
-# to lower case.
+# The `Sample` object has a `data` attribute that is a pandas DataFrame.  Where column names are recognised
+# as components the case is converted to the represent the chemical symbols.
 

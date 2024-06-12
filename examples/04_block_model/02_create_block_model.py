@@ -17,6 +17,7 @@ import omfvista
 import pooch
 import pyvista as pv
 import pandas as pd
+from omf import VolumeElement
 from ydata_profiling import ProfileReport
 
 # %%

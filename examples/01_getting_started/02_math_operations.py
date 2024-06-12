@@ -14,8 +14,8 @@ from elphick.geomet.utils.data import sample_data
 
 # %%
 #
-# Create a mass-composition (mc) enabled Xarray Dataset
-# -----------------------------------------------------
+# Load Data
+# ---------
 #
 # We get some demo data in the form of a pandas DataFrame
 
@@ -23,15 +23,18 @@ df_data: pd.DataFrame = sample_data()
 print(df_data.head())
 
 # %%
+#
+# Create Sample
+# -------------
 
-# Construct a Sample object and standardise the chemistry variables
-
-obj_smpl: Sample = Sample(df_data)
+obj_smpl: Sample = Sample(df_data, name='sample')
 print(obj_smpl)
 
 # %%
+# Split the Sample
+# ----------------
 #
-# Split the original Dataset and return the complement of the split fraction.
+# Split the Sample and return the complement of the split fraction.
 # Splitting does not modify the absolute grade of the input.
 
 obj_smpl_split, obj_smpl_comp = obj_smpl.split(fraction=0.1, include_supplementary_data=True)
@@ -42,14 +45,19 @@ print(obj_smpl_comp)
 
 # %%
 #
-# Add the split and complement parts using the mc.add method
+# Operands
+# --------
+#
+# The math operands +, -, / are supported for the Sample object.
+# We'll add the split and complement parts.
 
 obj_smpl_sum: Sample = obj_smpl_split + obj_smpl_comp
 print(obj_smpl_sum)
 
 # %%
 #
-# Confirm the sum of the splits is materially equivalent to the starting object.
+# Notice the name of the resultant sample object is None.
+# We'll confirm the sum of the splits is materially equivalent to the starting object.
 
 pd.testing.assert_frame_equal(obj_smpl.data, obj_smpl_sum.data)
 
@@ -62,7 +70,6 @@ obj_smpl_minus: Sample = obj_smpl_sum - obj_smpl_split
 pd.testing.assert_frame_equal(obj_smpl_minus.data, obj_smpl.data)
 print(obj_smpl_minus)
 
-
 # %%
 #
 # Demonstrate division.
@@ -70,17 +77,15 @@ print(obj_smpl_minus)
 obj_smpl_div: Sample = obj_smpl_split / obj_smpl
 print(obj_smpl_div)
 
-
 # %%
+# Methods
+# -------
 #
-# Math operations with rename
-# The alternative syntax, methods rather than operands, allows renaming of the result object
+# Performing math operations with methods allows the resultant objects to be renamed.
 
 obj_smpl_sum_renamed: Sample = obj_smpl.add(obj_smpl_split, name='Summed object')
 print(obj_smpl_sum_renamed)
 
 # %%
 obj_smpl_sub_renamed: Sample = obj_smpl.sub(obj_smpl_split, name='Subtracted object')
-print(obj_smpl_sum_renamed)
-
-print('done')
+print(obj_smpl_sub_renamed)
