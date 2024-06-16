@@ -55,8 +55,8 @@ def test_to_omf(omf_model_path):
     bm._mass_data.head()
     bm.plot('Cu').show(auto_close=False)
 
-    bm.to_omf(omf_filepath=Path('test_model.omf'))
-    assert Path('test_model.omf').exists()
+    bm.to_omf(omf_filepath=Path('data/test_model.omf'))
+    assert Path('data/test_model.omf').exists()
 
     # check some content using the OMFReader
     from omf import OMFReader
@@ -65,7 +65,7 @@ def test_to_omf(omf_model_path):
     assert omf_project.name == 'Block Model'
     assert len(omf_project.elements) == 1
 
-    project = omfvista.load_project('test_model.omf')
+    project = omfvista.load_project('data/test_model.omf')
     bm_loaded = project['Block Model']
 
     # check the variables in the model

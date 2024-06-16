@@ -45,4 +45,18 @@ yaml_data = yaml.dump(str_schema, sort_keys=False)
 
 print(yaml_data)
 
+# %%
+
+schema = pa.DataFrameSchema({
+    "a": pa.Column(
+        int,
+        parsers=pa.Parser(lambda s: s.clip(lower=0)),
+        checks=pa.Check.ge(0),
+    )
+})
+
+data = pd.DataFrame({"a": [1, 2, -1]})
+schema.validate(data)
+schema.to_yaml('schema_with_parser.yml')
+
 print('done')
