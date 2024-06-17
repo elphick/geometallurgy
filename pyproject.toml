@@ -1,5 +1,6 @@
 [tool.poetry]
 name = "geometallurgy"
+packages = [{ include = "elphick/geomet" }]
 version = "0.1.0"
 description = ""
 authors = ["Greg <11791585+elphick@users.noreply.github.com>"]
