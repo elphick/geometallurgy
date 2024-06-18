@@ -8,8 +8,8 @@ Create a network from a DataFrame
 import pandas as pd
 import plotly
 
-from elphick.mass_composition.datasets.sample_data import size_by_assay_2
-from elphick.mass_composition.flowsheet import Flowsheet
+from elphick.geomet.datasets.sample_data import size_by_assay_2
+from elphick.geomet.flowsheet import Flowsheet
 
 # %%
 #

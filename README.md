@@ -1,7 +1,7 @@
 # Geometallurgy
-
-[![Run Tests](https://github.com/Elphick/mass-composition/actions/workflows/poetry_build_and_test.yml/badge.svg?branch=main)](https://github.com/Elphick/mass-composition/actions/workflows/poetry_build_and_test.yml)
-[![Publish Docs](https://github.com/Elphick/mass-composition/actions/workflows/poetry_sphinx_docs_to_gh_pages.yml/badge.svg?branch=main)](https://github.com/Elphick/mass-composition/actions/workflows/poetry_sphinx_docs_to_gh_pages.yml)
+[![PyPI](https://img.shields.io/pypi/v/geometallurgy.svg?logo=python&logoColor=white)](https://pypi.org/project/geometallurgy/)
+[![Run Tests](https://github.com/Elphick/geometallurgy/actions/workflows/poetry_build_and_test.yml/badge.svg?branch=main)](https://github.com/Elphick/geometallurgy/actions/workflows/poetry_build_and_test.yml)
+[![Publish Docs](https://github.com/Elphick/geometallurgy/actions/workflows/poetry_sphinx_docs_to_gh_pages.yml/badge.svg?branch=main)](https://github.com/Elphick/geometallurgy/actions/workflows/poetry_sphinx_docs_to_gh_pages.yml)
 
 Geometallurgy is a python package that allows geoscientists and metallurgists to easily work with, and visualise
 mass-compositional data.
@@ -18,6 +18,8 @@ Plots are generally interactive to maximise context and insight. Assurance of da
 The package not only supports individual Samples, but collections of objects that are 
 mathematically related in a Directional Graph (a.k.a. network or flowsheet).
 
+This package is a rewrite of the [mass-composition](https://github.com/elphick/mass-composition) package
+(based on pandas only instead of pandas/xarray).
 
 [![example plot](https://elphick.github.io/mass-composition/_static/example_plot.png)](https://elphick.github.io/mass-composition/_static/example_plot.html)
 
@@ -33,13 +35,13 @@ Before you begin, ensure you have met the following requirements:
 To install Geometallurgy, follow these steps:
 
 ```
-pip install geometallurgy -e .[viz,network]
+pip install geometallurgy
 ```
 
 Or, if poetry is more your flavour.
 
 ```
-poetry add "geometallurgy[viz,network]"
+poetry add "geometallurgy"
 ```
 
 ## Using Geometallurgy

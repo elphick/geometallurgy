@@ -6,6 +6,9 @@ from io import StringIO
 from pathlib import Path
 from typing import Optional
 
+import pyarrow as pa
+import os
+
 import numpy as np
 import pandas as pd
 from omf import OMFReader, VolumeGridGeometry
@@ -314,3 +317,63 @@ class OMFFileReader(BaseReader):
         # get the index of the variable in order to index into elements
         variable_index = self.variables_in_file.index(variable_name)
         return self.element.data[variable_index].array.array
+
+
+class ParquetFileWriter:
+
+    def __init__(self):
+        pass
+
+    @classmethod
+    def from_column_generator(cls, index: pd.Index, column_generator):
+
+        # Path to the final output file
+        output_file = "final.parquet"
+
+        # Temp directory for storing parquet columns
+        temp_dir = "temp/"
+
+        # Ensure the temp directory exists
+        os.makedirs(temp_dir, exist_ok=True)
+
+        # Write the index to a separate Parquet file
+        index_table = pa.Table.from_pandas(index.to_frame('index'))
+        pq.write_table(index_table, temp_dir + "index.parquet")
+        index_pf = pq.ParquetFile(temp_dir + "index.parquet")
+
+        for i, column in enumerate(column_generator):
+            # Write each column to a temporary parquet file
+            table = pa.Table.from_pandas(column.to_frame())
+            pq.write_table(table, temp_dir + f"column_{i}.parquet")
+
+        # Collect paths to the temporary Parquet files
+        paths = [temp_dir + file for file in os.listdir(temp_dir) if file != "index.parquet"]
+
+        # Create a ParquetWriter for the final output file
+        first_pf = pq.ParquetFile(paths[0])
+        writer = pq.ParquetWriter(output_file, first_pf.schema)
+
+        for i in range(index_pf.num_row_groups):
+            # Read index chunk
+            index_chunk = index_pf.read_row_group(i).to_pandas()
+
+            # Dataframe to store chunk data
+            df = pd.DataFrame(index=index_chunk['index'])
+
+            for path in paths:
+                pf = pq.ParquetFile(path)
+                # Read data chunk
+                data_chunk = pf.read_row_group(i).to_pandas()
+
+                # Concatenate data chunk to the dataframe
+                df = pd.concat([df, data_chunk], axis=1)
+
+            # Write the chunk to the output file
+            writer.write_table(pa.Table.from_pandas(df))
+
+        # Close the writer and release resources
+        writer.close()
+
+        # Remove temporary files
+        for file in os.listdir(temp_dir):
+            os.remove(temp_dir + file)

@@ -10,7 +10,7 @@ Welcome to Geometallurgy's documentation!
    :hidden:
    :glob:
 
-   scope
+   scope/scope
    user_guide
    auto_examples/examples/index
    todo

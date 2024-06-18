@@ -56,12 +56,12 @@ gallery_dirs: list[str] = [str(Path('auto_examples') / Path(d).stem) for d in ex
 
 sphinx_gallery_conf = {
     'filename_pattern': r'\.py',
-    'ignore_pattern': r'(__init__)|(debug.*)|(pv.*)\.py',
+    'ignore_pattern': r'(__init__)|(debug.*)|(pv.*)|(02_flowsheet_from_dataframe)\.py',
     'examples_dirs': examples_dirs,
     'gallery_dirs': gallery_dirs,
     'nested_sections': False,
     'download_all_examples': False,
-    'within_subsection_order': FileNameSortKey,
+    'within_subsection_order': 'FileNameSortKey',
     "image_scrapers": (pyvista.Scraper(), "matplotlib", plotly_sg_scraper),
 }
 
