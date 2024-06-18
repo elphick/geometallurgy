@@ -8,6 +8,11 @@ import sys
 
 import numpy as np
 import pyvista
+import plotly
+from plotly.io._sg_scraper import plotly_sg_scraper
+from sphinx_gallery.sorting import FileNameSortKey
+
+plotly.io.renderers.default = 'sphinx_gallery_png'
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
@@ -33,21 +38,31 @@ pyvista.global_theme.window_size = np.array([1024, 768]) * 2
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = [
-    'sphinx_gallery.gen_gallery',
-]
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.autosummary',  # to document the api
+              'sphinx.ext.viewcode',  # to add view code links
+              'sphinx.ext.coverage',
+              'sphinx.ext.napoleon',  # for parsing numpy/google docstrings
+              'sphinx_gallery.gen_gallery',  # to generate a gallery of examples
+              'sphinx_autodoc_typehints',
+              'myst_parser',  # for parsing md files
+              'sphinx.ext.todo'
+              ]
 
-examples_dirs: list[str] = ['../../examples', '../../scripts']
+todo_include_todos = True
+autosummary_generate = True
+
+examples_dirs: list[str] = ['../../examples']
 gallery_dirs: list[str] = [str(Path('auto_examples') / Path(d).stem) for d in examples_dirs]
 
 sphinx_gallery_conf = {
     'filename_pattern': r'\.py',
-    'ignore_pattern': r'(__init__)\.py',
+    'ignore_pattern': r'(__init__)|(debug.*)|(pv.*)|(02_flowsheet_from_dataframe)\.py',
     'examples_dirs': examples_dirs,
     'gallery_dirs': gallery_dirs,
     'nested_sections': False,
     'download_all_examples': False,
-    "image_scrapers": (pyvista.Scraper(), "matplotlib"),
+    'within_subsection_order': 'FileNameSortKey',
+    "image_scrapers": (pyvista.Scraper(), "matplotlib", plotly_sg_scraper),
 }
 
 templates_path = ['_templates']
