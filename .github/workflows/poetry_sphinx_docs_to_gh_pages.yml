@@ -1,0 +1,57 @@
+name: "Build and Publish Docs to GitHub Pages"
+on:
+  push:
+    paths:
+      - 'examples/*.py'
+      - 'docs/**'
+      - 'README.md'
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'examples/*.py'
+      - 'README.md'
+  workflow_dispatch:
+
+permissions:
+    contents: write
+jobs:
+  docs:
+    if: github.ref_protected == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+
+      - name: Install poetry
+        run: |
+          pip install poetry==1.5.0
+
+      - name: Configure poetry
+        run: |
+          poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: |
+          poetry install --all-extras --no-interaction --no-root
+
+      - name: Install geometallurgy
+        run: |
+          poetry install
+
+      - name: Sphinx build
+        run: |
+          poetry run sphinx-build docs/source _build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        if: ${{ github.ref == 'refs/heads/main' }}
+        with:
+          publish_branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _build/
+          force_orphan: true
