@@ -5,18 +5,14 @@
 
 import os
 import sys
-
-sys.path.insert(0, os.path.abspath('../..'))
-
 from pathlib import Path
-
 
 import numpy as np
 import pyvista
 import plotly
 from plotly.io._sg_scraper import plotly_sg_scraper
-from sphinx_gallery.sorting import FileNameSortKey
 
+sys.path.insert(0, os.path.abspath('../..'))
 from elphick import geomet
 
 os.environ["PYVISTA_OFF_SCREEN"] = "True"
@@ -29,7 +25,6 @@ project = 'geometallurgy'
 copyright = '2024, Greg Elphick'
 author = 'Greg Elphick'
 version = geomet.__version__
-
 
 # -- pyvista configuration ---------------------------------------------------
 
