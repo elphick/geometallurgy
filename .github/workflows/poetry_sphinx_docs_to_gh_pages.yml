@@ -36,8 +36,9 @@ jobs:
 
       - name: Sphinx build
         run: |
-          export PYVISTA_OFF_SCREEN=True
           poetry run sphinx-build docs/source _build
+        env:
+          PYVISTA_OFF_SCREEN: True
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
