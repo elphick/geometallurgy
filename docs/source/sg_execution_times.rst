@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:36.744** total execution time for 11 files **from all galleries**:
+**01:11.367** total execution time for 11 files **from all galleries**:
 
 .. container::
 
@@ -33,35 +33,35 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_examples_04_block_model_02_create_block_model.py` (``..\..\examples\04_block_model\02_create_block_model.py``)
-     - 00:25.667
+     - 00:46.906
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_04_block_model_03_load_block_model.py` (``..\..\examples\04_block_model\03_load_block_model.py``)
-     - 00:04.207
+     - 00:08.296
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_03_plot_demo.py` (``..\..\examples\01_getting_started\03_plot_demo.py``)
-     - 00:02.871
+     - 00:06.896
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_01_flowsheet_basics.py` (``..\..\examples\03_flowsheet\01_flowsheet_basics.py``)
-     - 00:01.544
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``..\..\examples\02_interval_sample\01_interval_sample.py``)
-     - 00:00.961
+     - 00:03.337
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_02_math_operations.py` (``..\..\examples\01_getting_started\02_math_operations.py``)
-     - 00:00.608
+     - 00:01.986
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``..\..\examples\02_interval_sample\01_interval_sample.py``)
+     - 00:01.957
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``..\..\examples\02_interval_sample\02_interval_data_sink_float.py``)
-     - 00:00.356
+     - 00:00.702
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_01_create_sample.py` (``..\..\examples\01_getting_started\01_create_sample.py``)
-     - 00:00.209
+     - 00:00.498
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_04_block_model_01_consuming_omf.py` (``..\..\examples\04_block_model\01_consuming_omf.py``)
-     - 00:00.187
+     - 00:00.450
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_06_map_01_mapping.py` (``..\..\examples\06_map\01_mapping.py``)
-     - 00:00.069
+     - 00:00.187
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_05_mass_balance_01_mass_balance.py` (``..\..\examples\05_mass_balance\01_mass_balance.py``)
-     - 00:00.065
+     - 00:00.152
      - 0.0
