@@ -2,9 +2,14 @@
 #
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
-from pathlib import Path
+
 import os
 import sys
+
+sys.path.insert(0, os.path.abspath('../..'))
+
+from pathlib import Path
+
 
 import numpy as np
 import pyvista
@@ -25,9 +30,6 @@ copyright = '2024, Greg Elphick'
 author = 'Greg Elphick'
 version = geomet.__version__
 
-
-path = os.path.abspath("../..")
-sys.path.insert(0, path)
 
 # -- pyvista configuration ---------------------------------------------------
 
