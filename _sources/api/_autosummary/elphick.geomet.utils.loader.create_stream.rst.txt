@@ -1,0 +1,6 @@
+elphick.geomet.utils.loader.create\_stream
+==========================================
+
+.. currentmodule:: elphick.geomet.utils.loader
+
+.. autofunction:: create_stream

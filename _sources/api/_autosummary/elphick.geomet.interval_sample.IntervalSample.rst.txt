@@ -1,0 +1,55 @@
+elphick.geomet.interval\_sample.IntervalSample
+==============================================
+
+.. currentmodule:: elphick.geomet.interval_sample
+
+.. autoclass:: IntervalSample
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~IntervalSample.__init__
+      ~IntervalSample.add
+      ~IntervalSample.create_congruent_object
+      ~IntervalSample.div
+      ~IntervalSample.from_mass_dataframe
+      ~IntervalSample.is_2d_grid
+      ~IntervalSample.plot_comparison
+      ~IntervalSample.plot_heatmap
+      ~IntervalSample.plot_parallel
+      ~IntervalSample.plot_ternary
+      ~IntervalSample.set_child_node
+      ~IntervalSample.set_nodes
+      ~IntervalSample.set_parent_node
+      ~IntervalSample.split
+      ~IntervalSample.split_by_partition
+      ~IntervalSample.sub
+      ~IntervalSample.update_mass_data
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~IntervalSample.aggregate
+      ~IntervalSample.composition_columns
+      ~IntervalSample.data
+      ~IntervalSample.data_columns
+      ~IntervalSample.is_rectilinear_grid
+      ~IntervalSample.mass_columns
+      ~IntervalSample.mass_data
+      ~IntervalSample.moisture_column
+      ~IntervalSample.supplementary_columns
+      ~IntervalSample.variable_map
+   
+   

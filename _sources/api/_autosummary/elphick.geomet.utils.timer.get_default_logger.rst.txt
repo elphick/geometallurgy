@@ -1,0 +1,6 @@
+elphick.geomet.utils.timer.get\_default\_logger
+===============================================
+
+.. currentmodule:: elphick.geomet.utils.timer
+
+.. autofunction:: get_default_logger

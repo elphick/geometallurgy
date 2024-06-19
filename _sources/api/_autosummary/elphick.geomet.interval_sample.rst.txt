@@ -1,0 +1,30 @@
+﻿elphick.geomet.interval\_sample
+===============================
+
+.. automodule:: elphick.geomet.interval_sample
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      IntervalSample
+   
+   
+
+   
+   
+   
+
+
+

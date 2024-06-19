@@ -1,0 +1,6 @@
+elphick.geomet.utils.viz.plot\_parallel
+=======================================
+
+.. currentmodule:: elphick.geomet.utils.viz
+
+.. autofunction:: plot_parallel

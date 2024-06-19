@@ -1,0 +1,53 @@
+elphick.geomet.flowsheet.Flowsheet
+==================================
+
+.. currentmodule:: elphick.geomet.flowsheet
+
+.. autoclass:: Flowsheet
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Flowsheet.__init__
+      ~Flowsheet.from_dataframe
+      ~Flowsheet.from_objects
+      ~Flowsheet.get_edge_by_name
+      ~Flowsheet.get_input_streams
+      ~Flowsheet.get_output_streams
+      ~Flowsheet.nodes_to_dict
+      ~Flowsheet.plot
+      ~Flowsheet.plot_balance
+      ~Flowsheet.plot_network
+      ~Flowsheet.plot_parallel
+      ~Flowsheet.plot_sankey
+      ~Flowsheet.report
+      ~Flowsheet.reset_nodes
+      ~Flowsheet.reset_stream_nodes
+      ~Flowsheet.set_node_names
+      ~Flowsheet.set_nodes
+      ~Flowsheet.set_stream_child
+      ~Flowsheet.set_stream_data
+      ~Flowsheet.set_stream_parent
+      ~Flowsheet.solve
+      ~Flowsheet.streams_to_dict
+      ~Flowsheet.table_plot
+      ~Flowsheet.to_dataframe
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Flowsheet.balanced
+   
+   

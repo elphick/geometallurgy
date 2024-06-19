@@ -1,0 +1,6 @@
+elphick.geomet.utils.size.mean\_size
+====================================
+
+.. currentmodule:: elphick.geomet.utils.size
+
+.. autofunction:: mean_size

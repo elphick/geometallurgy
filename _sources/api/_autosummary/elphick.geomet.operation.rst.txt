@@ -1,0 +1,35 @@
+﻿elphick.geomet.operation
+========================
+
+.. automodule:: elphick.geomet.operation
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Input
+      NodeType
+      Operation
+      Output
+      Passthrough
+      UnitOperation
+   
+   
+
+   
+   
+   
+
+
+

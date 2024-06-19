@@ -1,0 +1,6 @@
+elphick.geomet.utils.data.sample\_data
+======================================
+
+.. currentmodule:: elphick.geomet.utils.data
+
+.. autofunction:: sample_data

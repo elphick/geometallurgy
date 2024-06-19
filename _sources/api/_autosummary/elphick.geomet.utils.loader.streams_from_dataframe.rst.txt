@@ -1,0 +1,6 @@
+elphick.geomet.utils.loader.streams\_from\_dataframe
+====================================================
+
+.. currentmodule:: elphick.geomet.utils.loader
+
+.. autofunction:: streams_from_dataframe

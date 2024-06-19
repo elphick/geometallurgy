@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interval Data &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Interval Data - Sink Float" href="02_interval_data_sink_float.html" />
+    <link rel="prev" title="Plot Demo" href="../01_getting_started/03_plot_demo.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#interval-samples">Interval Samples</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Interval Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-masscomposition-object">Create a MassComposition object</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02_interval_data_sink_float.html">Interval Data - Sink Float</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#flowsheets">Flowsheets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#block-models">Block Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mass-balancing">Mass Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mapping">Mapping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Example Gallery</a></li>
+      <li class="breadcrumb-item active">Interval Data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/auto_examples/examples/02_interval_sample/01_interval_sample.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-examples-02-interval-sample-01-interval-sample-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="interval-data">
+<span id="sphx-glr-auto-examples-examples-02-interval-sample-01-interval-sample-py"></span><h1>Interval Data<a class="headerlink" href="#interval-data" title="Link to this heading"></a></h1>
+<p>This example adds a second dimension.  The second dimension is an interval, of the form interval_from, interval_to.
+It is also known as binned data, where each ‘bin’ is bounded between and upper and lower limit.</p>
+<p>An interval is relevant in geology, when analysing drill hole data.</p>
+<p>Intervals are also encountered in metallurgy, but in that discipline they are often called fractions,
+e.g. size fractions.  In that case the typical nomenclature is size_retained, size passing, since the data
+originates from a sieve stack.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">from</span> <span class="nn">elphick.geomet</span> <span class="kn">import</span> <span class="n">Sample</span><span class="p">,</span> <span class="n">IntervalSample</span>
+<span class="kn">from</span> <span class="nn">elphick.geomet.data.downloader</span> <span class="kn">import</span> <span class="n">Downloader</span>
+<span class="kn">from</span> <span class="nn">elphick.geomet.utils.pandas</span> <span class="kn">import</span> <span class="n">weight_average</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(module)s</span><span class="s1"> - </span><span class="si">%(funcName)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S%z&#39;</span><span class="p">,</span>
+                    <span class="p">)</span>
+</pre></div>
+</div>
+<section id="create-a-masscomposition-object">
+<h2>Create a MassComposition object<a class="headerlink" href="#create-a-masscomposition-object" title="Link to this heading"></a></h2>
+<p>We get some demo data in the form of a pandas DataFrame
+We create this object as 1D based on the pandas index</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">iron_ore_sample_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">Downloader</span><span class="p">()</span><span class="o">.</span><span class="n">load_data</span><span class="p">(</span><span class="n">datafile</span><span class="o">=</span><span class="s1">&#39;iron_ore_sample_A072391.zip&#39;</span><span class="p">,</span> <span class="n">show_report</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">df_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">iron_ore_sample_data</span>
+<span class="n">df_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Downloading file &#39;iron_ore_sample_A072391.zip&#39; from &#39;https://github.com/elphick/mass-composition/raw/main/docs/source/_static/iron_ore_sample_A072391.zip&#39; to &#39;/home/runner/.cache/mass_composition&#39;.
+Unzipping contents of &#39;/home/runner/.cache/mass_composition/iron_ore_sample_A072391.zip&#39; to &#39;/home/runner/.cache/mass_composition/iron_ore_sample_A072391.zip.unzip&#39;
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>mass_dry</th>
+      <th>H2O</th>
+      <th>MgO</th>
+      <th>MnO</th>
+      <th>Al2O3</th>
+      <th>P</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>TiO2</th>
+      <th>CaO</th>
+      <th>Na2O</th>
+      <th>K2O</th>
+      <th>DHID</th>
+      <th>interval_from</th>
+      <th>interval_to</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>6</td>
+      <td>2.12</td>
+      <td>0.35</td>
+      <td>0.07</td>
+      <td>0.0</td>
+      <td>1.48</td>
+      <td>0.019</td>
+      <td>64.30</td>
+      <td>3.23</td>
+      <td>0.080</td>
+      <td>0.04</td>
+      <td>0.01</td>
+      <td>0.03</td>
+      <td>CBS02</td>
+      <td>26.60</td>
+      <td>26.85</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>7</td>
+      <td>2.06</td>
+      <td>0.23</td>
+      <td>0.06</td>
+      <td>0.0</td>
+      <td>1.28</td>
+      <td>0.017</td>
+      <td>64.91</td>
+      <td>2.90</td>
+      <td>0.082</td>
+      <td>0.04</td>
+      <td>0.01</td>
+      <td>0.03</td>
+      <td>CBS02</td>
+      <td>26.85</td>
+      <td>27.10</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>9</td>
+      <td>1.91</td>
+      <td>0.23</td>
+      <td>0.06</td>
+      <td>0.0</td>
+      <td>1.01</td>
+      <td>0.016</td>
+      <td>65.09</td>
+      <td>2.39</td>
+      <td>0.059</td>
+      <td>0.03</td>
+      <td>0.01</td>
+      <td>0.02</td>
+      <td>CBS02</td>
+      <td>27.70</td>
+      <td>28.00</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>10</td>
+      <td>1.96</td>
+      <td>0.36</td>
+      <td>0.06</td>
+      <td>0.0</td>
+      <td>0.99</td>
+      <td>0.022</td>
+      <td>65.03</td>
+      <td>2.22</td>
+      <td>0.057</td>
+      <td>0.04</td>
+      <td>0.01</td>
+      <td>0.02</td>
+      <td>CBS02</td>
+      <td>28.00</td>
+      <td>28.30</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>12</td>
+      <td>2.06</td>
+      <td>0.40</td>
+      <td>0.05</td>
+      <td>0.0</td>
+      <td>0.75</td>
+      <td>0.016</td>
+      <td>65.87</td>
+      <td>1.69</td>
+      <td>0.040</td>
+      <td>0.03</td>
+      <td>0.01</td>
+      <td>0.01</td>
+      <td>CBS02</td>
+      <td>28.60</td>
+      <td>28.95</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_mc</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">Sample</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Drill program&#39;</span><span class="p">)</span>
+<span class="n">obj_mc</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;elphick.geomet.sample.Sample object at 0x7fe1d5492980&gt;
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_mc</span><span class="o">.</span><span class="n">aggregate</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>mass_wet</th>
+      <th>mass_dry</th>
+      <th>H2O</th>
+      <th>MgO</th>
+      <th>MnO</th>
+      <th>Al2O3</th>
+      <th>P</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>TiO2</th>
+      <th>CaO</th>
+      <th>Na2O</th>
+      <th>K2O</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>2029.617808</td>
+      <td>1981.688</td>
+      <td>2.361519</td>
+      <td>0.080513</td>
+      <td>0.149219</td>
+      <td>1.773585</td>
+      <td>0.044628</td>
+      <td>60.443938</td>
+      <td>2.82721</td>
+      <td>0.062978</td>
+      <td>0.125071</td>
+      <td>0.015877</td>
+      <td>0.013164</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>Use the normal pandas groupby-apply as needed.  Here we leverage the weight_average function
+from utils.pandas</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">hole_average</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">obj_mc</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;DHID&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">weight_average</span><span class="p">)</span>
+<span class="n">hole_average</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/geometallurgy/geometallurgy/examples/02_interval_sample/01_interval_sample.py:56: DeprecationWarning:
+
+DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>weight_average</th>
+      <th>mass_dry</th>
+      <th>MgO</th>
+      <th>MnO</th>
+      <th>Al2O3</th>
+      <th>P</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>TiO2</th>
+      <th>CaO</th>
+      <th>Na2O</th>
+      <th>K2O</th>
+    </tr>
+    <tr>
+      <th>DHID</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>CBS02</th>
+      <td>46.310</td>
+      <td>0.055636</td>
+      <td>0.000000</td>
+      <td>1.029685</td>
+      <td>0.022764</td>
+      <td>64.656675</td>
+      <td>2.589849</td>
+      <td>0.053834</td>
+      <td>0.029160</td>
+      <td>0.010436</td>
+      <td>0.017296</td>
+    </tr>
+    <tr>
+      <th>CBS03</th>
+      <td>226.250</td>
+      <td>0.132968</td>
+      <td>0.038134</td>
+      <td>1.399500</td>
+      <td>0.046587</td>
+      <td>60.297271</td>
+      <td>3.653106</td>
+      <td>0.052016</td>
+      <td>0.699112</td>
+      <td>0.030318</td>
+      <td>0.019871</td>
+    </tr>
+    <tr>
+      <th>CBS04</th>
+      <td>344.680</td>
+      <td>0.088788</td>
+      <td>0.126484</td>
+      <td>1.513147</td>
+      <td>0.038461</td>
+      <td>60.289083</td>
+      <td>3.319658</td>
+      <td>0.050986</td>
+      <td>0.093096</td>
+      <td>0.001773</td>
+      <td>0.011788</td>
+    </tr>
+    <tr>
+      <th>CBS10</th>
+      <td>304.690</td>
+      <td>0.044836</td>
+      <td>0.091520</td>
+      <td>1.963728</td>
+      <td>0.059062</td>
+      <td>61.001839</td>
+      <td>2.949455</td>
+      <td>0.061461</td>
+      <td>0.060045</td>
+      <td>0.014310</td>
+      <td>0.012509</td>
+    </tr>
+    <tr>
+      <th>CBS12</th>
+      <td>493.968</td>
+      <td>0.090723</td>
+      <td>0.247394</td>
+      <td>1.854824</td>
+      <td>0.032990</td>
+      <td>60.572344</td>
+      <td>2.491186</td>
+      <td>0.067683</td>
+      <td>0.045545</td>
+      <td>0.016941</td>
+      <td>0.014323</td>
+    </tr>
+    <tr>
+      <th>CBS13</th>
+      <td>565.790</td>
+      <td>0.066832</td>
+      <td>0.165065</td>
+      <td>1.969400</td>
+      <td>0.051777</td>
+      <td>59.839565</td>
+      <td>2.443914</td>
+      <td>0.072125</td>
+      <td>0.027301</td>
+      <td>0.019054</td>
+      <td>0.010321</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>We will now make a 2D dataset using DHID and the interval.
+We will first create a mean interval variable.  Then we will set the dataframe index to both variables before
+constructing the object.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+<span class="n">df_data</span><span class="p">[</span><span class="s1">&#39;DHID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_data</span><span class="p">[</span><span class="s1">&#39;DHID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">)</span>
+<span class="c1"># make an int based drillhole identifier</span>
+<span class="n">code</span><span class="p">,</span> <span class="n">dh_id</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">factorize</span><span class="p">(</span><span class="n">df_data</span><span class="p">[</span><span class="s1">&#39;DHID&#39;</span><span class="p">])</span>
+<span class="n">df_data</span><span class="p">[</span><span class="s1">&#39;DH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">code</span>
+<span class="n">df_data</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;DH&#39;</span><span class="p">,</span> <span class="s1">&#39;interval_from&#39;</span><span class="p">,</span> <span class="s1">&#39;interval_to&#39;</span><span class="p">])</span>
+
+<span class="n">obj_mc_2d</span><span class="p">:</span> <span class="n">IntervalSample</span> <span class="o">=</span> <span class="n">IntervalSample</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span>
+                                           <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Drill program&#39;</span><span class="p">)</span>
+<span class="c1"># obj_mc_2d._data.assign(hole_id=dh_id)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_mc_2d</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_mc_2d</span><span class="o">.</span><span class="n">aggregate</span><span class="p">)</span>
+<span class="c1"># print(obj_mc_2d.aggregate(&#39;DHID&#39;))</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Index([&#39;index&#39;, &#39;mass_dry&#39;, &#39;H2O&#39;, &#39;MgO&#39;, &#39;MnO&#39;, &#39;Al2O3&#39;, &#39;P&#39;, &#39;Fe&#39;, &#39;SiO2&#39;,
+       &#39;TiO2&#39;, &#39;CaO&#39;, &#39;Na2O&#39;, &#39;K2O&#39;, &#39;DHID&#39;, &#39;interval_from&#39;, &#39;interval_to&#39;,
+       &#39;mass_wet&#39;],
+      dtype=&#39;object&#39;)
+IntervalSample: Drill program
+{&#39;mass_wet&#39;: {0: 2029.6178076448032}, &#39;mass_dry&#39;: {0: 1981.688}, &#39;H2O&#39;: {0: 2.3615188763258583}, &#39;MgO&#39;: {0: 0.08051321903347046}, &#39;MnO&#39;: {0: 0.14921928174364477}, &#39;Al2O3&#39;: {0: 1.773585095131019}, &#39;P&#39;: {0: 0.044627670955266416}, &#39;Fe&#39;: {0: 60.443937895370006}, &#39;SiO2&#39;: {0: 2.827210176374888}, &#39;TiO2&#39;: {0: 0.06297808534945964}, &#39;CaO&#39;: {0: 0.12507133312610258}, &#39;Na2O&#39;: {0: 0.015876646576050316}, &#39;K2O&#39;: {0: 0.013163565606694896}}
+      mass_wet  mass_dry       H2O  ...       CaO      Na2O       K2O
+0  2029.617808  1981.688  2.361519  ...  0.125071  0.015877  0.013164
+
+[1 rows x 13 columns]
+</pre></div>
+</div>
+<p>View some plots</p>
+<p>First confirm the parallel plot still works</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># TODO: work on the display order</span>
+<span class="c1"># TODO - fails for DH (integer)</span>
+
+<span class="c1"># fig: Figure = obj_mc_2d.plot_parallel(color=&#39;Fe&#39;)</span>
+<span class="c1"># fig.show()</span>
+
+<span class="c1"># now plot using the xarray data - take advantage of the multi-dim nature of the package</span>
+
+<span class="n">obj_mc_2d</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Fe&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_01_interval_sample_001.png" srcset="../../../_images/sphx_glr_01_interval_sample_001.png" alt="01 interval sample" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.197 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-examples-02-interval-sample-01-interval-sample-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/b3fedb99b89ea0655e67661a47f53799/01_interval_sample.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_interval_sample.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/0e97ef0f67bfca16ba6d846324217ab7/01_interval_sample.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">01_interval_sample.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../01_getting_started/03_plot_demo.html" class="btn btn-neutral float-left" title="Plot Demo" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02_interval_data_sink_float.html" class="btn btn-neutral float-right" title="Interval Data - Sink Float" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
