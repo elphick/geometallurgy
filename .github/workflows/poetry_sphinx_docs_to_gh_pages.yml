@@ -20,7 +20,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
 
       - name: Install poetry
         run: |
@@ -37,8 +42,6 @@ jobs:
       - name: Sphinx build
         run: |
           poetry run sphinx-build docs/source _build
-        env:
-          PYVISTA_OFF_SCREEN: 'True'
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
