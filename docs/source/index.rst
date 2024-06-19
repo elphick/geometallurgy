@@ -17,4 +17,3 @@ Welcome to Geometallurgy's documentation!
    glossary/*
    api/modules
    license/*
-
