@@ -18,4 +18,5 @@ modules_to_test: list[str] = [
 
 @pytest.mark.parametrize("module_name", modules_to_test)
 def test_examples(module_name):
+    os.environ["PYVISTA_OFF_SCREEN"] = "True"
     __import__(module_name)

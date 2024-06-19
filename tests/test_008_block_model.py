@@ -60,7 +60,7 @@ def test_to_omf(omf_model_path):
 
     # check some content using the OMFReader
     from omf import OMFReader
-    reader = OMFReader('test_model.omf')
+    reader = OMFReader('data/test_model.omf')
     omf_project = reader.get_project()
     assert omf_project.name == 'Block Model'
     assert len(omf_project.elements) == 1
@@ -74,7 +74,7 @@ def test_to_omf(omf_model_path):
     import pyvista as pv
     p = pv.Plotter()
     p.add_mesh_threshold(bm_loaded, 'Cu', show_edges=True, show_scalar_bar=True, cmap='viridis')
-    p.show()
+    p.show(auto_close=False)
 
     print('done')
 

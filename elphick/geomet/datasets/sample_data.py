@@ -9,7 +9,7 @@ from typing import Optional, Iterable, List
 import numpy as np
 import pandas as pd
 
-from elphick.geomet import Sample
+from elphick.geomet import Sample, IntervalSample
 from elphick.geomet.flowsheet import Flowsheet
 from elphick.geomet.utils.components import is_compositional
 from elphick.geomet.datasets import load_size_by_assay, load_iron_ore_sample_a072391, load_size_distribution, \
@@ -113,7 +113,7 @@ def size_by_assay() -> pd.DataFrame:
 def size_by_assay_2() -> pd.DataFrame:
     """ 3 x Sample Size x Assay dataset (balanced)
     """
-    mc_size: Sample = Sample(size_by_assay(), name='feed')
+    mc_size: IntervalSample = IntervalSample(size_by_assay(), name='feed', moisture_in_scope=False)
     partition = partial(napier_munn, d50=0.150, ep=0.1, dim='size')
     mc_coarse, mc_fine = mc_size.split_by_partition(partition_definition=partition, name_1='coarse', name_2='fine')
     fs: Flowsheet = Flowsheet().from_streams([mc_size, mc_coarse, mc_fine])
@@ -123,7 +123,7 @@ def size_by_assay_2() -> pd.DataFrame:
 def size_by_assay_3() -> pd.DataFrame:
     """ 3 x Sample Size x Assay dataset (unbalanced)
     """
-    mc_size: Sample = Sample(size_by_assay(), name='feed')
+    mc_size: IntervalSample = IntervalSample(size_by_assay(), name='feed')
     partition = partial(napier_munn, d50=0.150, ep=0.1, dim='size')
     mc_coarse, mc_fine = mc_size.split_by_partition(partition_definition=partition, name_1='coarse', name_2='fine')
     # add error to the coarse stream to create an imbalance

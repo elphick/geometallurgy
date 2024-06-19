@@ -12,6 +12,8 @@ import plotly
 from plotly.io._sg_scraper import plotly_sg_scraper
 from sphinx_gallery.sorting import FileNameSortKey
 
+from elphick import geomet
+
 os.environ["PYVISTA_OFF_SCREEN"] = "True"
 plotly.io.renderers.default = 'sphinx_gallery_png'
 
@@ -21,6 +23,8 @@ plotly.io.renderers.default = 'sphinx_gallery_png'
 project = 'geometallurgy'
 copyright = '2024, Greg Elphick'
 author = 'Greg Elphick'
+version = geomet.__version__
+
 
 path = os.path.abspath("../..")
 sys.path.insert(0, path)

@@ -268,27 +268,3 @@ class MeanIntervalIndex(pd.IntervalIndex):
         else:
             # Calculate arithmetic mean
             return (self.right + self.left) / 2
-
-
-class MeanIntervalArray(pd.arrays.IntervalArray):
-
-    def __new__(cls, data, mean_values=None):
-        obj = pd.arrays.IntervalArray.__new__(cls, data)
-        return obj
-
-    def __init__(self, data, mean_values=None):
-        super().__init__(data)
-        self.mean_values = mean_values
-
-    @property
-    def mean(self):
-        if self.mean_values is not None:
-            return self.mean_values
-        else:
-            # Calculate arithmetic mean
-            return (self.right + self.left) / 2
-
-    @classmethod
-    def from_tuples(cls, data, mean_values=None):
-        intervals = pd.arrays.IntervalArray.from_tuples(data, closed='left')
-        return cls(intervals, mean_values=mean_values)

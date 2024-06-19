@@ -1327,6 +1327,24 @@ six = "*"
 vectormath = ">=0.2.0"
 
 [[package]]
+name = "omfpandas"
+version = "0.2.0"
+description = ""
+optional = false
+python-versions = "<3.11,>=3.9"
+files = [
+    {file = "omfpandas-0.2.0-py3-none-any.whl", hash = "sha256:3e08222c18ebb7ede27161eb48d4e8c0bee42395cc1bde47d3cffd97ab4d9b7b"},
+    {file = "omfpandas-0.2.0.tar.gz", hash = "sha256:4549479ff594ff717133774ca05465b132ffe53520f7b3159cd64b0ef5f35919"},
+]
+
+[package.dependencies]
+omf = ">=1.0.1,<2.0.0"
+pandas = ">=2.2.2,<3.0.0"
+
+[package.extras]
+io = ["pyarrow (>=16.1.0,<17.0.0)"]
+
+[[package]]
 name = "omfvista"
 version = "0.3.0"
 description = "3D visualization for the Open Mining Format (omf)"
@@ -3223,4 +3241,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.11"
-content-hash = "dd7ef0026fa3abb540d94644da3feec46d98fe3083c9d508babd2e6553c1b8a1"
+content-hash = "d298a5ecebdbf3b727c3611305b9acf3d9b85aa207fb01849957f4fab3356d91"
