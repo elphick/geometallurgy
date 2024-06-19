@@ -26,6 +26,8 @@ sphinx = "^7.3.7"
 sphinx-gallery = "^0.16.0"
 sphinx-rtd-theme = "^2.0.0"
 ydata-profiling = "^4.8.3"
+myst-parser = "^3.0.1"
+sphinx-autodoc-typehints = "^2.1.1"
 
 [build-system]
 requires = ["poetry-core"]
