@@ -44,6 +44,7 @@ def test_load_from_omf(omf_model_path):
     print('done')
 
 
+@pytest.mark.skip(reason="Need work to make the file available")
 def test_to_omf(omf_model_path):
     block_model_filepath: Path = Path(__file__).parents[1] / "examples/04_block_model/block_model_copper.parquet"
 
