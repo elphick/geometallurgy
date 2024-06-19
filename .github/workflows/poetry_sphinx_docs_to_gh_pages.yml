@@ -16,11 +16,16 @@ permissions:
     contents: write
 jobs:
   docs:
-    if: github.ref_protected == true
+    # if: github.ref_protected == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@v1
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
 
       - name: Install poetry
         run: |
@@ -36,7 +41,6 @@ jobs:
 
       - name: Sphinx build
         run: |
-          export PYVISTA_OFF_SCREEN=True
           poetry run sphinx-build docs/source _build
 
       - name: Deploy
