@@ -28,6 +28,7 @@ def omf_model_path() -> Path:
     return Path(file_path)
 
 
+@pytest.mark.skip(reason="Need work to make the file available")
 def test_load_from_omf(omf_model_path):
     msg = "mass_dry_var is not provided and cannot be calculated from mass_wet_var and moisture_var for Block Model"
     # with pytest.raises(ValueError, match=msg):
