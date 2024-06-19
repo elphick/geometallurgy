@@ -12,6 +12,7 @@ import plotly
 from plotly.io._sg_scraper import plotly_sg_scraper
 from sphinx_gallery.sorting import FileNameSortKey
 
+os.environ["PYVISTA_OFF_SCREEN"] = "True"
 plotly.io.renderers.default = 'sphinx_gallery_png'
 
 # -- Project information -----------------------------------------------------
