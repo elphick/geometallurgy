@@ -36,6 +36,7 @@ jobs:
 
       - name: Sphinx build
         run: |
+          export PYVISTA_OFF_SCREEN=True
           poetry run sphinx-build docs/source _build
 
       - name: Deploy
