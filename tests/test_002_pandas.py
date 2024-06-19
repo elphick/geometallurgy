@@ -4,8 +4,7 @@ import numpy as np
 from pandas import IntervalIndex
 from scipy.stats.mstats import gmean
 
-from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, weight_average, MeanIntervalIndex, \
-    MeanIntervalArray
+from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, weight_average, MeanIntervalIndex
 from fixtures import sample_data as test_data
 
 
@@ -92,21 +91,6 @@ def test_weight_average_with_wet(test_data):
     pd.testing.assert_series_equal(res, expected_output)
 
 
-def test_mean_interval_array():
-    # Create a IntervalArray instance
-    intervals = pd.arrays.IntervalArray.from_tuples([(1, 2), (2, 3), (3, 4)], closed='left')
-    # create our custom object
-
-    mean_values = [1.5, 2.5, 3.5]  # replace with your actual mean values
-    intervals = MeanIntervalArray.from_tuples([(1, 2), (2, 3), (3, 4)], mean_values=mean_values)
-
-    intervals = MeanIntervalArray.from_tuples([(1, 2), (2, 3), (3, 4)])
-
-    # Check if the mean property returns the geometric mean
-    expected_mean = np.mean([intervals.right, intervals.left], axis=0)
-    assert np.allclose(intervals.mean, expected_mean)
-
-
 def test_mean_interval_index():
     # Create a CustomIntervalIndex instance
     intervals = pd.arrays.IntervalArray.from_tuples([(1, 2), (2, 3), (3, 4)], closed='left')
@@ -131,8 +115,14 @@ def test_mean_interval_index_with_input():
     intervals = pd.arrays.IntervalArray.from_tuples([(1, 2), (2, 3), (3, 4)])
     mean_values = [1.5, 2.5, 3.5]  # replace with your actual mean values
     index = MeanIntervalIndex(intervals, mean_values=mean_values)
-    index.name = 'size'
+    index.name = 'size'  # will not over-ride any set values
 
+    # Check if the mean property returns the set values
+    expected_mean = gmean([index.right, index.left], axis=0)
+    assert np.allclose(index.mean, mean_values)
+
+    index = MeanIntervalIndex(intervals)
+    index.name = 'size'
     # Check if the mean property returns the geometric mean
     expected_mean = gmean([index.right, index.left], axis=0)
     assert np.allclose(index.mean, expected_mean)

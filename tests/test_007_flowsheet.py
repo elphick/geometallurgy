@@ -3,7 +3,7 @@ import pytest
 from elphick.geomet import Stream
 from elphick.geomet.flowsheet import Flowsheet
 from elphick.geomet.base import MC
-from elphick.geomet.operation import NodeType
+from elphick.geomet.operation import NodeType, Operation
 from fixtures import sample_data
 
 def test_flowsheet_init(sample_data):
@@ -20,9 +20,9 @@ def test_flowsheet_init(sample_data):
     # Check that the Flowsheet object contains the correct number of edges
     assert len(fs.graph.edges) == 3, "Flowsheet object does not contain the correct number of edges"
 
-    # Check that the nodes have the correct MC objects
+    # Check that the nodes have the correct OP objects
     for node in fs.graph.nodes:
-        assert isinstance(fs.graph.nodes[node]['mc'], Stream), f"Node {node} does not have a MC object"
+        assert isinstance(fs.graph.nodes[node]['mc'], Operation), f"Node {node} does not have a OP object"
 
     # Check that the edges have the correct MC objects
     for u, v, data in fs.graph.edges(data=True):
