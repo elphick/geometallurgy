@@ -39,6 +39,10 @@ jobs:
         run: |
           poetry install --all-extras --no-interaction --no-root
 
+      - name: Install geometallurgy
+        run: |
+          poetry install
+
       - name: Sphinx build
         run: |
           poetry run sphinx-build docs/source _build
