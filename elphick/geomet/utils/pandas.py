@@ -268,3 +268,29 @@ class MeanIntervalIndex(pd.IntervalIndex):
         else:
             # Calculate arithmetic mean
             return (self.right + self.left) / 2
+
+
+import pandas as pd
+import numpy as np
+from scipy.stats import gmean
+
+class MeanIntervalArray(pd.arrays.IntervalArray):
+    def __init__(self, data, dtype=None, copy=False):
+        super().__init__(data, dtype, copy)
+        if self.name == 'size':
+            # Calculate geometric mean
+            self.mean_values = gmean([self.right, self.left], axis=0)
+        else:
+            # Calculate arithmetic mean
+            self.mean_values = (self.right + self.left) / 2
+
+    @property
+    def mean(self):
+        if self.mean_values is not None:
+            return self.mean_values
+        elif self.name == 'size':
+            # Calculate geometric mean
+            return gmean([self.right, self.left], axis=0)
+        else:
+            # Calculate arithmetic mean
+            return (self.right + self.left) / 2
