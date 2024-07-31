@@ -40,8 +40,11 @@ folium = { version = "^0.16.0", optional = true }
 pandera = { version = "^0.19.3", extras = ['io'], optional = true }
 geoh5py = "^0.8.0"
 pyarrow = "^16.1.0"
-omfpandas = "^0.2.0"
+omfpandas = ">=0.3.0"
 
+[tool.poetry.extras]
+map = ["folium"]
+validation = ["pandera"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"

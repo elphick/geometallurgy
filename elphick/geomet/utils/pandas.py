@@ -202,9 +202,12 @@ def calculate_recovery(df: pd.DataFrame,
 
 
 def calculate_partition(df_feed: pd.DataFrame,
-                        df_ref: pd.DataFrame,
+                        df_preferred: pd.DataFrame,
                         col_mass_dry: str = 'mass_dry') -> pd.DataFrame:
     """Calculate the partition curve from two streams
+
+    .. math::
+        K = \\frac{{m_{preferred}}}{{m_{feed}}}
 
     Applicable to the one dimensional case only.  The PN is bounded [0, 1].
     The interval mean for size is the geometric mean, otherwise the arithmetic mean.
@@ -213,19 +216,68 @@ def calculate_partition(df_feed: pd.DataFrame,
 
     Args:
         df_feed: The pd.DataFrame containing mass-composition representing the fractionated feed.
-        df_ref: The pd.DataFrame containing mass-composition representing the fractionated reference stream.
+        df_preferred: The pd.DataFrame containing mass-composition representing the fractionated preferred stream.
         col_mass_dry: The dry mass column, not optional.
 
     Returns:
-        A pd.DataFrame containing the partition data.
+        A pd.DataFrame containing the partition data with a range [0, 1].
     """
 
-    res: pd.DataFrame = df_ref[[col_mass_dry]].div(df_feed[[col_mass_dry]]).rename(columns={col_mass_dry: 'PN'})
-    if df_ref.index.name.lower() == 'size':
+    res: pd.DataFrame = df_preferred[[col_mass_dry]].div(df_feed[[col_mass_dry]]).rename(columns={col_mass_dry: 'K'})
+    if df_preferred.index.name.lower() == 'size':
         res.insert(loc=0, column='da', value=mean_size(res.index))
     else:
         res.insert(loc=0, column='da', value=res.index.mid)
     return res
+
+
+def cumulate(mass_data: pd.DataFrame, direction: str) -> pd.DataFrame:
+    """Cumulate along the index
+
+    Expected use case is only for Datasets that have been reduced to 1D.
+
+    Args:
+        mass_data: The mass data to cumulate - note composition must be represented as mass
+        direction: 'ascending'|'descending'
+
+    Returns:
+
+    """
+
+    valid_dirs: List[str] = ['ascending', 'descending']
+    if direction not in valid_dirs:
+        raise KeyError(f'Invalid direction provided.  Valid arguments are: {valid_dirs}')
+
+    d_dir: Dict = {'ascending': True if direction == 'ascending' else False,
+                   'descending': True if direction == 'descending' else False}
+
+    if mass_data.index.ndim > 1:
+        raise NotImplementedError('DataFrames having indexes > 1D have not been tested.')
+
+    index_var: str = mass_data.index.name
+    if not isinstance(mass_data.index, pd.IntervalIndex):
+        raise NotImplementedError(f"The {index_var} of this object is not a pd.Interval. "
+                                  f" Only 1D interval objects are valid")
+
+    interval_index = mass_data.index.get_level_values(index_var)
+    if not (interval_index.is_monotonic_increasing or interval_index.is_monotonic_decreasing):
+        raise ValueError('Index is not monotonically increasing or decreasing')
+
+    in_data_ascending: bool = True
+    if interval_index.is_monotonic_decreasing:
+        in_data_ascending = False
+
+    # sort by the direction provided, first save the index
+    original_index: pd.Index = mass_data.index
+    try:
+        mass_data: pd.DataFrame = mass_data.sort_index(ascending=d_dir[direction])
+        mass_cum: pd.DataFrame = mass_data.cumsum()
+
+    finally:
+        # reset the index to the original
+        mass_data = mass_data.reindex(original_index)
+
+    return mass_cum
 
 
 def _detect_non_float_columns(df):
@@ -264,7 +316,7 @@ class MeanIntervalIndex(pd.IntervalIndex):
             return self.mean_values
         elif self.name == 'size':
             # Calculate geometric mean
-            return gmean([self.right, self.left], axis=0)
+            return mean_size(self)
         else:
             # Calculate arithmetic mean
             return (self.right + self.left) / 2
@@ -273,6 +325,7 @@ class MeanIntervalIndex(pd.IntervalIndex):
 import pandas as pd
 import numpy as np
 from scipy.stats import gmean
+
 
 class MeanIntervalArray(pd.arrays.IntervalArray):
     def __init__(self, data, dtype=None, copy=False):

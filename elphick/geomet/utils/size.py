@@ -1,8 +1,11 @@
+from typing import Union
+
 import numpy as np
+from pandas import IntervalIndex
 from pandas.arrays import IntervalArray
 
 
-def mean_size(size_intervals: IntervalArray) -> np.ndarray:
+def mean_size(size_intervals: Union[IntervalArray, IntervalIndex]) -> np.ndarray:
     """Geometric mean size
 
     Size calculations are performed using the geometric mean, not the arithmetic mean
@@ -13,7 +16,7 @@ def mean_size(size_intervals: IntervalArray) -> np.ndarray:
 
 
     Args:
-        size_intervals: A pandas IntervalArray
+        size_intervals: A pandas IntervalArray or IntervalIndex
 
     Returns:
 

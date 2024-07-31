@@ -80,3 +80,7 @@ obj_mc_2d.data.groupby('DHID').apply(weight_average, **{'mass_wet': 'mass_wet', 
 
 fig: go.Figure = obj_mc_2d.plot_parallel(color='DHID')
 plotly.io.show(fig)
+
+# %%
+obj_mc_2d.query('DHID=="CBS02"').reset_index('DHID').plot_intervals(variables=['mass_dry', 'Fe', 'SiO2', 'Al2O3'],
+                                                                    cumulative=False)

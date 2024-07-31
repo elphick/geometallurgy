@@ -65,7 +65,7 @@ class MassComposition(ABC):
         self.mass_wet_var: Optional[str] = mass_wet_var
         self.mass_dry_var: str = mass_dry_var
         self.moisture_var: Optional[str] = moisture_var
-        self.component_vars: Optional[list[str]] = component_vars
+        self.component_vars: Optional[list[str]] = component_vars  # TODO: check if this is redundant and remove.
         self.composition_units: Literal['%', 'ppm', 'ppb'] = composition_units
         self.composition_factor: int = composition_factors[composition_units]
         self.components_as_symbols: bool = components_as_symbols
@@ -111,15 +111,13 @@ class MassComposition(ABC):
 
             self._supplementary_data = supplementary_data
 
-            self._mass_data = composition_to_mass(pd.concat([mass_totals, composition], axis=1),
-                                                  mass_wet=self.mass_wet_var, mass_dry=self.mass_dry_var,
-                                                  moisture_column_name=self.moisture_column,
-                                                  component_columns=composition.columns,
-                                                  composition_units=self.composition_units)
+            self.mass_data = composition_to_mass(pd.concat([mass_totals, composition], axis=1),
+                                                 mass_wet=self.mass_wet_var, mass_dry=self.mass_dry_var,
+                                                 moisture_column_name=self.moisture_column,
+                                                 component_columns=composition.columns,
+                                                 composition_units=self.composition_units)
             self._logger.debug(f"Data has been set.")
 
-            # Recalculate the aggregate whenever the data changes
-            self.aggregate = self._weight_average()
         else:
             self._mass_data = None
 
@@ -127,9 +125,15 @@ class MassComposition(ABC):
     def mass_data(self):
         return self._mass_data
 
+    @mass_data.setter
+    def mass_data(self, value):
+        self._mass_data = value
+        # Recalculate the aggregate whenever the data changes
+        self.aggregate = self._weight_average()
+
     @property
     def aggregate(self):
-        if self._aggregate is None:
+        if self._aggregate is None and self._mass_data is not None:
             self._aggregate = self._weight_average()
         return self._aggregate
 
@@ -649,10 +653,32 @@ class MassComposition(ABC):
         self._nodes = [self._nodes[0], child._nodes[0]]
         return self
 
-    def set_nodes(self, nodes: list) -> 'MassComposition':
+    def set_nodes(self, nodes: list) -> MC:
         self._nodes = nodes
         return self
 
+    def query(self, query_string: str, name: Optional[str] = None) -> MC:
+        name = name if name is not None else self.name
+        res = self.create_congruent_object(name=f"{name} ({query_string})", include_mc_data=True,
+                                           include_supp_data=True)
+        filtered_index = self.data.query(query_string).index
+        res.update_mass_data(self._mass_data.loc[filtered_index])
+        if res.supplementary_columns is not None:
+            res._supplementary_data = self._supplementary_data.loc[filtered_index]
+
+        return res
+
+    def reset_index(self, index_name: str) -> MC:
+        res = self.create_congruent_object(name=f"{self.name} (reset_index)", include_mc_data=True,
+                                           include_supp_data=True)
+        res.update_mass_data(self._mass_data.reset_index(level=index_name, drop=True))
+        if res.supplementary_columns is not None:
+            res._supplementary_data = self._supplementary_data.reset_index(level=index_name, drop=False)
+        else:
+            res._supplementary_data = pd.DataFrame(index=self._mass_data.index, columns=[index_name],
+                                                   data=self._mass_data.index.get_level_values(index_name))
+
+        return res
 
 class OutOfRangeStatus:
     """A class to check and report out-of-range records in an MC object."""

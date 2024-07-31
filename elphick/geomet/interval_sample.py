@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Literal
+from typing import Optional, Literal, Callable
 
 import numpy as np
 import pandas as pd
@@ -11,7 +11,9 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 from elphick.geomet.utils.amenability import amenability_index
-from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery
+from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
+    cumulate, mass_to_composition
+from elphick.geomet.utils.sampling import random_int
 
 
 class IntervalSample(MassComposition):
@@ -40,7 +42,8 @@ class IntervalSample(MassComposition):
                          ranges=ranges, config_file=config_file)
 
         # manage the interval indexes
-        self.data = self._create_interval_indexes(data)
+        if self.data is not None:
+            self.data = self._create_interval_indexes(data)
 
     def _create_interval_indexes(self, data: pd.DataFrame) -> pd.DataFrame:
         original_indexes = data.index.names
@@ -87,19 +90,44 @@ class IntervalSample(MassComposition):
 
         return data
 
-    def split_by_partition(self, partition_definition, name_1: str, name_2: str):
+    def split_by_partition(self, partition_definition, name_1: str = 'preferred', name_2: str = 'complement'):
         """
         Split the sample into two samples based on the partition definition.
-        :param partition_definition: A function that takes a data frame and returns a boolean series.
+
+        .. math::
+            K = \\frac{{m_{preferred}}}{{m_{feed}}}
+
+        :param partition_definition: A function that takes a data frame and returns a boolean series with a
+         range [0, 1].
         :param name_1: The name of the first sample.
         :param name_2: The name of the second sample.
         :return: A tuple of two IntervalSamples.
         """
-        raise NotImplementedError('Not yet ready...')
-        mask = partition_definition(self._data)
-        sample_1 = self._data[mask]
-        sample_2 = self._data[~mask]
-        return IntervalSample(sample_1, name_1), IntervalSample(sample_2, name_2)
+        if not isinstance(partition_definition, Callable):
+            raise TypeError("The definition is not a callable function")
+        if 'dim' not in partition_definition.keywords.keys():
+            raise NotImplementedError("The callable function passed does not have a dim")
+
+        dim = partition_definition.keywords['dim']
+        partition_definition.keywords.pop('dim')
+
+        # get the mean of the intervals - the geomean if the interval is called size
+        index = self.mass_data.index.get_level_values(dim)
+        # check the index is an interval index
+        if not isinstance(index, pd.IntervalIndex):
+            raise ValueError(f"The index is not an IntervalIndex.  The index is {type(index)}")
+        index = MeanIntervalIndex(index)
+        x = index.mean
+
+        pn: pd.Series = pd.Series(partition_definition(x), name='K', index=index)
+        sample_1 = self.create_congruent_object(name=name_1)
+        sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
+        sample_1.set_nodes([self._nodes[1], random_int()])
+        sample_2 = self.create_congruent_object(name=name_2)
+        sample_2.mass_data = self.mass_data.copy().multiply((1 - pn), axis=0)
+        sample_2.set_nodes([self._nodes[1], random_int()])
+
+        return sample_1, sample_2
 
     def is_2d_grid(self):
         """
@@ -302,6 +330,90 @@ class IntervalSample(MassComposition):
 
         return fig
 
+    def plot_intervals(self,
+                       variables: list[str],
+                       cumulative: bool = True,
+                       direction: str = 'descending',
+                       show_edges: bool = True,
+                       min_x: Optional[float] = None) -> go.Figure:
+        """Plot "The Grade-Tonnage" curve.
+
+        Mass and grade by bins for a cut-off variable.
+
+        Args:
+            variables: List of variables to include in the plot
+            cumulative: If True, the results are cumulative weight averaged.
+            direction: 'ascending'|'descending', if cumulative is True, the direction of accumulation
+            show_edges: If True, show the edges on the plot.  Applicable to cumulative plots only.
+            min_x: Optional minimum value for the x-axis, useful to set reasonable visual range with a log
+            scaled x-axis when plotting size data
+        """
+
+        res: pd.DataFrame = self.data[variables]
+
+        plot_kwargs: dict = dict(line_shape='vh')
+        if cumulative:
+            res = self.mass_data.pipe(cumulate, direction=direction).pipe(mass_to_composition)
+            plot_kwargs = dict(line_shape='spline')
+
+        interval_data: pd.DataFrame = res
+
+        # Get the first IntervalIndex - TODO: specify or check...
+        interval_index: Optional[pd.IntervalIndex] = None
+        for level in range(interval_data.index.nlevels):
+            if isinstance(interval_data.index.get_level_values(level), pd.IntervalIndex):
+                interval_index = interval_data.index.get_level_values(level)
+                break
+        if interval_index is None:
+            raise ValueError("No IntervalIndex found in the index levels")
+        left_name: str = interval_index.left.name if interval_index.left.name else 'left'
+        right_name: str = interval_index.right.name if interval_index.right.name else 'right'
+        left: pd.Series = pd.Series(interval_index.left, name=left_name, index=interval_index)
+        right: pd.Series = pd.Series(interval_index.right, name=right_name, index=interval_index)
+        df_intervals = pd.concat([left, right, interval_data], axis='columns')
+        x_var: str = interval_data.index.name
+        if not cumulative:
+            # append on the largest fraction right edge for display purposes
+            is_ascending: bool = interval_index.is_monotonic_increasing
+            df_end: pd.DataFrame = df_intervals.loc[df_intervals.index.max(), :].to_frame().T
+            df_end[left_name] = df_end[right_name]
+            df_end[right_name] = np.inf
+            df = pd.concat([df_end.reset_index(drop=True), df_intervals], axis='index')
+            df[interval_data.index.name] = df[left_name]
+            df = df.sort_values(by=interval_data.index.name, ascending=is_ascending)
+        else:
+            if direction == 'ascending':
+                x_var = right_name
+            elif direction == 'descending':
+                x_var = left_name
+            df = df_intervals
+
+        if res.index.name.lower() == 'size':
+            if not min_x:
+                min_x = interval_data.index.min().right / 2.0
+            # set zero to the minimum x value (for display only) to enable the tooltips on that point.
+            df.loc[df[x_var] == df[x_var].min(), x_var] = min_x
+            hover_data = {'component': True,  # add other column, default formatting
+                          x_var: ':.3f',  # add other column, customized formatting
+                          'value': ':.2f'
+                          }
+            plot_kwargs = {**plot_kwargs,
+                           **dict(log_x=True,
+                                  range_x=[min_x, interval_data.index.max().right],
+                                  hover_data=hover_data)}
+
+        df = df[[x_var] + variables].melt(id_vars=[x_var], var_name='component')
+
+        if cumulative and show_edges:
+            plot_kwargs['markers'] = True
+
+        fig = px.line(df, x=x_var, y='value', facet_row='component', **plot_kwargs)
+        fig.for_each_annotation(lambda a: a.update(text=a.text.replace("component=", "")))
+        fig.update_yaxes(matches=None)
+        fig.update_layout(title=self.name)
+
+        return fig
+
     @staticmethod
     def _get_unique_edges(interval_index):
         # Get the left and right edges of the intervals
@@ -401,3 +513,14 @@ class IntervalSample(MassComposition):
         fig.update_layout(xaxis_title='Yield (Mass Recovery)', yaxis_title='Recovery', title=title,
                           hovermode='x')
         return fig
+
+    def calculate_partition(self, preferred: 'MassComposition') -> pd.DataFrame:
+        """Calculate the partition number (K) [0, 1] of the preferred stream relative to self
+
+        .. math::
+            K = \\frac{{m_{preferred}}}{{m_{feed}}}
+
+        """
+        self._check_one_dim_interval()
+        return calculate_partition(df_feed=self.data, df_preferred=preferred.data,
+                                   col_mass_dry='mass_dry')

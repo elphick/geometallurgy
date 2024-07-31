@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:19.199** total execution time for 12 files **from all galleries**:
+**00:06.523** total execution time for 15 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_03_incremental_separation.py` (``..\..\examples\02_interval_sample\03_incremental_separation.py``)
-     - 00:19.199
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_05_resampling_interval_data.py` (``..\..\examples\02_interval_sample\05_resampling_interval_data.py``)
+     - 00:06.523
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_01_create_sample.py` (``..\..\examples\01_getting_started\01_create_sample.py``)
      - 00:00.000
@@ -44,10 +44,19 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_03_plot_demo.py` (``..\..\examples\01_getting_started\03_plot_demo.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_04_filtering.py` (``..\..\examples\01_getting_started\04_filtering.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``..\..\examples\02_interval_sample\01_interval_sample.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``..\..\examples\02_interval_sample\02_interval_data_sink_float.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_03_incremental_separation.py` (``..\..\examples\02_interval_sample\03_incremental_separation.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_04_partition_models.py` (``..\..\examples\02_interval_sample\04_partition_models.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_01_flowsheet_basics.py` (``..\..\examples\03_flowsheet\01_flowsheet_basics.py``)
