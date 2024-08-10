@@ -1,4 +1,6 @@
+import json
 import logging
+from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union, TypeVar
 
 import matplotlib
@@ -8,6 +10,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 import seaborn as sns
+import yaml
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from plotly.subplots import make_subplots
@@ -104,6 +107,71 @@ class Flowsheet:
         streams: list[Sample] = streams_from_dataframe(df=df, mc_name_col=mc_name_col, n_jobs=n_jobs)
         return cls().from_objects(objects=streams, name=name)
 
+    @classmethod
+    def from_dict(cls, config: dict) -> FS:
+        """Create a flowsheet from a dictionary
+
+        Args:
+            config: dictionary containing the flowsheet configuration
+
+        Returns:
+            A Flowsheet object with no data on the edges
+        """
+        if 'FLOWSHEET' not in config:
+            raise ValueError("Dictionary does not contain 'FLOWSHEET' root node")
+
+        flowsheet_config = config['FLOWSHEET']
+
+        # create the Stream objects
+        bunch_of_edges: list = []
+        for stream, stream_config in flowsheet_config['streams'].items():
+            bunch_of_edges.append(
+                (stream_config['node_in'], stream_config['node_out'], {'mc': None, 'name': stream_config['name']}))
+
+        graph = nx.DiGraph(name=flowsheet_config['flowsheet']['name'])
+        graph.add_edges_from(bunch_of_edges)
+        operation_objects: dict = {}
+        for node in graph.nodes:
+            operation_objects[node] = Operation(name=node)
+        nx.set_node_attributes(graph, operation_objects, 'mc')
+
+        graph = nx.convert_node_labels_to_integers(graph)
+
+        obj = cls()
+        obj.graph = graph
+
+        return obj
+
+    @classmethod
+    def from_yaml(cls, file_path: Path) -> FS:
+        """Create a flowsheet from yaml
+
+        Args:
+            file_path: path to the yaml file
+
+        Returns:
+            A Flowsheet object with no data on the edges
+        """
+        with open(file_path, 'r') as file:
+            config = yaml.safe_load(file)
+
+        return cls.from_dict(config)
+
+    @classmethod
+    def from_json(cls, file_path: Path) -> FS:
+        """Create a flowsheet from json
+
+        Args:
+            file_path: path to the json file
+
+        Returns:
+            A Flowsheet object with no data on the edges
+        """
+        with open(file_path, 'r') as file:
+            config = json.load(file)
+
+        return cls.from_dict(config)
+
     def solve(self):
         """Solve missing streams"""
 
@@ -180,8 +248,8 @@ class Flowsheet:
         node_colors: List = []
 
         for node1, node2, data in self.graph.edges(data=True):
-            edge_labels[(node1, node2)] = data['mc'].name
-            if data['mc'].status.ok:
+            edge_labels[(node1, node2)] = data['mc'].name if data['mc'] is not None else data['name']
+            if data['mc'] and data['mc'].status.ok:
                 edge_colors.append('gray')
             else:
                 edge_colors.append('red')
@@ -727,23 +795,25 @@ class Flowsheet:
                 self.graph.nodes[node]['mc'].name = node_names[node]
 
     def set_stream_data(self, stream_data: dict[str, Optional[MC]]):
-        """Set the data (MassComposition) of network edges (streams) with a Dict
-        """
+        """Set the data (MassComposition) of network edges (streams) with a Dict"""
         for stream_name, stream_data in stream_data.items():
             stream_found = False
+            nodes_to_refresh = set()
             for u, v, data in self.graph.edges(data=True):
-                if ('mc' in data.keys()) and (data['mc'].name == stream_name):
+                if 'mc' in data.keys() and (data['mc'].name if data['mc'] is not None else data['name']) == stream_name:
                     self._logger.info(f'Setting data on stream {stream_name}')
                     data['mc'] = stream_data
                     stream_found = True
-                    # refresh the node status
-                    for node in [u, v]:
-                        self.graph.nodes[node]['mc'].inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
-                                                               self.graph.in_edges(node)]
-                        self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
-                                                                self.graph.out_edges(node)]
+                    nodes_to_refresh.update([u, v])
             if not stream_found:
                 self._logger.warning(f'Stream {stream_name} not found in graph')
+            else:
+                # refresh the node status
+                for node in nodes_to_refresh:
+                    self.graph.nodes[node]['mc'].inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
+                                                           self.graph.in_edges(node)]
+                    self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
+                                                            self.graph.out_edges(node)]
 
     def streams_to_dict(self) -> Dict[str, MC]:
         """Export the Stream objects to a Dict

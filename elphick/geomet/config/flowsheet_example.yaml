@@ -1,26 +1,25 @@
 FLOWSHEET:
   flowsheet:
     name: Flowsheet
-  streams:
+  streams:  # graph edges
     Feed:
-      node_in: 0
-      node_out: 1
+      name: Feed
+      node_in: feed
+      node_out: screen
     Coarse:
-      node_in: 1
-      node_out: 2
+      name: Coarse
+      node_in: screen
+      node_out: lump
     Fine:
-      node_in: 1
-      node_out: 3
-  nodes:
-    0:
+      name: Fine
+      node_in: screen
+      node_out: fines
+  operations:  # graph nodes
+    feed:
       name: feed
-      subset: 0
-    1:
+    screen:
       name: screen
-      subset: 0
-    2:
+    lump:
       name: lump
-      subset: -1
-    3:
+    fines:
       name: fines
-      subset: 1
