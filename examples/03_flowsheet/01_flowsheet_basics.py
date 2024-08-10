@@ -19,7 +19,7 @@ from elphick.geomet.utils.data import sample_data
 # %%
 #
 # Create some Sample objects
-# --------------------------
+# -----------------------------------
 #
 # Create an object, and split it to create two more objects.
 
@@ -164,7 +164,7 @@ fig
 # Sometimes the network that is automatically created may not be what you are after - for example flow may be in
 # the wrong direction.  We'll learn how to modify an existing network, by picking up the network above.
 #
-# Let's break the links for the stream 1.
+# Let's break the links for the _stream 1_.
 
 fs.reset_stream_nodes(stream="stream 1")
 fig = fs.table_plot()
