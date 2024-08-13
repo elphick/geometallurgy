@@ -22,6 +22,7 @@ from elphick.geomet.operation import NodeType, OP
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
 from elphick.geomet.utils.loader import streams_from_dataframe
+from elphick.geomet.utils.pandas import parse_vars_from_expr
 from elphick.geomet.utils.sampling import random_int
 
 # generic type variable, used for type hinting that play nicely with subclasses
@@ -193,6 +194,27 @@ class Flowsheet:
                                 d['mc'].name = d['name']
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
+
+    def query(self, query: str) -> 'Flowsheet':
+        """Reduce the Flowsheet Stream records with a query
+
+        Args:
+            query: The query string to apply to all streams.  The query is applied in place.  The LHS of the
+                expression requires a prefix that defines the stream name e.g. stream_name.var_name > 0.5
+
+        Returns:
+            A Flowsheet object where the stream records conform to the query
+        """
+        # parse the query and apply to the relevant stream to get an index to apply to all edges using .loc
+        # query_streams = parse_vars_from_expr(expr=query)
+
+        # apply the query to the (first) input stream
+        input_stream: MC = self.get_input_streams()[0]
+        filtered_index: pd.Index = input_stream.data.query(query).index
+
+        for u, v, d in self.graph.edges(data=True):
+            d['mc'].filter_by_index(filtered_index)
+        return self
 
     def get_input_streams(self) -> list[MC]:
         """Get the input (feed) streams (edge objects)
@@ -521,22 +543,21 @@ class Flowsheet:
 
         return fig
 
-    def to_dataframe(self,
-                     names: Optional[str] = None):
+    def to_dataframe(self, stream_names: Optional[list[str]] = None):
         """Return a tidy dataframe
 
         Adds the mc name to the index so indexes are unique.
 
         Args:
-            names: Optional List of names of MassComposition objects (network edges) for export
+            stream_names: Optional List of names of Stream/MassComposition objects (network edges) for export
 
         Returns:
 
         """
         chunks: List[pd.DataFrame] = []
         for u, v, data in self.graph.edges(data=True):
-            if (names is None) or ((names is not None) and (data['mc'].name in names)):
-                chunks.append(data['mc'].data.mc.to_dataframe().assign(name=data['mc'].name))
+            if (stream_names is None) or ((stream_names is not None) and (data['mc'].name in stream_names)):
+                chunks.append(data['mc'].data.assign(name=data['mc'].name))
         return pd.concat(chunks, axis='index').set_index('name', append=True)
 
     def plot_parallel(self,
@@ -563,7 +584,7 @@ class Flowsheet:
         Returns:
 
         """
-        df: pd.DataFrame = self.to_dataframe(names=names)
+        df: pd.DataFrame = self.to_dataframe(stream_names=names)
 
         if not title and hasattr(self, 'name'):
             title = self.name

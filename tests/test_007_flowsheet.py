@@ -6,6 +6,7 @@ from elphick.geomet.base import MC
 from elphick.geomet.operation import NodeType, Operation
 from fixtures import sample_data
 
+
 def test_flowsheet_init(sample_data):
     obj_strm: Stream = Stream(sample_data, name='Feed')
     obj_strm_1, obj_strm_2 = obj_strm.split(0.4, name_1='stream 1', name_2='stream 2')
@@ -49,3 +50,16 @@ def test_solve(sample_data):
     # Check that the missing_count is zero
     missing_count = sum([1 for u, v, d in fs.graph.edges(data=True) if d['mc'] is None])
     assert missing_count == 0, "There are still missing MC objects after calling solve method"
+
+
+def test_query(sample_data):
+    # Create a new Flowsheet object
+    fs = Flowsheet()
+    obj_strm: Stream = Stream(sample_data, name='Feed')
+    obj_strm_1, obj_strm_2 = obj_strm.split(0.4, name_1='stream 1', name_2='stream 2')
+    fs: Flowsheet = Flowsheet.from_objects([obj_strm, obj_strm_1, obj_strm_2])
+
+    # Call the query method
+    fs_reduced: Flowsheet = fs.query(query='Fe>57')
+
+    # TODO: enhance this test

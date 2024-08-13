@@ -3325,10 +3325,12 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["folium", "pandera"]
-omf = ["omfpandas", "omfvista"]
+all = []
+blockmodel = ["omfpandas", "omfvista"]
+map = ["folium"]
+validation = ["pandera"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.11"
-content-hash = "531d2286dac8c9e686991b11cc1d24624ff1a7a8d2db139e1686618438e0d974"
+content-hash = "7cc8590a796f7cb8231cfbfee54a35b95328494335bc868d869ba35f9cb8c2aa"
