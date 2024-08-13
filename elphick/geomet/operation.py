@@ -169,7 +169,7 @@ class Operation:
 
     def _get_object(self, name: Optional[str] = None) -> MC:
         """Returns an object from inputs or outputs"""
-        candidates = [mc for mc in self.inputs + self.outputs if mc is not None]
+        candidates = [mc for mc in self.outputs + self.inputs if mc is not None]
         if len(candidates) == 0:
             raise ValueError("No object found")
         if name:
