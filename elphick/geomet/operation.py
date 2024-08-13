@@ -169,18 +169,16 @@ class Operation:
 
     def _get_object(self, name: Optional[str] = None) -> MC:
         """Returns an object from inputs or outputs"""
-        if name is None:
-            if self.outputs[0] is not None:
-                return self.outputs[0]
-            elif self.inputs[0] is not None:
-                return self.inputs[0]
-            else:
-                raise ValueError("No object found")
-        else:
-            for obj in self.inputs + self.outputs:
+        candidates = [mc for mc in self.inputs + self.outputs if mc is not None]
+        if len(candidates) == 0:
+            raise ValueError("No object found")
+        if name:
+            for obj in candidates:
                 if obj is not None and obj.name == name:
                     return obj
             raise ValueError(f"No object found with name {name}")
+        else:
+            return candidates[0]
 
 
 class Input(Operation):

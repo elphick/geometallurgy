@@ -22,7 +22,6 @@ from elphick.geomet.operation import NodeType, OP
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
 from elphick.geomet.utils.loader import streams_from_dataframe
-from elphick.geomet.utils.pandas import parse_vars_from_expr
 from elphick.geomet.utils.sampling import random_int
 
 # generic type variable, used for type hinting that play nicely with subclasses
