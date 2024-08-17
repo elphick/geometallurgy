@@ -1,3 +1,4 @@
+import copy
 import json
 import logging
 from pathlib import Path
@@ -172,6 +173,24 @@ class Flowsheet:
 
         return cls.from_dict(config)
 
+    def copy_without_stream_data(self):
+        """Copy without stream data"""
+        new_flowsheet = Flowsheet(name=self.name)
+        new_graph = nx.DiGraph()
+
+        # Copy nodes with Operation objects
+        for node, data in self.graph.nodes(data=True):
+            new_data = data.copy()
+            new_graph.add_node(node, **new_data)
+
+        # Copy edges with mc attribute set to None
+        for u, v, data in self.graph.edges(data=True):
+            new_data = {k: (None if k == 'mc' else copy.deepcopy(v)) for k, v in data.items()}
+            new_graph.add_edge(u, v, **new_data)
+
+        new_flowsheet.graph = new_graph
+        return new_flowsheet
+
     def solve(self):
         """Solve missing streams"""
 
@@ -194,26 +213,67 @@ class Flowsheet:
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
-    def query(self, query: str) -> 'Flowsheet':
+    def query(self, query: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
         """Reduce the Flowsheet Stream records with a query
 
         Args:
-            query: The query string to apply to all streams.  The query is applied in place.  The LHS of the
+            query: The query string to apply to all streams. The query is applied in place. The LHS of the
                 expression requires a prefix that defines the stream name e.g. stream_name.var_name > 0.5
+            stream_name: The name of the stream to apply the query to. If None, the query is applied to the
+                first input stream.
+            inplace: If True, apply the query in place on the same object, otherwise return a new instance.
 
         Returns:
             A Flowsheet object where the stream records conform to the query
         """
-        # parse the query and apply to the relevant stream to get an index to apply to all edges using .loc
-        # query_streams = parse_vars_from_expr(expr=query)
-
-        # apply the query to the (first) input stream
-        input_stream: MC = self.get_input_streams()[0]
+        if stream_name is None:
+            input_stream: MC = self.get_input_streams()[0]
+        else:
+            input_stream: MC = self.get_edge_by_name(name=stream_name)
         filtered_index: pd.Index = input_stream.data.query(query).index
+        return self._filter(filtered_index, inplace)
 
-        for u, v, d in self.graph.edges(data=True):
-            d['mc'].filter_by_index(filtered_index)
-        return self
+    def filter_by_index(self, index: pd.Index, inplace: bool = False) -> 'Flowsheet':
+        """Filter the Flowsheet Stream records by a given index.
+
+        Args:
+            index: The index to filter the data.
+            inplace: If True, apply the filter in place on the same object, otherwise return a new instance.
+
+        Returns:
+            A Flowsheet object where the stream records are filtered by the given index.
+        """
+        return self._filter(index, inplace)
+
+    def _filter(self, index: pd.Index, inplace: bool = False) -> 'Flowsheet':
+        """Private method to filter the Flowsheet Stream records by a given index.
+
+        Args:
+            index: The index to filter the data.
+            inplace: If True, apply the filter in place on the same object, otherwise return a new instance.
+
+        Returns:
+            A Flowsheet object where the stream records are filtered by the given index.
+        """
+        if inplace:
+            for u, v, d in self.graph.edges(data=True):
+                if d.get('mc') is not None:
+                    d.get('mc').filter_by_index(index)
+            return self
+        else:
+            obj: Flowsheet = self.copy_without_stream_data()
+            for u, v, d in self.graph.edges(data=True):
+                if d.get('mc') is not None:
+                    mc: MC = d.get('mc')
+                    mc_new = mc.__class__(name=mc.name)
+                    # Copy each attribute
+                    for attr, value in mc.__dict__.items():
+                        if attr in ['_mass_data', '_supplementary_data'] and value is not None:
+                            value = value.loc[index]
+                        setattr(mc_new, attr, copy.deepcopy(value))
+                    mc_new.aggregate = mc_new._weight_average()
+                    obj.graph[u][v]['mc'] = mc_new
+            return obj
 
     def get_input_streams(self) -> list[MC]:
         """Get the input (feed) streams (edge objects)

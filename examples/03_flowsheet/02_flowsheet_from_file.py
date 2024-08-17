@@ -6,6 +6,7 @@ It is possible to create a Flowsheet object from a file.  This example demonstra
 from a file.
 
 """
+import inspect
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict
@@ -16,6 +17,8 @@ from matplotlib import pyplot as plt
 from elphick.geomet import Stream, Flowsheet
 from elphick.geomet.operation import OP, Operation
 from elphick.geomet.utils.data import sample_data
+
+__file__ = Path(inspect.getfile(inspect.currentframe())).resolve()
 
 # %%
 #
@@ -74,4 +77,4 @@ plt
 # ---------------------
 
 fig = fs.table_plot(plot_type='network')
-fig.show()
+fig

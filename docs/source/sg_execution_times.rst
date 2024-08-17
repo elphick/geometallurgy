@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.442** total execution time for 12 files **from all galleries**:
+**00:01.288** total execution time for 13 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_examples_04_block_model_01_consuming_omf.py` (``..\..\examples\04_block_model\01_consuming_omf.py``)
-     - 00:00.442
+   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_03_filtering_flowsheet.py` (``..\..\examples\03_flowsheet\03_filtering_flowsheet.py``)
+     - 00:01.288
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_01_create_sample.py` (``..\..\examples\01_getting_started\01_create_sample.py``)
      - 00:00.000
@@ -54,6 +54,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_02_flowsheet_from_file.py` (``..\..\examples\03_flowsheet\02_flowsheet_from_file.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_04_block_model_01_consuming_omf.py` (``..\..\examples\04_block_model\01_consuming_omf.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_04_block_model_02_create_block_model.py` (``..\..\examples\04_block_model\02_create_block_model.py``)
