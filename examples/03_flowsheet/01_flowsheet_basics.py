@@ -19,7 +19,7 @@ from elphick.geomet.utils.data import sample_data
 # %%
 #
 # Create some Sample objects
-# -----------------------------------
+# --------------------------
 #
 # Create an object, and split it to create two more objects.
 

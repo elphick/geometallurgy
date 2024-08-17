@@ -447,7 +447,18 @@ class MassComposition(ABC):
         return new_obj
 
     def update_mass_data(self, value: pd.DataFrame):
-        self._mass_data = value
+        if self._mass_data is not None:
+            self._mass_data = value
+        if self._supplementary_data is not None:
+            self._supplementary_data = self._supplementary_data.loc[value.index]
+        self.aggregate = self._weight_average()
+
+    def filter_by_index(self, index: pd.Index):
+        """Update the data by index"""
+        if self._mass_data is not None:
+            self._mass_data = self._mass_data.loc[index]
+        if self._supplementary_data is not None:
+            self._supplementary_data = self._supplementary_data.loc[index]
         self.aggregate = self._weight_average()
 
     def split(self,

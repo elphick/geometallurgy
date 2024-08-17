@@ -93,7 +93,6 @@ def streams_from_dataframe(df: pd.DataFrame,
 
     with TqdmParallel(desc="Creating Stream objects", n_jobs=n_jobs,
                       prefer=None, total=len(stream_data)) as p:
-        res = p(delayed(create_geomet)(stream_data, interval_edges) for stream_data in stream_data.items())
-    res = dict(res)
+        res = p(delayed(create_stream)(stream_data, interval_edges) for stream_data in stream_data.items())
 
     return res

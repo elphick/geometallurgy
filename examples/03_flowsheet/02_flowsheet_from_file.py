@@ -6,6 +6,7 @@ It is possible to create a Flowsheet object from a file.  This example demonstra
 from a file.
 
 """
+import inspect
 from copy import deepcopy
 from pathlib import Path
 from typing import Dict
@@ -17,6 +18,8 @@ from elphick.geomet import Stream, Flowsheet
 from elphick.geomet.operation import OP, Operation
 from elphick.geomet.utils.data import sample_data
 
+__file__ = Path(inspect.getfile(inspect.currentframe())).resolve()
+
 # %%
 #
 # YAML file
@@ -24,7 +27,7 @@ from elphick.geomet.utils.data import sample_data
 #
 # The yaml file needs to follow this structure.
 
-yaml_filepath: Path = Path('./../../elphick/geomet/config/flowsheet_example.yaml')
+yaml_filepath: Path = Path(__file__).parents[2] / 'elphick/geomet/config/flowsheet_example.yaml'
 yaml_config: str = yaml_filepath.read_text()
 yaml_config
 
@@ -74,4 +77,4 @@ plt
 # ---------------------
 
 fig = fs.table_plot(plot_type='network')
-fig.show()
+fig

@@ -39,6 +39,8 @@ pyvista.BUILDING_GALLERY = True  # necessary when building the sphinx gallery
 pyvista.set_plot_theme("document")
 pyvista.global_theme.window_size = np.array([1024, 768]) * 2
 
+image_scrapers = ("pyvista", "matplotlib", plotly_sg_scraper)
+
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
@@ -66,7 +68,7 @@ sphinx_gallery_conf = {
     'nested_sections': False,
     'download_all_examples': False,
     'within_subsection_order': 'FileNameSortKey',
-    "image_scrapers": (pyvista.Scraper(), "matplotlib", plotly_sg_scraper),
+    "image_scrapers": image_scrapers,
 }
 
 templates_path = ['_templates']

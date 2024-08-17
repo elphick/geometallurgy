@@ -164,7 +164,7 @@ def test_get_object():
     assert op._get_object('output') == output
 
     # Test getting an object without specifying a name
-    # This should return the first non-None output if it exists
+    # This should return the first non-None output if it exists (why the output and not input?)
     assert op._get_object() == output
 
     # Set the outputs to None and test getting an object without specifying a name again
