@@ -3,6 +3,9 @@ Pandas utils
 """
 import inspect
 import logging
+import tokenize
+from io import StringIO
+from token import STRING
 from typing import List, Dict, Optional, Literal
 
 import pandas as pd
@@ -347,3 +350,34 @@ class MeanIntervalArray(pd.arrays.IntervalArray):
         else:
             # Calculate arithmetic mean
             return (self.right + self.left) / 2
+
+
+def parse_vars_from_expr(expr: str) -> list[str]:
+    """ Parse variables from a pandas query expression string.
+
+    Args:
+        expr: The expression string
+
+    Returns:
+        list[str]: The list of variables
+    """
+    variables = set()
+    tokens = tokenize.generate_tokens(StringIO(expr).readline)
+    logical_operators = {'and', 'or', '&', '|'}
+    inside_backticks = False
+    current_var = []
+
+    for token in tokens:
+        if token.string == '`':
+            if inside_backticks:
+                # End of backtick-enclosed variable
+                variables.add(' '.join(current_var))
+                current_var = []
+            inside_backticks = not inside_backticks
+        elif inside_backticks:
+            if token.type in {tokenize.NAME, STRING}:
+                current_var.append(token.string)
+        elif token.type == tokenize.NAME and token.string not in logical_operators:
+            variables.add(token.string)
+
+    return list(variables)
