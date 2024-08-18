@@ -12,7 +12,7 @@ def perfect(x: np.ndarray, d50: float) -> np.ndarray:
     Returns:
 
     """
-    pn: np.ndarray = np.where(x >= d50, 100.0, 0.0)
+    pn: np.ndarray = np.where(x >= d50, 1.0, 0.0)
     return pn
 
 
@@ -29,7 +29,7 @@ def napier_munn(x: np.ndarray, d50: float, ep: float) -> np.ndarray:
     Returns:
 
     """
-    pn: np.ndarray = 1 / (1 + np.exp(1.099 * (d50 - x) / ep)) * 100
+    pn: np.ndarray = 1 / (1 + np.exp(1.099 * (d50 - x) / ep))
     return pn
 
 

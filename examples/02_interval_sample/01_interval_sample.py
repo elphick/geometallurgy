@@ -15,11 +15,13 @@ originates from a sieve stack.
 import logging
 
 import pandas as pd
+import plotly.io
 from matplotlib import pyplot as plt
 
 from elphick.geomet import Sample, IntervalSample
 from elphick.geomet.data.downloader import Downloader
 from elphick.geomet.utils.pandas import weight_average
+import plotly.graph_objects as go
 
 # %%
 logging.basicConfig(level=logging.INFO,
@@ -58,38 +60,27 @@ hole_average
 
 # %%
 #
-# We will now make a 2D dataset using DHID and the interval.
-# We will first create a mean interval variable.  Then we will set the dataframe index to both variables before
-# constructing the object.
-
-print(df_data.columns)
-
+# We will now make a 2D dataset using DHID and the intervals.
 df_data['DHID'] = df_data['DHID'].astype('category')
-# make an int based drillhole identifier
-code, dh_id = pd.factorize(df_data['DHID'])
-df_data['DH'] = code
-df_data = df_data.reset_index().set_index(['DH', 'interval_from', 'interval_to'])
+df_data = df_data.reset_index(drop=True).set_index(['DHID', 'interval_from', 'interval_to'])
 
-obj_mc_2d: IntervalSample = IntervalSample(df_data,
-                                           name='Drill program')
-# obj_mc_2d._data.assign(hole_id=dh_id)
+obj_mc_2d: IntervalSample = IntervalSample(df_data, name='Drill program')
 print(obj_mc_2d)
-print(obj_mc_2d.aggregate)
-# print(obj_mc_2d.aggregate('DHID'))
+
+# %%
+obj_mc_2d.aggregate
+
+# %%
+obj_mc_2d.data.groupby('DHID').apply(weight_average, **{'mass_wet': 'mass_wet', 'moisture_column_name': 'H2O'})
 
 # %%
 #
 # View some plots
 #
-# First confirm the parallel plot still works
 
-# TODO: work on the display order
-# TODO - fails for DH (integer)
+fig: go.Figure = obj_mc_2d.plot_parallel(color='DHID')
+plotly.io.show(fig)
 
-# fig: Figure = obj_mc_2d.plot_parallel(color='Fe')
-# fig.show()
-
-# now plot using the xarray data - take advantage of the multi-dim nature of the package
-
-obj_mc_2d.data['Fe'].plot()
-plt.show()
+# %%
+obj_mc_2d.query('DHID=="CBS02"').reset_index('DHID').plot_intervals(variables=['mass_dry', 'Fe', 'SiO2', 'Al2O3'],
+                                                                    cumulative=False)

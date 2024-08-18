@@ -2,6 +2,7 @@ import copy
 import json
 import logging
 from pathlib import Path
+from copy import deepcopy
 from typing import Dict, List, Optional, Tuple, Union, TypeVar
 
 import matplotlib
@@ -213,11 +214,11 @@ class Flowsheet:
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
-    def query(self, query: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
+    def query(self, expr: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
         """Reduce the Flowsheet Stream records with a query
 
         Args:
-            query: The query string to apply to all streams. The query is applied in place. The LHS of the
+            expr: The query string to apply to all streams. The query is applied in place. The LHS of the
                 expression requires a prefix that defines the stream name e.g. stream_name.var_name > 0.5
             stream_name: The name of the stream to apply the query to. If None, the query is applied to the
                 first input stream.
@@ -230,7 +231,7 @@ class Flowsheet:
             input_stream: MC = self.get_input_streams()[0]
         else:
             input_stream: MC = self.get_edge_by_name(name=stream_name)
-        filtered_index: pd.Index = input_stream.data.query(query).index
+        filtered_index: pd.Index = input_stream.data.query(expr).index
         return self._filter(filtered_index, inplace)
 
     def filter_by_index(self, index: pd.Index, inplace: bool = False) -> 'Flowsheet':
@@ -1017,3 +1018,4 @@ class Flowsheet:
             mc: MC = self.get_edge_by_name(stream)
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)
+

@@ -1,3 +1,12 @@
+Geomet 0.3.0 (2024-08-18)
+=========================
+
+Feature
+-------
+
+- Interval sample functionality added. Standard sieve sizes added. (#13)
+
+
 Geomet 0.2.1 (2024-08-17)
 =========================
 
