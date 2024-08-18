@@ -454,6 +454,8 @@ class MassComposition(ABC):
         if self._mass_data is not None:
             self._mass_data = value
         if self._supplementary_data is not None:
+            if self._supplementary_data.index.names != self._mass_data.index.names:  # if indexes have been dropped
+                self._supplementary_data.index = self._mass_data.index
             self._supplementary_data = self._supplementary_data.loc[value.index]
         self.aggregate = self._weight_average()
 
@@ -668,11 +670,21 @@ class MassComposition(ABC):
         self._nodes = nodes
         return self
 
-    def query(self, query_string: str, name: Optional[str] = None) -> MC:
+    def query(self, expr: str, name: Optional[str] = None) -> MC:
+        """Reduce the data by a query expression
+
+        Args:
+            expr: A pandas query expression
+            name: name of the new object
+
+        Returns:
+            A new object with the reduced data
+
+        """
         name = name if name is not None else self.name
-        res = self.create_congruent_object(name=f"{name} ({query_string})", include_mc_data=True,
+        res = self.create_congruent_object(name=f"{name} ({expr})", include_mc_data=True,
                                            include_supp_data=True)
-        filtered_index = self.data.query(query_string).index
+        filtered_index = self.data.query(expr).index
         res.update_mass_data(self._mass_data.loc[filtered_index])
         if res.supplementary_columns is not None:
             res._supplementary_data = self._supplementary_data.loc[filtered_index]

@@ -1,3 +1,5 @@
+import pandas as pd
+
 from elphick.geomet import Stream
 from elphick.geomet.flowsheet import Flowsheet
 from elphick.geomet.operation import Operation
@@ -55,7 +57,7 @@ def test_query(sample_data):
     fs: Flowsheet = Flowsheet.from_objects([obj_strm, obj_strm_1, obj_strm_2])
 
     # Call the query method with inplace=False
-    fs_reduced: Flowsheet = fs.query(query='Fe>58', inplace=False)
+    fs_reduced: Flowsheet = fs.query(expr='Fe>58', inplace=False)
 
     # Check that the original flowsheet remains unmutated
     assert fs.get_input_streams()[0].data.equals(obj_strm.data)
@@ -68,7 +70,7 @@ def test_query(sample_data):
     assert not fs_reduced.get_output_streams()[1].data.equals(obj_strm_2.data)
 
     # Call the query method with inplace=True
-    fs.query(query='Fe>58', inplace=True)
+    fs.query(expr='Fe>58', inplace=True)
 
     # Check that the original flowsheet is now mutated, matching the fs_reduced
     assert fs.get_input_streams()[0].data.equals(fs_reduced.get_input_streams()[0].data)

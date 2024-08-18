@@ -214,11 +214,11 @@ class Flowsheet:
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
-    def query(self, query: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
+    def query(self, expr: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
         """Reduce the Flowsheet Stream records with a query
 
         Args:
-            query: The query string to apply to all streams. The query is applied in place. The LHS of the
+            expr: The query string to apply to all streams. The query is applied in place. The LHS of the
                 expression requires a prefix that defines the stream name e.g. stream_name.var_name > 0.5
             stream_name: The name of the stream to apply the query to. If None, the query is applied to the
                 first input stream.
@@ -231,7 +231,7 @@ class Flowsheet:
             input_stream: MC = self.get_input_streams()[0]
         else:
             input_stream: MC = self.get_edge_by_name(name=stream_name)
-        filtered_index: pd.Index = input_stream.data.query(query).index
+        filtered_index: pd.Index = input_stream.data.query(expr).index
         return self._filter(filtered_index, inplace)
 
     def filter_by_index(self, index: pd.Index, inplace: bool = False) -> 'Flowsheet':
@@ -1019,35 +1019,3 @@ class Flowsheet:
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)
 
-    def query(self, mc_name: str, query_string: str) -> 'Flowsheet':
-        """Query/filter across the network
-
-        The queries provided will be applied to the MassComposition object in the network with the mc_name.
-        The indexes for that result are then used to filter the other edges of the network.
-
-        Args:
-            mc_name: The name of the MassComposition object in the network to which the first filter to be applied.
-            query_string: The query string to apply to the object with mc_name.
-
-        Returns:
-
-        """
-
-        mc_obj_ref: MC = self.get_edge_by_name(mc_name).query(query_string=query_string)
-        filtered_index = mc_obj_ref.mass_data.index
-
-        # iterate through all other objects on the edges and filter them to the same indexes
-        mc_objects: List[MC] = []
-        for u, v, a in self.graph.edges(data=True):
-            if a['mc'].name == mc_name:
-                mc_objects.append(mc_obj_ref)
-            else:
-                mc_obj: MC = deepcopy(self.get_edge_by_name(a['mc'].name))
-                mc_obj.update_mass_data(mc_obj.mass_data.loc[filtered_index])
-                if mc_obj.supplementary_columns is not None:
-                    mc_obj._supplementary_data = mc_obj._supplementary_data.loc[filtered_index]
-                mc_objects.append(mc_obj)
-
-        res: Flowsheet = Flowsheet.from_objects(mc_objects)
-
-        return res

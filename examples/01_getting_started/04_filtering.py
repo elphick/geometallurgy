@@ -65,4 +65,4 @@ fs.report()
 # %%
 # Now we'll filter as we did before, though we must specify which object the query criteria is to be applied to.
 
-fs.query(mc_name='demo', query_string='Fe>58').report()
+fs.query(expr='Fe>58', stream_name='demo').report()

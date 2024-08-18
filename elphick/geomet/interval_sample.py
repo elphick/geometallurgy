@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Optional, Literal, Callable
+from typing import Optional, Literal, Callable, Union, Iterable
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,9 @@ from elphick.geomet import MassComposition
 import plotly.graph_objects as go
 import plotly.express as px
 
+from elphick.geomet.base import MC
 from elphick.geomet.utils.amenability import amenability_index
+from elphick.geomet.utils.interp import mass_preserving_interp
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
     cumulate, mass_to_composition
 from elphick.geomet.utils.sampling import random_int
@@ -524,3 +526,32 @@ class IntervalSample(MassComposition):
         self._check_one_dim_interval()
         return calculate_partition(df_feed=self.data, df_preferred=preferred.data,
                                    col_mass_dry='mass_dry')
+
+    def resample_1d(self, interval_edges: Union[Iterable, int],
+                    precision: Optional[int] = None,
+                    include_original_edges: bool = False) -> 'IntervalSample':
+        """Resample a 1D fractional dim/index
+
+        Args:
+            interval_edges: The values of the new grid (interval edges).  If an int, will up-sample by that factor, for
+             example the value of 10 will automatically define edges that create 10 x the resolution (up-sampled).
+            precision: Optional integer for the number of decimal places to round the grid values to.
+            include_original_edges: If True include the original edges in the grid.
+
+        Returns:
+            A new IntervalSample object interpolated onto the new grid
+        """
+
+        # TODO: add support for supplementary variables
+
+        # test the index contains a single interval index
+        self._check_one_dim_interval()
+
+        df_upsampled: pd.DataFrame = mass_preserving_interp(self.data,
+                                                            interval_edges=interval_edges, precision=precision,
+                                                            include_original_edges=include_original_edges)
+
+        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False)
+        obj._nodes = self._nodes
+        obj.status.ranges = self.status.ranges
+        return obj
