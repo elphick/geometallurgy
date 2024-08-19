@@ -203,14 +203,23 @@ class Flowsheet:
             prev_missing_count = missing_count
             for node in self.graph.nodes:
                 if self.graph.nodes[node]['mc'].node_type == NodeType.BALANCE:
-                    if self.graph.nodes[node]['mc'].has_empty_input or self.graph.nodes[node]['mc'].has_empty_output:
+                    if self.graph.nodes[node]['mc'].has_empty_input:
                         mc: MC = self.graph.nodes[node]['mc'].solve()
-                        # copy the solved object to the empty edge
-                        for u, v, d in self.graph.edges(data=True):
-                            if d['mc'] is None and u == node:
-                                d['mc'] = mc
-                                # set the mc name to match the edge name
-                                d['mc'].name = d['name']
+                        # copy the solved object to the empty input edges
+                        for predecessor in self.graph.predecessors(node):
+                            edge_data = self.graph.get_edge_data(predecessor, node)
+                            if edge_data and edge_data['mc'] is None:
+                                edge_data['mc'] = mc
+                                edge_data['mc'].name = edge_data['name']
+
+                    if self.graph.nodes[node]['mc'].has_empty_output:
+                        mc: MC = self.graph.nodes[node]['mc'].solve()
+                        # copy the solved object to the empty output edges
+                        for successor in self.graph.successors(node):
+                            edge_data = self.graph.get_edge_data(node, successor)
+                            if edge_data and edge_data['mc'] is None:
+                                edge_data['mc'] = mc
+                                edge_data['mc'].name = edge_data['name']
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
@@ -375,7 +384,8 @@ class Flowsheet:
         for n, nbrs in self.graph.adj.items():
             for nbr, eattr in nbrs.items():
                 if eattr['mc'] is None or eattr['mc'].data.empty:
-                    raise KeyError("Cannot generate report on empty dataset")
+                    edge_name: str = eattr['mc']['name'] if eattr['mc'] is not None else eattr['name']
+                    raise KeyError(f"Cannot generate report on empty dataset: {edge_name}")
                 chunks.append(eattr['mc'].aggregate.assign(name=eattr['mc'].name))
         rpt: pd.DataFrame = pd.concat(chunks, axis='index').set_index('name')
         if apply_formats:
