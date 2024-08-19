@@ -1,3 +1,12 @@
+Geomet 0.3.1 (2024-08-19)
+=========================
+
+Bugfix
+------
+
+- Fixed Flowsheet.solve missing input bug. Improved error message for Flowsheet.report when a stream is empty. (#23)
+
+
 Geomet 0.3.0 (2024-08-18)
 =========================
 
