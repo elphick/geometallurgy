@@ -72,7 +72,8 @@ fig
 new_edges = np.unique(np.geomspace(1.0e-03, size_fractions.data.index.right.max(), 50))
 new_coords = np.insert(new_edges, 0, 0)
 
-upsampled: IntervalSample = size_fractions.resample_1d(interval_edges=new_edges, precision=3, include_original_edges=True)
+upsampled: IntervalSample = size_fractions.resample_1d(interval_edges=new_edges, precision=3,
+                                                       include_original_edges=True)
 
 fig = upsampled.plot_intervals(variables=['mass_dry', 'Fe', 'SiO2', 'Al2O3'], cumulative=False)
 # noinspection PyTypeChecker
@@ -103,8 +104,9 @@ fig
 # Standard sieve series account for the log nature of a particle size distribution.  This results in reasonably
 # equal width intervals on a log scale.  We will up-sample to a standard sieve series and plot the results.
 
-new_sizes = [s for s in sizes_all if s <= size_fractions.data.index.right.max()]
-new_sizes
+new_sizes = [s for s in sizes_all if
+             s >= size_fractions.data.index.left.min() and s <= size_fractions.data.index.right.max()]
+new_sizes = sorted(new_sizes)
 
 # %%
 upsampled_3: IntervalSample = size_fractions.resample_1d(interval_edges=new_sizes, precision=3)
@@ -120,6 +122,9 @@ pd.testing.assert_frame_equal(size_fractions.aggregate.reset_index(drop=True),
 pd.testing.assert_frame_equal(size_fractions.aggregate.reset_index(drop=True),
                               upsampled_2.aggregate.reset_index(drop=True))
 
+pd.testing.assert_frame_equal(size_fractions.aggregate.reset_index(drop=True),
+                              upsampled_3.aggregate.reset_index(drop=True))
+
 # %%
 # Complete a round trip by converting the up-sampled objects back to the original intervals and validate.
 
@@ -128,7 +133,8 @@ original_edges: np.ndarray = np.sort(np.unique(list(orig_index.left) + list(orig
 
 downsampled: IntervalSample = upsampled.resample_1d(interval_edges=original_edges, precision=3)
 downsampled_2: IntervalSample = upsampled_2.resample_1d(interval_edges=original_edges, precision=3)
+downsampled_3: IntervalSample = upsampled_3.resample_1d(interval_edges=original_edges, precision=3)
 
 pd.testing.assert_frame_equal(size_fractions.data, downsampled.data)
 pd.testing.assert_frame_equal(size_fractions.data, downsampled_2.data)
-
+pd.testing.assert_frame_equal(size_fractions.data, downsampled_3.data)
