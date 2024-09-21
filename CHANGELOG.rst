@@ -1,3 +1,12 @@
+Geomet 0.3.3 (2024-09-21)
+=========================
+
+Bugfix
+------
+
+- Fixed incorrect label on plot_network nodes (#15)
+
+
 Geomet 0.3.2 (2024-09-03)
 =========================
 

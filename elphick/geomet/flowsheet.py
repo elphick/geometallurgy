@@ -754,7 +754,7 @@ class Flowsheet:
             edge_annotations[data['mc'].name] = {'pos': np.mean([pos[u], pos[v]], axis=0)}
             edge_traces.append(go.Scatter(x=[x0, x1], y=[y0, y1],
                                           line=dict(width=2, color=edge_color_map[data['mc'].status.ok]),
-                                          hoverinfo='text',
+                                          hoverinfo='none',
                                           mode='lines+markers',
                                           text=data['mc'].name,
                                           marker=dict(
@@ -771,12 +771,14 @@ class Flowsheet:
         node_y = []
         node_color = []
         node_text = []
+        node_label = []
         for node in self.graph.nodes():
             x, y = pos[node]
             node_x.append(x)
             node_y.append(y)
             node_color.append(node_color_map[self.graph.nodes[node]['mc'].is_balanced])
             node_text.append(node)
+            node_label.append(self.graph.nodes[node]['mc'].name)
         node_trace = go.Scatter(
             x=node_x, y=node_y,
             mode='markers+text',
@@ -785,7 +787,9 @@ class Flowsheet:
                 color=node_color,
                 size=30,
                 line_width=2),
-            text=node_text)
+            text=node_text,
+            customdata=node_label,
+            hovertemplate='%{customdata}<extra></extra>')
 
         # edge annotations
         edge_labels = list(edge_annotations.keys())
