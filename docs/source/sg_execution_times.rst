@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:08.954** total execution time for 17 files **from all galleries**:
+**00:05.355** total execution time for 17 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_05_resampling_interval_data.py` (``..\..\examples\02_interval_sample\05_resampling_interval_data.py``)
-     - 00:08.954
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``..\..\examples\02_interval_sample\02_interval_data_sink_float.py``)
+     - 00:05.355
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_01_create_sample.py` (``..\..\examples\01_getting_started\01_create_sample.py``)
      - 00:00.000
@@ -50,13 +50,13 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``..\..\examples\02_interval_sample\01_interval_sample.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``..\..\examples\02_interval_sample\02_interval_data_sink_float.py``)
-     - 00:00.000
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_03_incremental_separation.py` (``..\..\examples\02_interval_sample\03_incremental_separation.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_04_partition_models.py` (``..\..\examples\02_interval_sample\04_partition_models.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_05_resampling_interval_data.py` (``..\..\examples\02_interval_sample\05_resampling_interval_data.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_01_flowsheet_basics.py` (``..\..\examples\03_flowsheet\01_flowsheet_basics.py``)

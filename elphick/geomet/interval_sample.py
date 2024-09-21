@@ -12,7 +12,7 @@ import plotly.express as px
 
 from elphick.geomet.base import MC
 from elphick.geomet.utils.amenability import amenability_index
-from elphick.geomet.utils.interp import mass_preserving_interp
+from elphick.geomet.utils.interp import mass_preserving_interp, mass_preserving_interp_2d
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
     cumulate, mass_to_composition
 from elphick.geomet.utils.sampling import random_int
@@ -221,13 +221,22 @@ class IntervalSample(MassComposition):
         return res
 
     def _check_one_dim_interval(self):
-        if self.mass_data.index.ndim > 1:
+        if len(self.mass_data.index.names) != 1:
             raise NotImplementedError(f"This object is {self.mass_data.index.ndim} dimensional. "
                                       f"Only 1D interval objects are valid")
         index_var: str = self.mass_data.index.name
         if not isinstance(self.mass_data.index, pd.IntervalIndex):
             raise NotImplementedError(f"The {index_var} of this object is not a pd.Interval. "
                                       f" Only 1D interval objects are valid")
+
+    def _check_two_dim_interval(self):
+        if len(self.mass_data.index.names) != 2:
+            raise NotImplementedError(f"This object is {self.mass_data.index.ndim} dimensional. "
+                                      f"Only 2D interval objects are valid")
+        for indx in self.mass_data.index.levels:
+            if not isinstance(indx, pd.IntervalIndex):
+                raise NotImplementedError(f"The {indx.name} of this object is not a pd.Interval. "
+                                          f" Only 1D interval objects are valid")
 
     def ideal_incremental_composition(self, discard_from: Literal["lowest", "highest"] = "lowest") -> pd.DataFrame:
         """Incrementally separate a fractionated sample.
@@ -295,8 +304,8 @@ class IntervalSample(MassComposition):
 
         # convert IntervalIndex to nominal values df.index = df.index.map(lambda x: x.mid)
 
-        x_label = self.mass_data.index.names[1]
-        y_label = self.mass_data.index.names[0]
+        x_label = self.mass_data.index.names[0]
+        y_label = self.mass_data.index.names[1]
         z_label = self.mass_data.columns[0]
 
         # create a pivot table for the heatmap
@@ -324,11 +333,15 @@ class IntervalSample(MassComposition):
             hoverinfo='text'))
 
         # update the layout to use logarithmic x-axis
-        fig.update_layout(yaxis_type="log")
+        if x_label == 'size':
+            fig.update_layout(xaxis_type="log")
+        elif y_label == 'size':
+            fig.update_layout(yaxis_type="log")
+
         # set the title and x and y labels dynamically
         fig.update_layout(title=f'{self.name} Heatmap',
-                          xaxis_title=self.mass_data.index.names[1],
-                          yaxis_title=self.mass_data.index.names[0])
+                          xaxis_title=self.mass_data.index.names[0],
+                          yaxis_title=self.mass_data.index.names[1])
 
         return fig
 
@@ -552,6 +565,35 @@ class IntervalSample(MassComposition):
                                                             include_original_edges=include_original_edges)
 
         obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False)
+        obj._nodes = self._nodes
+        obj.status.ranges = self.status.ranges
+        return obj
+
+    def resample_2d(self, interval_edges: dict[str, Iterable],
+                    precision: Optional[int] = None,
+                    include_original_edges: bool = False) -> 'IntervalSample':
+        """Resample a 2D fractional dim/index
+
+        Args:
+            interval_edges: A dict keyed by index name containing the grid the data is resampled to.
+            precision: Optional integer for the number of decimal places to round the grid values to.
+            include_original_edges: If True include the original edges in the grid.
+
+        Returns:
+            A new IntervalSample object interpolated onto the new grid
+        """
+
+        # TODO: add support for supplementary variables
+
+        # test the index contains a single interval index
+        self._check_two_dim_interval()
+
+        df_upsampled: pd.DataFrame = mass_preserving_interp_2d(self.data,
+                                                               interval_edges=interval_edges, precision=precision,
+                                                               include_original_edges=include_original_edges,
+                                                               mass_dry=self.mass_dry_var)
+
+        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False, mass_dry_var=self.mass_dry_var)
         obj._nodes = self._nodes
         obj.status.ranges = self.status.ranges
         return obj
