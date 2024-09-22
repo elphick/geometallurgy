@@ -10,7 +10,7 @@ Both individual objects can be filtered, as can multiple objects contained withi
 
 import pandas as pd
 
-from elphick.geomet import MassComposition, Sample
+from elphick.geomet import Sample
 from elphick.geomet.flowsheet import Flowsheet
 from elphick.geomet.datasets.sample_data import sample_data
 

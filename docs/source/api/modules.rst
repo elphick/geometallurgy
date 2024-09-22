@@ -11,8 +11,11 @@ API Reference
     base
     sample
     interval_sample
-    stream
-    flowsheet
-    operation
+    block_model
     utils
+
+    flowsheet.flowsheet
+    flowsheet.stream
+    flowsheet.operation
+    flowsheet.loader
 

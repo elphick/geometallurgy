@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 from elphick.geomet import Sample
+from elphick.geomet.flowsheet.stream import Stream
 from elphick.geomet.utils.data import sample_data
 
 
@@ -17,17 +18,17 @@ def expected_data() -> pd.DataFrame:
 
 def test_sample_split(expected_data):
     data = sample_data(include_moisture=True)
-    smpl = Sample(data=data, name='sample')
+    smpl: Sample = Sample(data=data, name='sample')
     ref, comp = smpl.split(fraction=0.5)
+    smpl: Stream
     pd.testing.assert_frame_equal(ref.data, comp.data)
 
     # test that the _node tuple values have preserved the relationship.
     # the first element of the tuple is the parent node, the second element is the child node.
-    assert smpl._nodes[1] == ref._nodes[0]
-    assert smpl._nodes[1] == comp._nodes[0]
-    assert ref._nodes[0] == comp._nodes[0]
-    assert ref._nodes[1] != comp._nodes[1]
-
+    assert smpl.nodes[1] == ref.nodes[0]
+    assert smpl.nodes[1] == comp.nodes[0]
+    assert ref.nodes[0] == comp.nodes[0]
+    assert ref.nodes[1] != comp.nodes[1]
 
 
 def test_sample_add(expected_data):

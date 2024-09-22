@@ -1,21 +1,25 @@
+from __future__ import annotations
 from pathlib import Path
-from typing import Optional, Literal, Callable, Union, Iterable
+from typing import Optional, Literal, Callable, Union, Iterable, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 from pandas import IntervalIndex
 from pandas.core.indexes.frozen import FrozenList
 
-from elphick.geomet import MassComposition
 import plotly.graph_objects as go
 import plotly.express as px
 
-from elphick.geomet.base import MC
 from elphick.geomet.utils.amenability import amenability_index
 from elphick.geomet.utils.interp import mass_preserving_interp
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
     cumulate, mass_to_composition
 from elphick.geomet.utils.sampling import random_int
+
+from elphick.geomet.base import MassComposition
+
+if TYPE_CHECKING:
+    from elphick.geomet.flowsheet.stream import Stream
 
 
 class IntervalSample(MassComposition):
@@ -121,13 +125,16 @@ class IntervalSample(MassComposition):
         index = MeanIntervalIndex(index)
         x = index.mean
 
+        self.to_stream()
+        self: Stream
+
         pn: pd.Series = pd.Series(partition_definition(x), name='K', index=index)
-        sample_1 = self.create_congruent_object(name=name_1)
+        sample_1 = self.create_congruent_object(name=name_1).to_stream()
         sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
-        sample_1.set_nodes([self._nodes[1], random_int()])
+        sample_1.set_nodes([self.nodes[1], random_int()])
         sample_2 = self.create_congruent_object(name=name_2)
         sample_2.mass_data = self.mass_data.copy().multiply((1 - pn), axis=0)
-        sample_2.set_nodes([self._nodes[1], random_int()])
+        sample_2.set_nodes([self.nodes[1], random_int()])
 
         return sample_1, sample_2
 
@@ -552,6 +559,5 @@ class IntervalSample(MassComposition):
                                                             include_original_edges=include_original_edges)
 
         obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False)
-        obj._nodes = self._nodes
         obj.status.ranges = self.status.ranges
         return obj
