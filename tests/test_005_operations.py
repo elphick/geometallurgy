@@ -1,7 +1,8 @@
 import pandas as pd
 import pytest
 
-from elphick.geomet import Sample, Operation
+from elphick.geomet import Sample
+from elphick.geomet.flowsheet.operation import Operation
 from elphick.geomet.utils.data import sample_data
 
 

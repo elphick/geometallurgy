@@ -1,4 +1,7 @@
+from pathlib import Path
+
 import pandas as pd
+import pooch
 import pytest
 
 
@@ -44,3 +47,22 @@ def sample_data(include_wet_mass: bool = True, include_dry_mass: bool = True,
     res.index.name = 'index'
 
     return res
+
+
+@pytest.fixture
+def omf_model_path() -> Path:
+    # Base URL and relative path
+    base_url = "https://github.com/OpenGeoVis/omfvista/raw/master/assets/"
+    relative_path = "test_file.omf"
+
+    # Create a Pooch object
+    p = pooch.create(
+        path=pooch.os_cache("geometallurgy"),
+        base_url=base_url,
+        registry={relative_path: None}
+    )
+
+    # Use fetch method to download the file
+    file_path = p.fetch(relative_path)
+
+    return Path(file_path)

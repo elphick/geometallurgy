@@ -11,7 +11,7 @@ import pyvista as pv
 from pyvista import CellType
 from scipy import stats
 
-from elphick.geomet import MassComposition
+from elphick.geomet.base import MassComposition
 from elphick.geomet.utils.block_model_converter import volume_to_vtk
 from elphick.geomet.utils.timer import log_timer
 
@@ -30,19 +30,20 @@ class BlockModel(MassComposition):
                  ranges: Optional[dict[str, list]] = None,
                  config_file: Optional[Path] = None):
 
-        if isinstance(data.index, pd.MultiIndex):
-            if all([n.lower() in data.index.names for n in ['x', 'y', 'z', 'dx', 'dy', 'dz']]):
-                self.is_irregular = True
-            elif all([n.lower() in data.index.names for n in ['x', 'y', 'z']]):
-                self.is_irregular = False
-            data.index.set_names([n.lower() for n in data.index.names], inplace=True)
+        if data is not None:
+            if isinstance(data.index, pd.MultiIndex):
+                if all([n.lower() in data.index.names for n in ['x', 'y', 'z', 'dx', 'dy', 'dz']]):
+                    self.is_irregular = True
+                elif all([n.lower() in data.index.names for n in ['x', 'y', 'z']]):
+                    self.is_irregular = False
+                data.index.set_names([n.lower() for n in data.index.names], inplace=True)
 
-        else:
-            raise ValueError("The index must be a pd.MultiIndex with names ['x', 'y', 'z'] "
-                             "or [['x', 'y', 'z', 'dx', 'dy', 'dz'].")
+            else:
+                raise ValueError("The index must be a pd.MultiIndex with names ['x', 'y', 'z'] "
+                                 "or [['x', 'y', 'z', 'dx', 'dy', 'dz'].")
 
-        # sort the data to ensure consistent with pyvista
-        data.sort_index(level=['z', 'y', 'x'], ascending=[True, True, True], inplace=True)
+            # sort the data to ensure consistent with pyvista
+            data.sort_index(level=['z', 'y', 'x'], ascending=[True, True, True], inplace=True)
 
         super().__init__(data=data, name=name, moisture_in_scope=moisture_in_scope,
                          mass_wet_var=mass_wet_var, mass_dry_var=mass_dry_var,

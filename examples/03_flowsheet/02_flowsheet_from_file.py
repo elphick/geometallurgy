@@ -7,15 +7,13 @@ from a file.
 
 """
 import inspect
-from copy import deepcopy
 from pathlib import Path
-from typing import Dict
 
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from elphick.geomet import Stream, Flowsheet
-from elphick.geomet.operation import OP, Operation
+from elphick.geomet.flowsheet import Flowsheet
+from elphick.geomet.flowsheet.stream import Stream
 from elphick.geomet.utils.data import sample_data
 
 __file__ = Path(inspect.getfile(inspect.currentframe())).resolve()

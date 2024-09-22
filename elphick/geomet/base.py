@@ -1,9 +1,10 @@
 import copy
+import inspect
 import logging
 import re
-from abc import ABC, abstractmethod
+from abc import ABC
 from pathlib import Path
-from typing import Optional, Union, Literal, TypeVar
+from typing import Optional, Union, Literal, TypeVar, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
@@ -19,8 +20,17 @@ from .plot import parallel_plot, comparison_plot
 import plotly.express as px
 import plotly.graph_objects as go
 
+if TYPE_CHECKING:
+    from elphick.geomet.flowsheet.stream import Stream
+
 # generic type variable, used for type hinting, to indicate that the type is a subclass of MassComposition
 MC = TypeVar('MC', bound='MassComposition')
+
+
+def filter_kwargs(cls, **kwargs):
+    valid_params = inspect.signature(cls.__init__).parameters
+    res = {k: v for k, v in kwargs.items() if k in valid_params}
+    return res
 
 
 class MassComposition(ABC):
@@ -56,9 +66,6 @@ class MassComposition(ABC):
         if config_file is None:
             config_file = Path(__file__).parent / './config/mc_config.yml'
         self.config = read_yaml(config_file)
-
-        # _nodes can preserve relationships from math operations, and can be used to build a network.
-        self._nodes: list[Union[str, int]] = [random_int(), random_int()]
 
         self.name: str = name
         self.moisture_in_scope: bool = moisture_in_scope
@@ -471,7 +478,7 @@ class MassComposition(ABC):
               fraction: float,
               name_1: Optional[str] = None,
               name_2: Optional[str] = None,
-              include_supplementary_data: bool = False) -> tuple[MC, MC]:
+              include_supplementary_data: bool = False) -> tuple['Stream', 'Stream']:
         """Split the object by mass
 
         A simple mass split maintaining the same composition
@@ -499,14 +506,22 @@ class MassComposition(ABC):
                                                              include_supp_data=include_supplementary_data)
         comp.update_mass_data(self._mass_data * (1 - fraction))
 
+        # Ensure self and other are Stream objects
+        self._convert_to_stream(self)
+        self._convert_to_stream(ref)
+        self._convert_to_stream(comp)
+        self: 'Stream'
+        ref: 'Stream'
+        comp: 'Stream'
+
         # create the relationships
-        ref._nodes = [self._nodes[1], random_int()]
-        comp._nodes = [self._nodes[1], random_int()]
+        ref.nodes = [self.nodes[1], random_int()]
+        comp.nodes = [self.nodes[1], random_int()]
 
         return ref, comp
 
     def add(self, other: MC, name: Optional[str] = None,
-            include_supplementary_data: bool = False) -> MC:
+            include_supplementary_data: bool = False) -> 'Stream':
         """Add two objects together
 
         Args:
@@ -517,18 +532,24 @@ class MassComposition(ABC):
         Returns:
             The new object
         """
-        res = self.create_congruent_object(name=name, include_mc_data=True,
-                                           include_supp_data=include_supplementary_data)
+
+        res: MC = self.create_congruent_object(name=name, include_mc_data=True,
+                                               include_supp_data=include_supplementary_data)
         res.update_mass_data(self._mass_data + other._mass_data)
 
+        # Ensure self and other are Stream objects
+        self: 'Stream' = self.to_stream()
+        other: 'Stream' = self._convert_to_stream(other)
+        res: 'Stream' = self._convert_to_stream(res)
+
         # create the relationships
-        other._nodes = [other._nodes[0], self._nodes[1]]
-        res._nodes = [self._nodes[1], random_int()]
+        other.nodes = [other.nodes[0], self.nodes[1]]
+        res.nodes = [self.nodes[1], random_int()]
 
         return res
 
     def sub(self, other: MC, name: Optional[str] = None,
-            include_supplementary_data: bool = False) -> MC:
+            include_supplementary_data: bool = False) -> 'Stream':
         """Subtract other from self
 
         Args:
@@ -543,8 +564,14 @@ class MassComposition(ABC):
                                            include_supp_data=include_supplementary_data)
         res.update_mass_data(self._mass_data - other._mass_data)
 
+        # Ensure self and other are Stream objects
+        self._convert_to_stream(self)
+        self._convert_to_stream(other)
+        self: 'Stream'
+        other: 'Stream'
+
         # create the relationships
-        res._nodes = [self._nodes[1], random_int()]
+        res.nodes = [self.nodes[1], random_int()]
 
         return res
 
@@ -586,7 +613,7 @@ class MassComposition(ABC):
         new_obj.name = name
         return new_obj
 
-    def __add__(self, other: MC) -> MC:
+    def __add__(self, other: MC) -> 'Stream':
         """Add two objects
 
         Perform the addition with the mass-composition variables only and then append any attribute variables.
@@ -597,10 +624,9 @@ class MassComposition(ABC):
         Returns:
 
         """
-
         return self.add(other, include_supplementary_data=True)
 
-    def __sub__(self, other: MC) -> MC:
+    def __sub__(self, other: MC) -> 'Stream':
         """Subtract the supplied object from self
 
         Perform the subtraction with the mass-composition variables only and then append any attribute variables.
@@ -610,8 +636,26 @@ class MassComposition(ABC):
         Returns:
 
         """
-
         return self.sub(other, include_supplementary_data=True)
+
+    def to_stream(self) -> 'Stream':
+        from elphick.geomet.flowsheet.stream import Stream  # Local import to avoid circular dependency
+        if not isinstance(self, Stream):
+            self.__class__ = type(self.__class__.__name__, (self.__class__, Stream), {})
+            filtered_kwargs = filter_kwargs(self.__class__, **self.__dict__)
+            filtered_kwargs['data'] = self.data
+            Stream.__init__(self, **filtered_kwargs)  # Initialize Stream properties
+        return self
+
+    @staticmethod
+    def _convert_to_stream(obj) -> 'Stream':
+        from elphick.geomet.flowsheet.stream import Stream  # Local import to avoid circular dependency
+        if not isinstance(obj, Stream):
+            obj.__class__ = type(obj.__class__.__name__, (obj.__class__, Stream), {})
+            filtered_kwargs = filter_kwargs(obj.__class__, **obj.__dict__)
+            filtered_kwargs['data'] = obj.data
+            Stream.__init__(obj, **filtered_kwargs)  # Initialize Stream properties
+        return obj
 
     def __truediv__(self, other: MC) -> MC:
         """Divide self by the supplied object
@@ -658,18 +702,6 @@ class MassComposition(ABC):
         # Create a new instance of the MassComposition class
         return cls(data=composition_df, **kwargs)
 
-    def set_parent_node(self, parent: MC) -> MC:
-        self._nodes = [parent._nodes[1], self._nodes[1]]
-        return self
-
-    def set_child_node(self, child: MC) -> MC:
-        self._nodes = [self._nodes[0], child._nodes[0]]
-        return self
-
-    def set_nodes(self, nodes: list) -> MC:
-        self._nodes = nodes
-        return self
-
     def query(self, expr: str, name: Optional[str] = None) -> MC:
         """Reduce the data by a query expression
 
@@ -702,6 +734,7 @@ class MassComposition(ABC):
                                                    data=self._mass_data.index.get_level_values(index_name))
 
         return res
+
 
 class OutOfRangeStatus:
     """A class to check and report out-of-range records in an MC object."""

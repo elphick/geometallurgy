@@ -2,8 +2,7 @@ import copy
 import json
 import logging
 from pathlib import Path
-from copy import deepcopy
-from typing import Dict, List, Optional, Tuple, Union, TypeVar
+from typing import Dict, List, Optional, Tuple, Union, TypeVar, TYPE_CHECKING
 
 import matplotlib
 import matplotlib.cm as cm
@@ -17,14 +16,17 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from plotly.subplots import make_subplots
 
-from elphick.geomet import Stream, Sample, Operation
+from elphick.geomet import Sample
 from elphick.geomet.base import MC
 from elphick.geomet.config.config_read import get_column_config
-from elphick.geomet.operation import NodeType, OP
+from elphick.geomet.flowsheet.operation import NodeType, OP
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
-from elphick.geomet.utils.loader import streams_from_dataframe
+from elphick.geomet.flowsheet.loader import streams_from_dataframe
 from elphick.geomet.utils.sampling import random_int
+
+if TYPE_CHECKING:
+    from elphick.geomet.flowsheet import Stream
 
 # generic type variable, used for type hinting that play nicely with subclasses
 FS = TypeVar('FS', bound='Flowsheet')
@@ -57,16 +59,16 @@ class Flowsheet:
         Returns:
 
         """
-
+        from elphick.geomet.flowsheet.operation import Operation
         cls._check_indexes(objects)
         bunch_of_edges: list = []
-        for mc in objects:
-            if mc._nodes is None:
-                raise KeyError(f'Stream {mc.name} does not have the node property set')
-            nodes = mc._nodes
+        for stream in objects:
+            if stream.nodes is None:
+                raise KeyError(f'Stream {stream.name} does not have the node property set')
+            nodes = stream.nodes
 
             # add the objects to the edges
-            bunch_of_edges.append((nodes[0], nodes[1], {'mc': mc, 'name': mc.name}))
+            bunch_of_edges.append((nodes[0], nodes[1], {'mc': stream, 'name': stream.name}))
 
         graph = nx.DiGraph(name=name)
         graph.add_edges_from(bunch_of_edges)
@@ -82,7 +84,7 @@ class Flowsheet:
         graph = nx.convert_node_labels_to_integers(graph)
         # update the temporary nodes on the mc object property to match the renumbered integers
         for node1, node2, data in graph.edges(data=True):
-            data['mc']._nodes = [node1, node2]
+            data['mc'].nodes = [node1, node2]
         # update the node names after renumbering
         for node in graph.nodes:
             graph.nodes[node]['mc'].name = str(node)
@@ -119,6 +121,9 @@ class Flowsheet:
         Returns:
             A Flowsheet object with no data on the edges
         """
+
+        from elphick.geomet.flowsheet.operation import Operation
+
         if 'FLOWSHEET' not in config:
             raise ValueError("Dictionary does not contain 'FLOWSHEET' root node")
 

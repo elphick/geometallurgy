@@ -4,7 +4,7 @@ from typing import Optional, Literal
 
 import pandas as pd
 
-from elphick.geomet import MassComposition
+from elphick.geomet.base import MassComposition
 
 
 class Sample(MassComposition):

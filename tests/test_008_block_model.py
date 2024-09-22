@@ -7,25 +7,7 @@ import pooch
 import pytest
 
 from elphick.geomet.block_model import BlockModel
-
-
-@pytest.fixture
-def omf_model_path() -> Path:
-    # Base URL and relative path
-    base_url = "https://github.com/OpenGeoVis/omfvista/raw/master/assets/"
-    relative_path = "test_file.omf"
-
-    # Create a Pooch object
-    p = pooch.create(
-        path=pooch.os_cache("geometallurgy"),
-        base_url=base_url,
-        registry={relative_path: None}
-    )
-
-    # Use fetch method to download the file
-    file_path = p.fetch(relative_path)
-
-    return Path(file_path)
+from fixtures import omf_model_path
 
 
 @pytest.mark.skip(reason="Need work to make the file available")
@@ -39,7 +21,6 @@ def test_load_from_omf(omf_model_path):
         bm: BlockModel = BlockModel.from_omf(omf_filepath=omf_model_path, columns=['DMT'])
 
     bm: BlockModel = BlockModel.from_omf(omf_filepath=omf_model_path, columns=['CU_pct'])
-
 
     bm.plot('CU_pct').show(auto_close=False)
     print('done')
@@ -79,6 +60,3 @@ def test_to_omf(omf_model_path):
     p.show(auto_close=False)
 
     print('done')
-
-
-
