@@ -1,3 +1,21 @@
+Geomet 0.3.3 (2024-09-21)
+=========================
+
+Bugfix
+------
+
+- Fixed incorrect label on plot_network nodes (#15)
+
+
+Geomet 0.3.2 (2024-09-03)
+=========================
+
+Other Tasks
+-----------
+
+- Reduced ydata-profiling = ^4.6.0 to enable pydantic < 2.0 if required. (#25)
+
+
 Geomet 0.3.1 (2024-08-19)
 =========================
 
