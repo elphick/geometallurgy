@@ -1,3 +1,20 @@
+Geomet 0.4.1 (2024-09-29)
+=========================
+
+Feature
+-------
+
+- Exposed weight_average method with group_by argument. (#29)
+
+
+Geomet 0.4.0 (2024-09-22)
+=========================
+
+Other Tasks
+-----------
+
+- Breaking change - refactored stream inheritance. Objects now mutate to Stream with nodes property after math operations (#21)
+
 Geomet 0.3.3 (2024-09-21)
 =========================
 
