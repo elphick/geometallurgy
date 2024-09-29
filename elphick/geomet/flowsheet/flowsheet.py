@@ -286,7 +286,7 @@ class Flowsheet:
                         if attr in ['_mass_data', '_supplementary_data'] and value is not None:
                             value = value.loc[index]
                         setattr(mc_new, attr, copy.deepcopy(value))
-                    mc_new.aggregate = mc_new._weight_average()
+                    mc_new.aggregate = mc_new.weight_average()
                     obj.graph[u][v]['mc'] = mc_new
             return obj
 

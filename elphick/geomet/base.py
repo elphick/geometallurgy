@@ -4,7 +4,7 @@ import logging
 import re
 from abc import ABC
 from pathlib import Path
-from typing import Optional, Union, Literal, TypeVar, TYPE_CHECKING
+from typing import Optional, Union, Literal, TypeVar, TYPE_CHECKING, Any
 
 import numpy as np
 import pandas as pd
@@ -136,12 +136,12 @@ class MassComposition(ABC):
     def mass_data(self, value):
         self._mass_data = value
         # Recalculate the aggregate whenever the data changes
-        self.aggregate = self._weight_average()
+        self.aggregate = self.weight_average()
 
     @property
-    def aggregate(self):
+    def aggregate(self) -> pd.DataFrame:
         if self._aggregate is None and self._mass_data is not None:
-            self._aggregate = self._weight_average()
+            self._aggregate = self.weight_average()
         return self._aggregate
 
     @aggregate.setter
@@ -182,7 +182,7 @@ class MassComposition(ABC):
         return None
 
     @property
-    def moisture_column(self) -> Optional[list[str]]:
+    def moisture_column(self) -> Optional[str]:
         res = 'h2o'
         if self.moisture_in_scope:
             res = self.moisture_var
@@ -336,20 +336,34 @@ class MassComposition(ABC):
 
         return fig
 
-    def _weight_average(self):
-        composition: pd.DataFrame = pd.DataFrame(
-            self._mass_data[self.composition_columns].sum(axis=0) / self._mass_data[
-                self.mass_dry_var].sum() * self.composition_factor).T
+    def weight_average(self, group_by: Optional[str] = None) -> pd.DataFrame:
 
-        mass_sum = pd.DataFrame(self._mass_data[self.mass_columns].sum(axis=0)).T
+        if group_by is None:
+            composition: pd.DataFrame = pd.DataFrame(
+                self._mass_data[self.composition_columns].sum(axis=0) / self._mass_data[
+                    self.mass_dry_var].sum() * self.composition_factor).T
 
-        # Recalculate the moisture
-        if self.moisture_in_scope:
-            mass_sum[self.moisture_column] = solve_mass_moisture(mass_wet=mass_sum[self.mass_columns[0]],
-                                                                 mass_dry=mass_sum[self.mass_columns[1]])
+            mass_sum = pd.DataFrame(self._mass_data[self.mass_columns].sum(axis=0)).T
 
-        # Create a DataFrame from the weighted averages
-        weighted_averages_df = pd.concat([mass_sum, composition], axis=1)
+            # Recalculate the moisture
+            if self.moisture_in_scope:
+                mass_sum[self.moisture_column] = solve_mass_moisture(mass_wet=mass_sum[self.mass_columns[0]],
+                                                                     mass_dry=mass_sum[self.mass_columns[1]])
+
+            # Create a DataFrame from the weighted averages
+            weighted_averages_df = pd.concat([mass_sum, composition], axis=1)
+        else:
+            group_var: pd.Series = self._supplementary_data[group_by]
+            weighted_averages_df = self._mass_data.groupby(group_var).apply(
+                lambda x: pd.DataFrame(
+                    x[self.composition_columns].sum(axis=0) / x[self.mass_dry_var].sum() * self.composition_factor).T)
+            weighted_averages_df.index = weighted_averages_df.index.droplevel(-1)
+            mass_sum = self._mass_data[self.mass_columns].groupby(group_var).sum()
+            weighted_averages_df = pd.concat([mass_sum, weighted_averages_df], axis=1)
+            if self.moisture_in_scope:
+                weighted_averages_df.insert(loc=2, column=self.moisture_column, value=solve_mass_moisture(
+                    mass_wet=mass_sum[self.mass_columns[0]],
+                    mass_dry=mass_sum[self.mass_columns[1]]))
 
         return weighted_averages_df
 
@@ -464,7 +478,7 @@ class MassComposition(ABC):
             if self._supplementary_data.index.names != self._mass_data.index.names:  # if indexes have been dropped
                 self._supplementary_data.index = self._mass_data.index
             self._supplementary_data = self._supplementary_data.loc[value.index]
-        self.aggregate = self._weight_average()
+        self.aggregate = self.weight_average()
 
     def filter_by_index(self, index: pd.Index):
         """Update the data by index"""
@@ -472,7 +486,7 @@ class MassComposition(ABC):
             self._mass_data = self._mass_data.loc[index]
         if self._supplementary_data is not None:
             self._supplementary_data = self._supplementary_data.loc[index]
-        self.aggregate = self._weight_average()
+        self.aggregate = self.weight_average()
 
     def split(self,
               fraction: float,
