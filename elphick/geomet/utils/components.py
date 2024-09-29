@@ -7,7 +7,7 @@ from typing import List, Dict, Union
 import periodictable as pt
 from periodictable.formulas import Formula
 
-custom_components: List[str] = ['LOI']
+custom_components: List[str] = ['LOI', 'Ash']
 
 # Kudos: pyrolite
 DEFAULT_CHARGES: Dict = dict(
