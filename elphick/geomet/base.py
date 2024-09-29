@@ -600,7 +600,7 @@ class MassComposition(ABC):
                 non_mass_cols: list[str] = [col for col in value.columns if
                                             col not in [self.mass_wet_var, self.mass_dry_var, self.moisture_var, 'h2o',
                                                         'H2O', 'H2O']]
-                component_cols: list[str] = get_components(value[non_mass_cols], strict=False)
+                component_cols: list[str] = get_components(value[non_mass_cols].columns, strict=False)
             else:
                 component_cols: list[str] = self.component_vars
             composition = value[component_cols]
