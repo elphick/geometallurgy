@@ -6,7 +6,8 @@ import pandas as pd
 from joblib import delayed
 from tqdm import tqdm
 
-from elphick.geomet import Sample, Stream
+from elphick.geomet import Sample
+from elphick.geomet.flowsheet.stream import Stream
 # from elphick.geomet.utils.interp import _upsample_grid_by_factor
 from elphick.geomet.utils.parallel import TqdmParallel
 from elphick.geomet.utils.pandas import column_prefix_counts, column_prefixes

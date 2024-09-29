@@ -2,8 +2,7 @@ import copy
 import json
 import logging
 from pathlib import Path
-from copy import deepcopy
-from typing import Dict, List, Optional, Tuple, Union, TypeVar
+from typing import Dict, List, Optional, Tuple, Union, TypeVar, TYPE_CHECKING
 
 import matplotlib
 import matplotlib.cm as cm
@@ -17,14 +16,17 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 from plotly.subplots import make_subplots
 
-from elphick.geomet import Stream, Sample, Operation
+from elphick.geomet import Sample
 from elphick.geomet.base import MC
 from elphick.geomet.config.config_read import get_column_config
-from elphick.geomet.operation import NodeType, OP
+from elphick.geomet.flowsheet.operation import NodeType, OP
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
-from elphick.geomet.utils.loader import streams_from_dataframe
+from elphick.geomet.flowsheet.loader import streams_from_dataframe
 from elphick.geomet.utils.sampling import random_int
+
+if TYPE_CHECKING:
+    from elphick.geomet.flowsheet import Stream
 
 # generic type variable, used for type hinting that play nicely with subclasses
 FS = TypeVar('FS', bound='Flowsheet')
@@ -57,16 +59,16 @@ class Flowsheet:
         Returns:
 
         """
-
+        from elphick.geomet.flowsheet.operation import Operation
         cls._check_indexes(objects)
         bunch_of_edges: list = []
-        for mc in objects:
-            if mc._nodes is None:
-                raise KeyError(f'Stream {mc.name} does not have the node property set')
-            nodes = mc._nodes
+        for stream in objects:
+            if stream.nodes is None:
+                raise KeyError(f'Stream {stream.name} does not have the node property set')
+            nodes = stream.nodes
 
             # add the objects to the edges
-            bunch_of_edges.append((nodes[0], nodes[1], {'mc': mc, 'name': mc.name}))
+            bunch_of_edges.append((nodes[0], nodes[1], {'mc': stream, 'name': stream.name}))
 
         graph = nx.DiGraph(name=name)
         graph.add_edges_from(bunch_of_edges)
@@ -82,7 +84,7 @@ class Flowsheet:
         graph = nx.convert_node_labels_to_integers(graph)
         # update the temporary nodes on the mc object property to match the renumbered integers
         for node1, node2, data in graph.edges(data=True):
-            data['mc']._nodes = [node1, node2]
+            data['mc'].nodes = [node1, node2]
         # update the node names after renumbering
         for node in graph.nodes:
             graph.nodes[node]['mc'].name = str(node)
@@ -119,6 +121,9 @@ class Flowsheet:
         Returns:
             A Flowsheet object with no data on the edges
         """
+
+        from elphick.geomet.flowsheet.operation import Operation
+
         if 'FLOWSHEET' not in config:
             raise ValueError("Dictionary does not contain 'FLOWSHEET' root node")
 
@@ -281,7 +286,7 @@ class Flowsheet:
                         if attr in ['_mass_data', '_supplementary_data'] and value is not None:
                             value = value.loc[index]
                         setattr(mc_new, attr, copy.deepcopy(value))
-                    mc_new.aggregate = mc_new._weight_average()
+                    mc_new.aggregate = mc_new.weight_average()
                     obj.graph[u][v]['mc'] = mc_new
             return obj
 
@@ -754,7 +759,7 @@ class Flowsheet:
             edge_annotations[data['mc'].name] = {'pos': np.mean([pos[u], pos[v]], axis=0)}
             edge_traces.append(go.Scatter(x=[x0, x1], y=[y0, y1],
                                           line=dict(width=2, color=edge_color_map[data['mc'].status.ok]),
-                                          hoverinfo='text',
+                                          hoverinfo='none',
                                           mode='lines+markers',
                                           text=data['mc'].name,
                                           marker=dict(
@@ -771,12 +776,14 @@ class Flowsheet:
         node_y = []
         node_color = []
         node_text = []
+        node_label = []
         for node in self.graph.nodes():
             x, y = pos[node]
             node_x.append(x)
             node_y.append(y)
             node_color.append(node_color_map[self.graph.nodes[node]['mc'].is_balanced])
             node_text.append(node)
+            node_label.append(self.graph.nodes[node]['mc'].name)
         node_trace = go.Scatter(
             x=node_x, y=node_y,
             mode='markers+text',
@@ -785,7 +792,9 @@ class Flowsheet:
                 color=node_color,
                 size=30,
                 line_width=2),
-            text=node_text)
+            text=node_text,
+            customdata=node_label,
+            hovertemplate='%{customdata}<extra></extra>')
 
         # edge annotations
         edge_labels = list(edge_annotations.keys())

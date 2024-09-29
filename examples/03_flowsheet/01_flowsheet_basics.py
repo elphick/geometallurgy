@@ -12,8 +12,9 @@ from typing import Dict
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from elphick.geomet import Stream, Flowsheet
-from elphick.geomet.operation import OP, Operation
+from elphick.geomet.flowsheet import Flowsheet
+from elphick.geomet.flowsheet.operation import Operation
+from elphick.geomet.flowsheet.stream import Stream
 from elphick.geomet.utils.data import sample_data
 
 # %%
@@ -32,7 +33,7 @@ obj_strm_1, obj_strm_2 = obj_strm.split(0.4, name_1='stream 1', name_2='stream 2
 # This is done to capture the relationships implicitly defined by any math operations performed on the objects.
 
 for obj in [obj_strm, obj_strm_1, obj_strm_2]:
-    print(obj.name, obj._nodes)
+    print(obj.name, obj.nodes)
 
 # %%
 #
@@ -53,7 +54,7 @@ for node in fs.graph.nodes:
 # Note that the random node placeholder integers have been renumbered for readability.
 
 for obj in [obj_strm, obj_strm_1, obj_strm_2]:
-    print(obj.name, obj._nodes)
+    print(obj.name, obj.nodes)
 
 # %%
 # Print the overall network balanced status
