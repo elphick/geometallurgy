@@ -88,7 +88,7 @@ fig
 
 # %%
 # Up-sample by a factor
-# --------------------
+# ---------------------
 # We can up-sample each of the original fraction by a factor.  Since adjacent fractions are similar, the fractional
 # plot is reasonably smooth.  Note however, that fraction widths are still different, caused by the original sieve
 # selection.
@@ -99,7 +99,7 @@ fig
 
 # %%
 # Up-sample to a sieve series
-# --------------------------
+# ---------------------------
 # Standard sieve series account for the log nature of a particle size distribution.  This results in reasonably
 # equal width intervals on a log scale.  We will up-sample to a standard sieve series and plot the results.
 
