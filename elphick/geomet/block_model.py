@@ -94,7 +94,7 @@ class BlockModel(MassComposition):
         # set the index to the cell centroids
         df.set_index(['x', 'y', 'z'], drop=True, inplace=True)
 
-        if not isinstance(bm, pv.RectilinearGrid):
+        if not isinstance(bm, imports.pv.RectilinearGrid):
             for d, t in zip(['dx', 'dy', 'dz'], ['tensor_u', 'tensor_v', 'tensor_w']):
                 # todo: fix - wrong shape
                 df[d] = eval(f"omf_bm.geometry.{t}")
@@ -319,7 +319,8 @@ class BlockModel(MassComposition):
 
     @staticmethod
     @log_timer
-    def voxelise(blocks):
+    @import_extras
+    def voxelise(blocks, imports) -> 'pv.UnstructuredGrid':
 
         logger = logging.getLogger(__name__)
         msg = "Voxelising blocks requires PVGeo package."
@@ -336,7 +337,7 @@ class BlockModel(MassComposition):
         centroids = np.column_stack((x_values, y_values, z_values))
 
         # Create a PolyData object
-        polydata = pv.PolyData(centroids)
+        polydata = imports.pv.PolyData(centroids)
 
         # Add cell values as point data
         for column in blocks.columns:
