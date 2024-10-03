@@ -1,10 +1,4 @@
-from typing import Union
-
-from elphick.geomet.base import MassComposition, filter_kwargs
-from elphick.geomet.block_model import BlockModel
-from elphick.geomet.interval_sample import IntervalSample
-from elphick.geomet.sample import Sample
-from elphick.geomet.utils.sampling import random_int
+from elphick.geomet.base import MassComposition
 
 
 class Stream(MassComposition):

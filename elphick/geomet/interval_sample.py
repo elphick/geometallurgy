@@ -10,6 +10,7 @@ from pandas.core.indexes.frozen import FrozenList
 import plotly.graph_objects as go
 import plotly.express as px
 
+import elphick.geomet.flowsheet.stream
 from elphick.geomet.utils.amenability import amenability_index
 from elphick.geomet.utils.interp import mass_preserving_interp, mass_preserving_interp_2d
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
@@ -599,7 +600,22 @@ class IntervalSample(MassComposition):
                                                                include_original_edges=include_original_edges,
                                                                mass_dry=self.mass_dry_var)
 
-        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False, mass_dry_var=self.mass_dry_var)
-        obj._nodes = self._nodes
+        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False,
+                                             mass_dry_var=self.mass_dry_var)
+        if hasattr(obj, 'nodes'):
+            self.nodes = self.nodes
         obj.status.ranges = self.status.ranges
         return obj
+
+    def _specific_mass(self) -> Optional[pd.DataFrame]:
+        """Calculate the specific mass of the sample
+
+        Specific mass is the mass of the sample fractions divided by the mass of all fractions.
+        The sum of the specific mass (for mass_dry) is 1.0 by definition.
+        """
+        res = None
+        if self.data is not None:
+            res = self.mass_data.div(self.mass_data[self.mass_dry_var].sum(), axis=0)
+            if self.moisture_in_scope:
+                res.drop(columns=[self.mass_wet_var], inplace=True)
+        return res
