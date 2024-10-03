@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.774** total execution time for 17 files **from all galleries**:
+**00:07.865** total execution time for 17 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,11 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_examples_04_block_model_03_load_block_model.py` (``..\..\examples\04_block_model\03_load_block_model.py``)
+     - 00:07.865
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_01_create_sample.py` (``..\..\examples\01_getting_started\01_create_sample.py``)
-     - 00:00.774
+     - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_02_math_operations.py` (``..\..\examples\01_getting_started\02_math_operations.py``)
      - 00:00.000
@@ -72,9 +75,6 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_04_block_model_02_create_block_model.py` (``..\..\examples\04_block_model\02_create_block_model.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_04_block_model_03_load_block_model.py` (``..\..\examples\04_block_model\03_load_block_model.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_05_mass_balance_01_mass_balance.py` (``..\..\examples\05_mass_balance\01_mass_balance.py``)

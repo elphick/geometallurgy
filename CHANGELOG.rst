@@ -1,3 +1,12 @@
+Geomet 0.4.2 (2024-10-03)
+=========================
+
+Other Tasks
+-----------
+
+- Improved management of dependencies for the blockmodel extra (#32)
+
+
 Geomet 0.4.1 (2024-09-29)
 =========================
 

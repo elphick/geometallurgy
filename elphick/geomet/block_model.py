@@ -1,19 +1,31 @@
-import copy
 import logging
+from functools import wraps
 from pathlib import Path
-from typing import Optional, Union, Literal
+from typing import Optional, Union, Literal, TYPE_CHECKING
 
 import numpy as np
-import omf
-import omfvista
 import pandas as pd
-import pyvista as pv
-from pyvista import CellType
 from scipy import stats
 
+from elphick.geomet import extras
 from elphick.geomet.base import MassComposition
+from elphick.geomet.extras import BlockmodelExtras
 from elphick.geomet.utils.block_model_converter import volume_to_vtk
 from elphick.geomet.utils.timer import log_timer
+
+if TYPE_CHECKING:
+    import pyvista as pv
+
+
+# Modify the import_extras decorator
+def import_extras(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        omf, omfvista, pv = extras.import_blockmodel_packages()
+        extras_instance = BlockmodelExtras(omf, omfvista, pv)
+        return func(*args, imports=extras_instance, **kwargs)
+
+    return wrapper
 
 
 class BlockModel(MassComposition):
@@ -52,13 +64,15 @@ class BlockModel(MassComposition):
                          ranges=ranges, config_file=config_file)
 
     @classmethod
-    def from_omf(cls, omf_filepath: Path,
+    @import_extras
+    def from_omf(cls, omf_filepath: Path, imports,
                  name: Optional[str] = None,
                  columns: Optional[list[str]] = None) -> 'BlockModel':
-        reader = omf.OMFReader(str(omf_filepath))
-        project: omf.Project = reader.get_project()
+
+        reader = imports.omf.OMFReader(str(omf_filepath))
+        project: imports.omf.Project = reader.get_project()
         # get the first block model detected in the omf project
-        block_model_candidates = [obj for obj in project.elements if isinstance(obj, omf.volume.VolumeElement)]
+        block_model_candidates = [obj for obj in project.elements if isinstance(obj, imports.omf.volume.VolumeElement)]
         if name:
             omf_bm = [obj for obj in block_model_candidates if obj.name == name]
             if len(omf_bm) == 0:
@@ -96,13 +110,15 @@ class BlockModel(MassComposition):
 
         return cls(data=df, name=omf_bm.name, moisture_in_scope=moisture_in_scope)
 
-    def to_omf(self, omf_filepath: Path, name: str = 'Block Model', description: str = 'A block model'):
+    @import_extras
+    def to_omf(self, omf_filepath: Path, imports, name: str = 'Block Model', description: str = 'A block model'):
 
         # Create a Project instance
-        project = omf.Project(name=name, description=description)
+        project = imports.omf.Project(name=name, description=description)
 
         # Create a VolumeElement instance for the block model
-        block_model = omf.VolumeElement(name=name, description=description, geometry=omf.VolumeGridGeometry())
+        block_model = imports.omf.VolumeElement(name=name, description=description,
+                                                geometry=imports.omf.VolumeGridGeometry())
 
         # Set the geometry of the block model
         block_model.geometry.origin = self.data.index.get_level_values('x').min(), \
@@ -139,7 +155,7 @@ class BlockModel(MassComposition):
         blocks: pd.DataFrame = self.data.sort_index()
 
         # Add the data to the block model
-        data = [omf.ScalarData(name=col, location='cells', array=blocks[col].values) for col in blocks.columns]
+        data = [imports.omf.ScalarData(name=col, location='cells', array=blocks[col].values) for col in blocks.columns]
         block_model.data = data
 
         # Add the block model to the project
@@ -148,10 +164,11 @@ class BlockModel(MassComposition):
         assert project.validate()
 
         # Write the project to a file
-        omf.OMFWriter(project, str(omf_filepath))
+        imports.omf.OMFWriter(project, str(omf_filepath))
 
     @log_timer
-    def get_blocks(self) -> Union[pv.StructuredGrid, pv.UnstructuredGrid]:
+    def get_blocks(self) -> Union['pv.StructuredGrid', 'pv.UnstructuredGrid']:
+
         try:
             # Attempt to create a regular grid
             grid = self.create_structured_grid()
@@ -162,14 +179,14 @@ class BlockModel(MassComposition):
             self._logger.debug("Created a pv.UnstructuredGrid.")
         return grid
 
-    @log_timer
-    def plot(self, scalar: str, show_edges: bool = True) -> pv.Plotter:
+    @import_extras
+    def plot(self, scalar: str, imports, show_edges: bool = True) -> 'pv.Plotter':
 
         if scalar not in self.data_columns:
             raise ValueError(f"Column '{scalar}' not found in the DataFrame.")
 
         # Create a PyVista plotter
-        plotter = pv.Plotter()
+        plotter = imports.pv.Plotter()
 
         mesh = self.get_blocks()
 
@@ -214,7 +231,9 @@ class BlockModel(MassComposition):
 
         return stats.mode(x_spacing).mode, stats.mode(y_spacing).mode, stats.mode(z_spacing).mode
 
-    def create_structured_grid(self) -> pv.StructuredGrid:
+    @import_extras
+    def create_structured_grid(self, imports) -> 'pv.StructuredGrid':
+
         # Get the unique x, y, z coordinates (centroids)
         data = self.data
         x_centroids = data.index.get_level_values('x').unique()
@@ -235,7 +254,7 @@ class BlockModel(MassComposition):
         x, y, z = np.meshgrid(x_points, y_points, z_points, indexing='ij')
 
         # Create a StructuredGrid object
-        grid = pv.StructuredGrid(x, y, z)
+        grid = imports.pv.StructuredGrid(x, y, z)
 
         # Add the data from the DataFrame to the grid
         for column in data.columns:
@@ -243,16 +262,17 @@ class BlockModel(MassComposition):
 
         return grid
 
-    def create_voxels(self) -> pv.UnstructuredGrid:
+    def create_voxels(self) -> 'pv.UnstructuredGrid':
         grid = self.voxelise(self.data)
         return grid
 
-    @log_timer
-    def create_unstructured_grid(self) -> pv.UnstructuredGrid:
+    @import_extras
+    def create_unstructured_grid(self, imports) -> 'pv.UnstructuredGrid':
         """
         Requires the index to be a pd.MultiIndex with names ['x', 'y', 'z', 'dx', 'dy', 'dz'].
         :return:
         """
+
         # Get the x, y, z coordinates and cell dimensions
         blocks = self.data.reset_index().sort_values(['z', 'y', 'x'])
         # if no dims are passed, estimate them
@@ -289,7 +309,7 @@ class BlockModel(MassComposition):
         # REF: https://docs/pyvista.org/examples/00-load/create-unstructured-surface.html
         cells_hex = np.arange(n_cells * 8).reshape(n_cells, 8)
 
-        grid = pv.UnstructuredGrid({CellType.VOXEL: cells_hex}, nodes)
+        grid = imports.pv.UnstructuredGrid({imports.pv.CellType.VOXEL: cells_hex}, nodes)
 
         # add the attributes (column) data
         for col in blocks.columns:
