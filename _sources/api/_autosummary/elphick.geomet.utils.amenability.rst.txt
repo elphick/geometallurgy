@@ -1,0 +1,33 @@
+elphick.geomet.utils.amenability
+================================
+
+.. automodule:: elphick.geomet.utils.amenability
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      amenability_index
+      area_trapezoid
+      pairwise
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

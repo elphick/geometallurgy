@@ -1,0 +1,32 @@
+elphick.geomet.utils.partition
+==============================
+
+.. automodule:: elphick.geomet.utils.partition
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      napier_munn
+      perfect
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

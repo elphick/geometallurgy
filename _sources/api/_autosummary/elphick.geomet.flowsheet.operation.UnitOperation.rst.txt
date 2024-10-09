@@ -1,0 +1,40 @@
+elphick.geomet.flowsheet.operation.UnitOperation
+================================================
+
+.. currentmodule:: elphick.geomet.flowsheet.operation
+
+.. autoclass:: UnitOperation
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~UnitOperation.__init__
+      ~UnitOperation.check_balance
+      ~UnitOperation.get_input_mass
+      ~UnitOperation.get_output_mass
+      ~UnitOperation.solve
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~UnitOperation.has_empty_input
+      ~UnitOperation.has_empty_output
+      ~UnitOperation.inputs
+      ~UnitOperation.is_balanced
+      ~UnitOperation.node_type
+      ~UnitOperation.outputs
+      ~UnitOperation.unbalanced_records
+   
+   

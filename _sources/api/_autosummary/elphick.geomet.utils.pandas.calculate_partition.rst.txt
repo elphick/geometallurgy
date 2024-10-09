@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.calculate\_partition
+================================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: calculate_partition

@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.prepare\_columns
+============================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: prepare_columns

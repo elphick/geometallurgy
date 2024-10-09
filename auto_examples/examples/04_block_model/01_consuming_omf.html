@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consuming OMF &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Create Block Model" href="02_create_block_model.html" />
+    <link rel="prev" title="Flowsheet from File" href="../03_flowsheet/02_flowsheet_from_file.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.3
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#interval-samples">Interval Samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#flowsheets">Flowsheets</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#block-models">Block Models</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Consuming OMF</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load">Load</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="02_create_block_model.html">Create Block Model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_load_block_model.html">Load Block Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mass-balancing">Mass Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mapping">Mapping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Example Gallery</a></li>
+      <li class="breadcrumb-item active">Consuming OMF</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/auto_examples/examples/04_block_model/01_consuming_omf.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-examples-04-block-model-01-consuming-omf-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="consuming-omf">
+<span id="sphx-glr-auto-examples-examples-04-block-model-01-consuming-omf-py"></span><h1>Consuming OMF<a class="headerlink" href="#consuming-omf" title="Link to this heading"></a></h1>
+<p>This example demonstrates how to consume and Open Mining Format file</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">omf</span>
+<span class="kn">import</span> <span class="nn">pooch</span>
+<span class="kn">import</span> <span class="nn">json</span>
+</pre></div>
+</div>
+<section id="load">
+<h2>Load<a class="headerlink" href="#load" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Base URL and relative path</span>
+<span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/OpenGeoVis/omfvista/raw/master/assets/&quot;</span>
+<span class="n">relative_path</span> <span class="o">=</span> <span class="s2">&quot;test_file.omf&quot;</span>
+
+<span class="c1"># Create a Pooch object</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="n">pooch</span><span class="o">.</span><span class="n">os_cache</span><span class="p">(</span><span class="s2">&quot;geometallurgy&quot;</span><span class="p">),</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">,</span>
+    <span class="n">registry</span><span class="o">=</span><span class="p">{</span><span class="n">relative_path</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Use fetch method to download the file</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">relative_path</span><span class="p">)</span>
+
+<span class="n">reader</span> <span class="o">=</span> <span class="n">omf</span><span class="o">.</span><span class="n">OMFReader</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="n">project</span><span class="p">:</span> <span class="n">omf</span><span class="o">.</span><span class="n">Project</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">get_project</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">elements</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Wolfpass
+[&lt;omf.pointset.PointSetElement object at 0x7f6664065ff0&gt;, &lt;omf.lineset.LineSetElement object at 0x7f6664064190&gt;, &lt;omf.surface.SurfaceElement object at 0x7f66641cb4c0&gt;, &lt;omf.surface.SurfaceElement object at 0x7f66641cbac0&gt;, &lt;omf.surface.SurfaceElement object at 0x7f66641ca1a0&gt;, &lt;omf.surface.SurfaceElement object at 0x7f66641ca3b0&gt;, &lt;omf.surface.SurfaceElement object at 0x7f66641c95d0&gt;, &lt;omf.surface.SurfaceElement object at 0x7f66641ca050&gt;, &lt;omf.volume.VolumeElement object at 0x7f66641c8c40&gt;]
+OMF Wolfpass model
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.390 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-examples-04-block-model-01-consuming-omf-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/4a43b349a0c8256ab547b49bbc8213f8/01_consuming_omf.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">01_consuming_omf.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/2b85bbdec6ab16bf135efc4925c85ba0/01_consuming_omf.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">01_consuming_omf.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../03_flowsheet/02_flowsheet_from_file.html" class="btn btn-neutral float-left" title="Flowsheet from File" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="02_create_block_model.html" class="btn btn-neutral float-right" title="Create Block Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
