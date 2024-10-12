@@ -26,7 +26,7 @@ from elphick.geomet.flowsheet.loader import streams_from_dataframe
 from elphick.geomet.utils.sampling import random_int
 
 if TYPE_CHECKING:
-    from elphick.geomet.flowsheet import Stream
+    from elphick.geomet.flowsheet.stream import Stream
 
 # generic type variable, used for type hinting that play nicely with subclasses
 FS = TypeVar('FS', bound='Flowsheet')

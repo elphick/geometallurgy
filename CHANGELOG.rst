@@ -1,3 +1,30 @@
+Geomet 0.4.4 (2024-10-10)
+=========================
+
+Other Tasks
+-----------
+
+- Support up to python 3.12 (#36)
+
+
+Geomet 0.4.3 (2024-10-09)
+=========================
+
+Other Tasks
+-----------
+
+- Support for later pandera version (#34)
+
+
+Geomet 0.4.2 (2024-10-03)
+=========================
+
+Other Tasks
+-----------
+
+- Improved management of dependencies for the blockmodel extra (#32)
+
+
 Geomet 0.4.1 (2024-09-29)
 =========================
 
