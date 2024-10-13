@@ -352,7 +352,8 @@ class MassComposition(ABC):
 
             # Create a DataFrame from the weighted averages
             weighted_averages_df = pd.concat([mass_sum, composition], axis=1)
-        else:
+
+        else:  # group by a variable
             group_var: pd.Series = self._supplementary_data[group_by]
             weighted_averages_df = self._mass_data.groupby(group_var).apply(
                 lambda x: pd.DataFrame(
