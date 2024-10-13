@@ -14,7 +14,8 @@ import plotly.express as px
 
 import elphick.geomet.flowsheet.stream
 from elphick.geomet.utils.amenability import amenability_index
-from elphick.geomet.utils.interp import mass_preserving_interp, mass_preserving_interp_2d
+from elphick.geomet.utils.interp import mass_preserving_interp
+from elphick.geomet.utils.interp2 import mass_preserving_interp_2d
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
     cumulate, mass_to_composition
 from elphick.geomet.utils.sampling import random_int
@@ -593,14 +594,12 @@ class IntervalSample(MassComposition):
         return obj
 
     def resample_2d(self, interval_edges: dict[str, Iterable],
-                    precision: Optional[int] = None,
-                    include_original_edges: bool = False) -> 'IntervalSample':
+                    precision: Optional[int] = None) -> 'IntervalSample':
         """Resample a 2D fractional dim/index
 
         Args:
             interval_edges: A dict keyed by index name containing the grid the data is resampled to.
             precision: Optional integer for the number of decimal places to round the grid values to.
-            include_original_edges: If True include the original edges in the grid.
 
         Returns:
             A new IntervalSample object interpolated onto the new grid
@@ -611,15 +610,20 @@ class IntervalSample(MassComposition):
         # test the index contains a single interval index
         self._check_two_dim_interval()
 
-        df_upsampled: pd.DataFrame = mass_preserving_interp_2d(self.data,
-                                                               interval_edges=interval_edges, precision=precision,
-                                                               include_original_edges=include_original_edges,
-                                                               mass_dry=self.mass_dry_var)
+        df_upsampled_specific_mass: pd.DataFrame = mass_preserving_interp_2d(self._specific_mass(),
+                                                                             interval_edges=interval_edges,
+                                                                             precision=precision,
+                                                                             mass_dry=self.mass_dry_var)
+
+        # convert from specific mass to mass
+        df_upsampled = df_upsampled_specific_mass.mul(self.mass_data[self.mass_dry_var].sum(), axis=0)
+        df_upsampled[self.composition_columns] = df_upsampled[self.composition_columns].div(
+            df_upsampled[self.mass_dry_var], axis=0).mul(self.composition_factor, axis=0)
 
         obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False,
                                              mass_dry_var=self.mass_dry_var)
         if hasattr(obj, 'nodes'):
-            self.nodes = self.nodes
+            obj.nodes = self.nodes
         obj.status.ranges = self.status.ranges
         return obj
 

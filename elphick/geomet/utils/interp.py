@@ -133,7 +133,8 @@ def mass_preserving_interp_2d(intervals: pd.DataFrame, interval_edges: dict[str,
 
     Args:
         intervals: Dataframe with two pd.IntervalIndexes, in mass-composition space.
-        interval_edges: Dict of the values of the new grid (interval edges) for each dimension, keyed by index name (dimension).
+        interval_edges: Dict of the values of the new grid (interval edges) for each dimension, keyed by
+         index name (dimension).
         include_original_edges: If True include the original index edges in the result
         precision: Number of decimal places to round the index (edge) values.
         mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
