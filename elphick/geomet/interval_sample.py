@@ -585,11 +585,12 @@ class IntervalSample(MassComposition):
         # test the index contains a single interval index
         self._check_one_dim_interval()
 
-        df_upsampled: pd.DataFrame = mass_preserving_interp(self.data,
+        df_upsampled: pd.DataFrame = mass_preserving_interp(self.mass_data,
                                                             interval_edges=interval_edges, precision=precision,
                                                             include_original_edges=include_original_edges)
 
-        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False)
+        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False,
+                                             mass_dry_var=self.mass_dry_var)
         obj.status.ranges = self.status.ranges
         return obj
 

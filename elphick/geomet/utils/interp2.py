@@ -54,6 +54,12 @@ def mass_preserving_interp_2d(specific_mass_intervals: pd.DataFrame,
         interval_edges: dict[str, list[float]] = {dim: specific_mass_intervals.index.get_level_values(dim).unique()
                                                   for dim in dim_names}
 
+    # check that the supplied interval edges are bounded on the left by the sampled minimum
+    for dim in dim_names:
+        if np.min(interval_edges[dim]) < specific_mass_intervals.index.get_level_values(dim).left.min():
+            raise ValueError(f"The supplied {dim} grid contains values lower than the minimum in the sample.")
+
+
     # Convert to a numpy 3d array
     # [i, j, k] where i is the dim1, j is the dim2, and k is the component
 
