@@ -480,6 +480,7 @@ class MassComposition(ABC):
                 self._supplementary_data.index = self._mass_data.index
             self._supplementary_data = self._supplementary_data.loc[value.index]
         self.aggregate = self.weight_average()
+        self.status = OutOfRangeStatus(self, self.status.ranges)
 
     def filter_by_index(self, index: pd.Index):
         """Update the data by index"""
@@ -586,6 +587,7 @@ class MassComposition(ABC):
         other: 'Stream'
 
         # create the relationships
+        other.nodes = [self.nodes[1], other.nodes[1]]
         res.nodes = [self.nodes[1], random_int()]
 
         return res
@@ -738,6 +740,41 @@ class MassComposition(ABC):
 
         return res
 
+    def compare(self, other: 'MassComposition', comparisons: Union[str, list[str]] = 'recovery',
+                explicit_names: bool = True) -> pd.DataFrame:
+
+        comparisons = [comparisons] if isinstance(comparisons, str) else comparisons
+        valid_comparisons: set = {'recovery', 'difference', 'divide', 'all'}
+
+        cols = [col for col in self.data.data_vars if col not in self.data.mc.mc_vars_attrs]
+
+        chunks: list[pd.DataFrame] = []
+        if 'recovery' in comparisons or comparisons == ['all']:
+            df: pd.DataFrame = self._mass_data[self.component_vars] / other._mass_data[self.component_vars]
+            if explicit_names:
+                df.columns = [f"{self.name}_{col}_{self.config['comparisons']['recovery']}_{other.name}" for col in
+                              df.columns]
+            chunks.append(df)
+        if 'difference' in comparisons or comparisons == ['all']:
+            df: pd.DataFrame = self.data[cols] - other.data[cols]
+            if explicit_names:
+                df.columns = [f"{self.name}_{col}_{self.config['comparisons']['difference']}_{other.name}" for col in
+                              df.columns]
+            chunks.append(df)
+        if 'divide' in comparisons or comparisons == ['all']:
+            df: pd.DataFrame = self.data[cols] / other.data[cols]
+            if explicit_names:
+                df.columns = [f"{self.name}_{col}_{self.config['comparisons']['divide']}_{other.name}" for col in
+                              df.columns]
+            chunks.append(df)
+
+        if not chunks:
+            raise ValueError(f"The comparison argument is not valid: {valid_comparisons}")
+
+        res: pd.DataFrame = pd.concat(chunks, axis=1)
+
+        return res
+
     def reset_index(self, index_name: str) -> MC:
         res = self.create_congruent_object(name=f"{self.name} (reset_index)", include_mc_data=True,
                                            include_supp_data=True)
@@ -768,7 +805,7 @@ class OutOfRangeStatus:
             self.oor: pd.DataFrame = self._check_range()
             self.num_oor: int = len(self.oor)
             self.failing_components: Optional[list[str]] = list(
-                self.oor.dropna(axis=1).columns) if self.num_oor > 0 else None
+                self.oor.dropna(axis=1, how='all').columns) if self.num_oor > 0 else None
 
     def get_ranges(self, ranges: dict[str, list]) -> dict[str, list]:
 
