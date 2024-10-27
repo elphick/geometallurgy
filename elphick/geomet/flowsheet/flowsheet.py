@@ -205,7 +205,7 @@ class Flowsheet:
         with open(file_path, 'r') as file:
             config = yaml.safe_load(file)
 
-        return cls.from_dict_old(config)
+        return cls.from_dict(config)
 
     @classmethod
     def from_json(cls, file_path: Path) -> FS:
@@ -221,6 +221,46 @@ class Flowsheet:
             config = json.load(file)
 
         return cls.from_dict(config)
+
+    def unhealthy_stream_records(self) -> pd.DataFrame:
+        """Return on unhealthy streams
+
+        Return the records for all streams that are not healthy.
+        Returns:
+            DataFrame: A DataFrame containing the unhealthy stream records
+        """
+        unhealthy_edges = [e for e in self.graph.edges if not self.graph.edges[e]['mc'].status.ok]
+        unhealthy_data: pd.DataFrame = pd.concat(
+            [self.graph.edges[e]['mc'].status.oor.assign(stream=self.graph.edges[e]['mc'].name) for e in
+             unhealthy_edges], axis=1)
+        # move the last column to the front
+        unhealthy_data = unhealthy_data[[unhealthy_data.columns[-1]] + list(unhealthy_data.columns[:-1])]
+
+        # append the flowsheet records for additional context
+        records: pd.DataFrame = self.to_dataframe()
+        records = records.unstack(level='name').swaplevel(axis=1).sort_index(axis=1, level=0, sort_remaining=False)
+        records.columns = [f"{col[0]}_{col[1]}" for col in records.columns]
+
+        result = unhealthy_data.merge(records, left_index=True, right_index=True, how='left')
+        return result
+
+    def unhealthy_node_records(self) -> pd.DataFrame:
+        """Return unhealthy nodes
+
+        Return the records for all nodes that are not healthy.
+        Returns:
+            DataFrame: A DataFrame containing the unhealthy node records
+        """
+        unhealthy_nodes = [n for n in self.graph.nodes if
+                           self.graph.nodes[n]['mc'].node_type == NodeType.BALANCE and not self.graph.nodes[n][
+                               'mc'].is_balanced]
+        unhealthy_data: pd.DataFrame = pd.concat([self.graph.nodes[n]['mc'].unbalanced_records.assign(node=self.graph.nodes[n]['mc'].name) for n in unhealthy_nodes], axis=1)
+        # move the last column to the front
+        unhealthy_data = unhealthy_data[[unhealthy_data.columns[-1]] + list(unhealthy_data.columns[:-1])]
+
+        # todo: append  the streams around the node
+
+        return unhealthy_data
 
     def add_stream(self, stream: 'Stream'):
         """Add a stream to the flowsheet."""
