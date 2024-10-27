@@ -3,6 +3,7 @@ import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union, TypeVar, TYPE_CHECKING
+import re
 
 import matplotlib
 import matplotlib.cm as cm
@@ -39,10 +40,22 @@ class Flowsheet:
         self._logger: logging.Logger = logging.getLogger(__class__.__name__)
 
     @property
-    def balanced(self) -> bool:
+    def healthy(self) -> bool:
+        return self.all_nodes_healthy and self.all_streams_healthy
+
+    @property
+    def all_nodes_healthy(self) -> bool:
         bal_vals: List = [self.graph.nodes[n]['mc'].is_balanced for n in self.graph.nodes]
         bal_vals = [bv for bv in bal_vals if bv is not None]
         return all(bal_vals)
+
+    @property
+    def all_streams_healthy(self) -> bool:
+        """Check if all streams are healthy"""
+        # account for the fact that some edges may not have an mc object
+        if not all([d['mc'] for u, v, d in self.graph.edges(data=True)]):
+            return False
+        return all([self.graph.edges[u, v]['mc'].status.ok for u, v in self.graph.edges])
 
     @classmethod
     def from_objects(cls, objects: list[MC],
@@ -417,14 +430,18 @@ class Flowsheet:
         return hf
 
     def _plot_title(self, html: bool = True, compact: bool = False):
-        title = self.name
-        # title = f"{self.name}<br><br><sup>Balanced: {self.balanced}<br>Edge Status OK: {self.edge_status[0]}</sup>"
+        # title = self.name
+        title = (f"{self.name}<br><sup>Nodes Healthy: "
+                 f"<span style='color: {'red' if not self.all_nodes_healthy else 'black'}'>{self.all_nodes_healthy}</span>, "
+                 f"Streams Healthy: "
+                 f"<span style='color: {'red' if not self.all_streams_healthy else 'black'}'>{self.all_streams_healthy}</span></sup>")
         # if compact:
         #     title = title.replace("<br><br>", "<br>").replace("<br>Edge", ", Edge")
         # if not self.edge_status[0]:
         #     title = title.replace("</sup>", "") + f", {self.edge_status[1]}</sup>"
-        # if not html:
-        #     title = title.replace('<br><br>', '\n').replace('<br>', '\n').replace('<sup>', '').replace('</sup>', '')
+        if not html:
+            title = title.replace('<br><br>', '\n').replace('<br>', '\n').replace('<sup>', '').replace('</sup>', '')
+            title = re.sub(r'<span style=.*?>(.*?)</span>', r'\1', title)
         return title
 
     def report(self, apply_formats: bool = False) -> pd.DataFrame:
