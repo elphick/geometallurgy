@@ -122,7 +122,8 @@ class MassComposition(ABC):
                                                  mass_wet=self.mass_wet_var, mass_dry=self.mass_dry_var,
                                                  moisture_column_name=self.moisture_column,
                                                  component_columns=composition.columns,
-                                                 composition_units=self.composition_units)
+                                                 composition_units=self.composition_units,
+                                                 return_moisture=False)
             self._logger.debug(f"Data has been set.")
 
         else:
@@ -137,6 +138,22 @@ class MassComposition(ABC):
         self._mass_data = value
         # Recalculate the aggregate whenever the data changes
         self.aggregate = self.weight_average()
+
+    def get_mass_data(self, include_moisture: bool = True) -> pd.DataFrame:
+        """Get the mass data
+
+        Args:
+            include_moisture: If True (and moisture is in scope), include the moisture mass column
+
+        Returns:
+
+        """
+        if include_moisture and self.moisture_in_scope:
+            moisture_mass = self._mass_data[self.mass_wet_var] - self._mass_data[self.mass_dry_var]
+            mass_data: pd.DataFrame = self._mass_data.copy()
+            mass_data.insert(loc=2, column=self.moisture_column, value=moisture_mass)
+            return mass_data
+        return self._mass_data
 
     @property
     def aggregate(self) -> pd.DataFrame:
@@ -551,6 +568,10 @@ class MassComposition(ABC):
 
         res: MC = self.create_congruent_object(name=name, include_mc_data=True,
                                                include_supp_data=include_supplementary_data)
+
+        if set(self._mass_data.columns) != set(other._mass_data.columns):
+            raise ValueError(f"Mass data columns do not match: {set(self._mass_data.columns)} != "
+                             f"{set(other._mass_data.columns)}")
         res.update_mass_data(self._mass_data + other._mass_data)
 
         # Ensure self and other are Stream objects
@@ -578,6 +599,11 @@ class MassComposition(ABC):
         """
         res = self.create_congruent_object(name=name, include_mc_data=True,
                                            include_supp_data=include_supplementary_data)
+
+        if set(self._mass_data.columns) != set(other._mass_data.columns):
+            raise ValueError(f"Mass data columns do not match: {set(self._mass_data.columns)} != "
+                             f"{set(other._mass_data.columns)}")
+
         res.update_mass_data(self._mass_data - other._mass_data)
 
         # Ensure self and other are Stream objects
