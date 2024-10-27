@@ -122,7 +122,8 @@ class MassComposition(ABC):
                                                  mass_wet=self.mass_wet_var, mass_dry=self.mass_dry_var,
                                                  moisture_column_name=self.moisture_column,
                                                  component_columns=composition.columns,
-                                                 composition_units=self.composition_units)
+                                                 composition_units=self.composition_units,
+                                                 return_moisture=False)
             self._logger.debug(f"Data has been set.")
 
         else:
@@ -704,6 +705,10 @@ class MassComposition(ABC):
 
         res: MC = self.create_congruent_object(name=name, include_mc_data=True,
                                                include_supp_data=include_supplementary_data)
+
+        if set(self._mass_data.columns) != set(other._mass_data.columns):
+            raise ValueError(f"Mass data columns do not match: {set(self._mass_data.columns)} != "
+                             f"{set(other._mass_data.columns)}")
         res.update_mass_data(self._mass_data + other._mass_data)
 
         # Ensure self and other are Stream objects
@@ -731,6 +736,11 @@ class MassComposition(ABC):
         """
         res = self.create_congruent_object(name=name, include_mc_data=True,
                                            include_supp_data=include_supplementary_data)
+
+        if set(self._mass_data.columns) != set(other._mass_data.columns):
+            raise ValueError(f"Mass data columns do not match: {set(self._mass_data.columns)} != "
+                             f"{set(other._mass_data.columns)}")
+
         res.update_mass_data(self._mass_data - other._mass_data)
 
         # Ensure self and other are Stream objects
