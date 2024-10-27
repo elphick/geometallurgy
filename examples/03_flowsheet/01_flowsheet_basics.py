@@ -62,7 +62,7 @@ for obj in [obj_strm, obj_strm_1, obj_strm_2]:
 # NOTE: presently this only includes node balance status
 # edge balance status will assure the mass-moisture balance is satisfied
 
-print(fs.balanced)
+print(fs.all_nodes_healthy)
 
 # %%
 # Plot the network.

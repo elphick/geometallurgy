@@ -105,7 +105,7 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
         fig = fs2.table_plot(plot_type='network')
         fig.update_layout(title=f"{fs2.name}: Coerced Estimates").show()
 
-    if fs2.balanced is False:
+    if fs2.all_nodes_healthy is False:
         raise ValueError('Flowsheet is not balanced after adjustment')
 
     return estimate_stream
