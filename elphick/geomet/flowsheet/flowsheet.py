@@ -35,9 +35,16 @@ FS = TypeVar('FS', bound='Flowsheet')
 
 class Flowsheet:
     def __init__(self, name: str = 'Flowsheet'):
-        self.name: str = name
-        self.graph: nx.DiGraph = nx.DiGraph()
+        self.graph: nx.DiGraph = nx.DiGraph(name=name)
         self._logger: logging.Logger = logging.getLogger(__class__.__name__)
+
+    @property
+    def name(self) -> str:
+        return self.graph.name
+
+    @name.setter
+    def name(self, value: str):
+        self.graph.name = value
 
     @property
     def healthy(self) -> bool:
