@@ -1026,3 +1026,78 @@ class OutOfRangeStatus:
         if isinstance(other, OutOfRangeStatus):
             return self.oor.equals(other.oor)
         return False
+
+
+class SampleStatus:
+    """A class to check and report sample status in an MC object.
+
+    A MassComposition object (Sample, Stream, etc) can be unhealthy if:
+    1. the total mass of components is greater than the dry mass
+    2. any of the masses are negative
+    3. the component values are out of range
+    """
+
+    def __init__(self, mc: 'MC', component_limits: dict):
+        """Initialize with an MC object."""
+        self._logger = logging.getLogger(__name__)
+        self.mc: 'MC' = mc
+        self.sample_status: Optional[dict] = None
+        self.num_samples: Optional[int] = None
+        self.failing_samples: Optional[list[str]] = None
+
+        if mc.mass_data is not None:
+            self.sample_status = self.get_sample_status(component_limits)
+            self.num_samples = len(self.sample_status)
+            self.failing_samples = [sample for sample, status in self.sample_status.items() if not status['ok']]
+
+    def get_sample_status(self, component_limits: dict) -> dict:
+        """Check if all records are within the constraints."""
+        sample_status = {}
+        if self.mc._mass_data is not None:
+            df: pd.DataFrame = self.mc.data[self.mc.composition_columns]
+            mass_dry = self.mc._mass_data[self.mc.mass_dry_var]
+
+            # Check for component limits
+            for component, limits in component_limits.items():
+                oor = df[(df[component] < limits[0]) | (df[component] > limits[1])]
+                for sample in oor.index:
+                    if sample not in sample_status:
+                        sample_status[sample] = {'ok': True, 'causes': []}
+                    sample_status[sample]['ok'] = False
+                    sample_status[sample]['causes'].append(f"{component} out of range")
+
+            # Check if total mass of components is greater than dry mass
+            total_component_mass = df.sum(axis=1)
+            for sample in total_component_mass.index:
+                if sample not in sample_status:
+                    sample_status[sample] = {'ok': True, 'causes': []}
+                if total_component_mass[sample] > mass_dry[sample]:
+                    sample_status[sample]['ok'] = False
+                    sample_status[sample]['causes'].append("Total mass of components greater than dry mass")
+
+            # Check for negative masses
+            negative_masses = df[df < 0].dropna(how='all')
+            for sample in negative_masses.index:
+                if sample not in sample_status:
+                    sample_status[sample] = {'ok': True, 'causes': []}
+                sample_status[sample]['ok'] = False
+                sample_status[sample]['causes'].append("Negative mass detected")
+        return sample_status
+    @property
+    def ok(self) -> bool:
+        """Return True if all records are within range, False otherwise."""
+        if self.num_samples > 0:
+            self._logger.warning(f'{self.num_samples} unhealthy samples exist.')
+        return True if self.num_samples == 0 else False
+
+    def __str__(self) -> str:
+        """Return a string representation of the status."""
+        res: str = f'status.ok: {self.ok}\n'
+        res += f'num_samples: {self.num_samples}'
+        return res
+
+    def __eq__(self, other: object) -> bool:
+        """Return True if other Status has the same out-of-range records."""
+        if isinstance(other, SampleStatus):
+            return self.sample_status == other.sample_status
+        return False

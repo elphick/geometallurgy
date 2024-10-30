@@ -46,9 +46,9 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
         complement_stream: MassComposition = input_stream.sub(estimate_stream, name=complement_name)
         fs: Flowsheet = Flowsheet.from_objects([input_stream, estimate_stream, complement_stream],
                                                name=f"{fs_name}: Balance prior to coercion")
-        fs.table_plot(plot_type='network').show()
+        fs.table_plot(plot_type='network', table_area=0.2, table_pos='top').show()
 
-    # coerce the component mass to within the total dry mass
+    # coerce the estimate component mass to within the total dry mass
     estimate_stream = coerce_component_mass(estimate_stream)
 
     if estimate_stream.status.ok is False:
@@ -65,7 +65,7 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
         recovery: pd.DataFrame = estimate_stream._mass_data / input_stream._mass_data
 
     # limit the recovery to the bounds
-    recovery = recovery.clip(lower=recovery_bounds[0], upper=recovery_bounds[1])
+    recovery = recovery.clip(lower=recovery_bounds[0], upper=recovery_bounds[1]).fillna(0.0)
 
     # recalculate the estimate from the bound recovery
     if estimate_stream.moisture_in_scope:
@@ -83,18 +83,28 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
         raise ValueError('Estimate stream is not OK - it should be after bounding recovery')
 
     # solve the complement
-    complement_stream: MassComposition = input_stream.sub(estimate_stream, name=complement_name)
+    complement_stream: Stream = input_stream.sub(estimate_stream, name=complement_name)
+
+    # coerce the complement component mass to within the total dry mass
+    complement_stream = coerce_component_mass(complement_stream)
+
     if complement_stream.status.ok is False:
 
         # adjust the complement to be within the component
         cols = [col for col in complement_stream.data.columns if col not in [complement_stream.mass_wet_var]]
         new_complement_composition = complement_stream.data[cols]
         for comp, comp_range in complement_stream.status.ranges.items():
+            if comp not in new_complement_composition.columns:
+                continue
             new_complement_composition[comp] = new_complement_composition[comp].clip(comp_range[0], comp_range[1])
+        if estimate_stream.moisture_in_scope:
+            new_complement_wet_mass: pd.Series = complement_stream._mass_data[complement_stream.mass_wet_var]
+            new_complement_composition: pd.DataFrame = pd.concat([new_complement_wet_mass, new_complement_composition],
+                                                                 axis=1)
         new_component_mass: pd.DataFrame = composition_to_mass(new_complement_composition,
                                                                mass_wet=complement_stream.mass_wet_var,
                                                                mass_dry=complement_stream.mass_dry_var)
-        complement_stream.update_mass_data(new_component_mass)
+        complement_stream.update_mass_data(new_component_mass.drop(columns=complement_stream.moisture_column))
 
         # adjust the estimate to maintain the balance
         estimate_stream = input_stream.sub(complement_stream, name=estimate_stream.name,
@@ -107,10 +117,13 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
                                             name=f"{fs_name}: Coerced Estimates")
 
     if show_plot:
-        fs2.table_plot(plot_type='network').show()
+        fs2.table_plot(plot_type='network', table_area=0.2, table_pos='top').show()
 
     if fs2.all_nodes_healthy is False:
-        raise ValueError('Flowsheet is not balanced after adjustment')
+        if fs2.all_streams_healthy and not fs2.all_nodes_healthy:
+            logging.warning('All streams are healthy but not all nodes are healthy.  Consider the water balance.')
+        else:
+            raise ValueError('Flowsheet is not balanced after adjustment')
 
     return estimate_stream
 
