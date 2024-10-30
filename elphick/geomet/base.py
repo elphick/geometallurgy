@@ -230,6 +230,28 @@ class MassComposition(ABC):
                 (self.mass_columns + [self.moisture_column] + self.composition_columns + self.supplementary_columns) if
                 col is not None]
 
+    def balance_composition(self) -> MC:
+        """Balance the composition data
+
+        For records where the component mass exceeds the dry mass, the component masses are reduced proportionally
+        to equal the dry mass.  Records where the component mass is less than the dry mass are left unchanged.
+
+        """
+        if self._mass_data is not None:
+            # calculate the ratio of the sum of the components to the dry mass
+            ratio = self._mass_data[self.composition_columns].sum(axis=1) / self._mass_data[self.mass_dry_var]
+            if ratio.max() <= 1.0:
+                return self
+            epsilon = 1e-6
+            # add a small value to the ratio to avoid component sums marginally over 100.0
+            ratio[ratio > 1.0] = ratio[ratio > 1.0] + epsilon
+            # to avoid reducing compliant records, clip the ratio at the lower side to 1.0
+            ratio = ratio.clip(lower=1.0)
+            # apply the ratio to the components
+            self._mass_data[self.composition_columns] = self._mass_data[self.composition_columns].div(ratio, axis=0)
+
+        return self
+
     def plot_parallel(self, color: Optional[str] = None,
                       vars_include: Optional[list[str]] = None,
                       vars_exclude: Optional[list[str]] = None,
@@ -725,7 +747,7 @@ class MassComposition(ABC):
                             moisture_column_name: Optional[str] = None,
                             component_columns: Optional[list[str]] = None,
                             composition_units: Literal['%', 'ppm', 'ppb'] = '%',
-                            **kwargs):
+                            **kwargs) -> MC:
         """
         Class method to create a MassComposition object from a mass dataframe.
 
