@@ -1,3 +1,12 @@
+Geomet 0.4.5 (2024-10-30)
+=========================
+
+Feature
+-------
+
+- Added new mc method, balance_composition (#40)
+
+
 Geomet 0.4.4 (2024-10-10)
 =========================
 
