@@ -235,6 +235,39 @@ class MassComposition(ABC):
 
         return self
 
+    def set_moisture(self, moisture: Union[pd.Series, float, int], mass_to_adjust: Literal['wet', 'dry'] = 'wet') -> MC:
+        """Set the moisture to the specified value
+
+        A convenience method for an mc object that modifies the concrete mass to deliver the specified moisture.
+
+        Args:
+            moisture: The moisture value to set.  Can be a constant or series.
+            mass_to_adjust: The mass to adjust, either 'wet' or 'dry'.
+
+        Returns:
+
+        """
+
+        if not self.moisture_in_scope:
+            raise AssertionError("This method is not applicable unless moisture_in_scope property is True.")
+
+        if isinstance(moisture, float) or isinstance(moisture, int):
+            # create a series with the same index as the mass data
+            moisture = pd.Series(float(moisture), index=self._mass_data.index)
+        elif not isinstance(moisture, pd.Series):
+            raise TypeError(f"moisture must be a float or a pd.Series, not {type(moisture)}")
+
+        if mass_to_adjust == 'wet':
+            self._mass_data[self.mass_wet_var] = solve_mass_moisture(mass_dry=self._mass_data[self.mass_dry_var],
+                                                                     moisture=moisture)
+        elif mass_to_adjust == 'dry':
+            self._mass_data[self.mass_dry_var] = solve_mass_moisture(mass_wet=self._mass_data[self.mass_wet_var],
+                                                                     moisture=moisture)
+        else:
+            raise ValueError(f"mass_to_adjust must be 'wet' or 'dry', not {mass_to_adjust}")
+
+        return self
+
     def plot_parallel(self, color: Optional[str] = None,
                       vars_include: Optional[list[str]] = None,
                       vars_exclude: Optional[list[str]] = None,
