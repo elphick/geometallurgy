@@ -49,7 +49,7 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
         fs.table_plot(plot_type='network', table_area=0.2, table_pos='top').show()
 
     # coerce the estimate component mass to within the total dry mass
-    estimate_stream = coerce_component_mass(estimate_stream)
+    estimate_stream = estimate_stream.balance_composition()
 
     if estimate_stream.status.ok is False:
         logging.info(str(estimate_stream.status.num_oor) + ' records are out of range in the estimate stream.')
@@ -86,7 +86,7 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
     complement_stream: Stream = input_stream.sub(estimate_stream, name=complement_name)
 
     # coerce the complement component mass to within the total dry mass
-    complement_stream = coerce_component_mass(complement_stream)
+    complement_stream = complement_stream.balance_composition()
 
     if complement_stream.status.ok is False:
 
@@ -128,42 +128,3 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
     return estimate_stream
 
 
-def coerce_component_mass(input_stream: Stream):
-    """Coerce the component mass to within the total dry mass
-
-    When estimates are made independently, the component mass can exceed the total dry mass.  This function coerces
-    the component mass to be within the total dry mass.
-
-    Note that this can modify the grades of the components, and should be used with caution.
-    The number and indexes of the coerced records are logged.
-
-    Args:
-        input_stream: The input stream
-
-    Returns:
-
-    """
-
-    # calculate the total dry mass
-    wet_dry_mass = input_stream.get_mass_data()[[input_stream.mass_wet_var, input_stream.mass_dry_var]]
-    total_dry_mass = wet_dry_mass[input_stream.mass_dry_var]
-
-    # calculate the sum of the component masses
-    component_mass = input_stream.get_mass_data().drop(columns=[wet_dry_mass.columns])
-    sum_component_mass = component_mass.sum(axis=1)
-
-    # calculate the ratio of the total dry mass to the sum of the component masses
-    ratio = total_dry_mass / sum_component_mass
-
-    # multiply the component masses by the ratio
-    new_component_mass = component_mass * ratio
-
-    # update the mass data
-    input_stream.update_mass_data(pd.concat([wet_dry_mass, new_component_mass], axis=1))
-
-    # log the number of records coerced
-    num_coerced = sum_component_mass[sum_component_mass > total_dry_mass].count()
-    logging.info(f'{num_coerced} records were coerced to maintain the total dry mass.  '
-                 f'Indexes: {sum_component_mass[sum_component_mass > total_dry_mass].index}')
-
-    return input_stream

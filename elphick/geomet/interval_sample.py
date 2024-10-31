@@ -124,7 +124,7 @@ class IntervalSample(MassComposition):
         # check the index is an interval index
         if not isinstance(index, pd.IntervalIndex):
             raise ValueError(f"The index is not an IntervalIndex.  The index is {type(index)}")
-        index = MeanIntervalIndex(index)
+        index = MeanIntervalIndex(index.copy().unique())  # unique allows applying 1D partition to 2D sample.
         x = index.mean
 
         self.to_stream()
