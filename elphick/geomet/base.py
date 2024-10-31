@@ -268,6 +268,45 @@ class MassComposition(ABC):
 
         return self
 
+    def clip_composition(self, ranges: Optional[dict[str, list[float]]] = None) -> MC:
+        """Clip the components
+
+        Clip to the components to within the range provided or the default range for each component.
+        This method does not clip moisture - see set_moisture and solve_moisture for that.
+
+        Args:
+            ranges: An optional dict defining a list of [lo, hi] floats for each component.  If not provided,
+            the default range from the config file will be used.
+
+        Returns:
+            The object with clipped composition.
+        """
+
+        # load the default ranges from the config file
+        component_ranges: dict = self._get_component_ranges(ranges)
+
+        # define a small value to ensure the clipped values lie marginally inside the specified range.
+        epsilon: float = 0.0  # 1.0e-05
+        # clip the components
+        affected_indexes = set()
+        for component, component_range in component_ranges.items():
+            before_clip = self._mass_data[component].copy()
+            # define the component mass that aligns with the lower and upper bounds
+            component_mass_limits = self._mass_data[self.mass_dry_var].values[:, np.newaxis] * np.array(
+                component_range) / self.composition_factor
+            # apply the clip to the mass data
+            self._mass_data[component] = self._mass_data[component].clip(lower=component_mass_limits[:, 0] + epsilon,
+                                                                         upper=component_mass_limits[:, 1] - epsilon)
+            affected_indexes.update(self._mass_data.index[before_clip != self._mass_data[component]])
+
+        # log the action, including the first 50 indexes affected
+        affected_indexes_list = sorted(affected_indexes)[:50]
+        self._logger.info(
+            f"{len(affected_indexes)} records where composition has been clipped to the range: {component_ranges}."
+            f" Affected indexes (first 50): {affected_indexes_list}")
+
+        return self
+
     def plot_parallel(self, color: Optional[str] = None,
                       vars_include: Optional[list[str]] = None,
                       vars_exclude: Optional[list[str]] = None,
@@ -803,6 +842,20 @@ class MassComposition(ABC):
                                                    data=self._mass_data.index.get_level_values(index_name))
 
         return res
+
+    def _get_component_ranges(self, ranges: dict[str, list]) -> dict[str, list]:
+
+        d_ranges: dict = get_column_config(config_dict=self.config, var_map=self.variable_map,
+                                           config_key='range')
+        # filter to include only components
+        d_ranges = {k: v for k, v in d_ranges.items() if k in self.composition_columns}
+
+        # modify the default dict based on any user passed constraints
+        if ranges:
+            for k, v in ranges.items():
+                d_ranges[k] = v
+
+        return d_ranges
 
 
 class OutOfRangeStatus:

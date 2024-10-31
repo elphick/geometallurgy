@@ -27,6 +27,7 @@ MC:
       - [from, to]
       - [retained, passing]
       - [sink, float]
+      - [lo, hi]
   comparisons:
     recovery: 'rec'
     difference: 'diff'
