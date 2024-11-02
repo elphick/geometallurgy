@@ -1093,7 +1093,7 @@ class Flowsheet:
         # brutal approach - rebuild from streams
         strms: List[Union[Stream, MC]] = []
         for u, v, a in self.graph.edges(data=True):
-            if a['mc'].name == mc.name:
+            if a.get('mc') and a['mc'].name == mc.name:
                 strms.append(mc)
             else:
                 strms.append(a['mc'])
