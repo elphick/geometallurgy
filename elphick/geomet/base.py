@@ -283,6 +283,9 @@ class MassComposition(ABC):
         else:
             raise ValueError(f"mass_to_adjust must be 'wet' or 'dry', not {mass_to_adjust}")
 
+        self.aggregate = self.weight_average()
+        self.status = OutOfRangeStatus(self, self.status.ranges)
+
         return self
 
     def clip_composition(self, ranges: Optional[dict[str, list[float]]] = None) -> MC:
