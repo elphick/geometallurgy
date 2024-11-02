@@ -230,19 +230,24 @@ class MassComposition(ABC):
                 (self.mass_columns + [self.moisture_column] + self.composition_columns + self.supplementary_columns) if
                 col is not None]
 
-    def balance_composition(self) -> MC:
+    def balance_composition(self, epsilon: float = 1.0e-6) -> MC:
         """Balance the composition data
 
         For records where the component mass exceeds the dry mass, the component masses are reduced proportionally
         to equal the dry mass.  Records where the component mass is less than the dry mass are left unchanged.
 
+        epsilon: A small float to avoid component sums marginally over 100.0
+
+        Returns:
+            The object with balanced composition.
         """
         if self._mass_data is not None:
             # calculate the ratio of the sum of the components to the dry mass
             ratio = self._mass_data[self.composition_columns].sum(axis=1) / self._mass_data[self.mass_dry_var]
             if ratio.max() <= 1.0:
                 return self
-            epsilon = 1e-6
+
+            before_reduction = self._mass_data[self.composition_columns].copy()
             # add a small value to the ratio to avoid component sums marginally over 100.0
             ratio[ratio > 1.0] = ratio[ratio > 1.0] + epsilon
             # to avoid reducing compliant records, clip the ratio at the lower side to 1.0
@@ -250,6 +255,18 @@ class MassComposition(ABC):
             # apply the ratio to the components
             self._mass_data[self.composition_columns] = self._mass_data[self.composition_columns].div(ratio, axis=0)
 
+            # manage the reporting
+            affected_indexes = set(self._mass_data.index[before_reduction != self._mass_data[self.composition_columns]])
+            # log the action, including the first 50 indexes affected
+            affected_indexes_list = sorted(affected_indexes)[:50]
+
+            self.aggregate = self.weight_average()
+            self.status = OutOfRangeStatus(self, self.status.ranges)
+
+            self._logger.info(f"Object {self.name} has been balanced. "
+                              f"{len(affected_indexes)} records where composition has been reduced "
+                              f"to conform to dry mass. "
+                              f"Affected indexes (first 50): {affected_indexes_list}")
         return self
 
     def clip_recovery(self, other: MC, recovery_bounds: tuple[float, float] = (0.01, 0.99),
@@ -364,9 +381,14 @@ class MassComposition(ABC):
 
         # log the action, including the first 50 indexes affected
         affected_indexes_list = sorted(affected_indexes)[:50]
-        self._logger.info(
-            f"{len(affected_indexes)} records where composition has been clipped to the range: {component_ranges}."
-            f" Affected indexes (first 50): {affected_indexes_list}")
+
+        self.aggregate = self.weight_average()
+        self.status = OutOfRangeStatus(self, self.status.ranges)
+
+        self._logger.info(f"Object {self.name} has been clipped. "
+                          f"{len(affected_indexes)} records where composition has been clipped to the "
+                          f"range: {component_ranges}. "
+                          f"Affected indexes (first 50): {affected_indexes_list}")
 
         return self
 
@@ -1086,6 +1108,7 @@ class SampleStatus:
                 sample_status[sample]['ok'] = False
                 sample_status[sample]['causes'].append("Negative mass detected")
         return sample_status
+
     @property
     def ok(self) -> bool:
         """Return True if all records are within range, False otherwise."""
