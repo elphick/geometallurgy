@@ -353,7 +353,7 @@ class Flowsheet:
         if stream_name is None:
             input_stream: MC = self.get_input_streams()[0]
         else:
-            input_stream: MC = self.get_edge_by_name(name=stream_name)
+            input_stream: MC = self.get_stream_by_name(name=stream_name)
         filtered_index: pd.Index = input_stream.data.query(expr).index
         return self._filter(filtered_index, inplace)
 
@@ -1055,7 +1055,7 @@ class Flowsheet:
         return nodes
 
     def set_nodes(self, stream: str, nodes: Tuple[int, int]):
-        mc: MC = self.get_edge_by_name(stream)
+        mc: MC = self.get_stream_by_name(stream)
         mc._nodes = nodes
         self._update_graph(mc)
 
@@ -1077,7 +1077,7 @@ class Flowsheet:
                 streams[k] = v.set_nodes([random_int(), random_int()])
             self.graph = Flowsheet(name=self.name).from_objects(objects=list(streams.values())).graph
         else:
-            mc: MC = self.get_edge_by_name(stream)
+            mc: MC = self.get_stream_by_name(stream)
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)
 
@@ -1099,11 +1099,11 @@ class Flowsheet:
                 strms.append(a['mc'])
         self.graph = Flowsheet(name=self.name).from_objects(objects=strms).graph
 
-    def get_edge_by_name(self, name: str) -> MC:
-        """Get the MC object from the network by its name
+    def get_stream_by_name(self, name: str) -> MC:
+        """Get the Stream object from the network by its name
 
         Args:
-            name: The string name of the MassComposition object stored on an edge in the network.
+            name: The string name of the Stream object stored on an edge in the network.
 
         Returns:
 
@@ -1111,7 +1111,7 @@ class Flowsheet:
 
         res: Optional[Union[Stream, MC]] = None
         for u, v, a in self.graph.edges(data=True):
-            if a['mc'].name == name:
+            if a.get('mc') and a['mc'].name == name:
                 res = a['mc']
 
         if not res:
@@ -1120,13 +1120,13 @@ class Flowsheet:
         return res
 
     def set_stream_parent(self, stream: str, parent: str):
-        mc: MC = self.get_edge_by_name(stream)
-        mc.set_parent_node(self.get_edge_by_name(parent))
+        mc: MC = self.get_stream_by_name(stream)
+        mc.set_parent_node(self.get_stream_by_name(parent))
         self._update_graph(mc)
 
     def set_stream_child(self, stream: str, child: str):
-        mc: MC = self.get_edge_by_name(stream)
-        mc.set_child_node(self.get_edge_by_name(child))
+        mc: MC = self.get_stream_by_name(stream)
+        mc.set_child_node(self.get_stream_by_name(child))
         self._update_graph(mc)
 
     def reset_stream_nodes(self, stream: Optional[str] = None):
@@ -1147,6 +1147,6 @@ class Flowsheet:
                 streams[k] = v.set_nodes([random_int(), random_int()])
             self.graph = Flowsheet(name=self.name).from_objects(objects=list(streams.values())).graph
         else:
-            mc: MC = self.get_edge_by_name(stream)
+            mc: MC = self.get_stream_by_name(stream)
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)
