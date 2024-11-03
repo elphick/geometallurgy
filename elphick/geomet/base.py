@@ -4,10 +4,12 @@ import logging
 import re
 from abc import ABC
 from pathlib import Path
-from typing import Optional, Union, Literal, TypeVar, TYPE_CHECKING, Any
+from typing import Optional, Union, Literal, TypeVar, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
 
 from elphick.geomet.config import read_yaml
 from elphick.geomet.utils.components import get_components, is_compositional
@@ -17,8 +19,6 @@ from elphick.geomet.utils.sampling import random_int
 from elphick.geomet.utils.timer import log_timer
 from .config.config_read import get_column_config
 from .plot import parallel_plot, comparison_plot
-import plotly.express as px
-import plotly.graph_objects as go
 
 if TYPE_CHECKING:
     from elphick.geomet.flowsheet.stream import Stream
@@ -268,6 +268,49 @@ class MassComposition(ABC):
                               f"{len(affected_indexes)} records where composition has been reduced "
                               f"to conform to dry mass. "
                               f"Affected indexes (first 50): {affected_indexes_list}")
+        return self
+
+    def clip_recovery(self, other: MC, recovery_bounds: tuple[float, float] = (0.01, 0.99),
+                      allow_moisture_coercion: bool = True) -> MC:
+        """Clip the recovery to the specified bounds and recalculate the estimate.
+
+        Args:
+            other: The other MassComposition object, from which the recovery of self is calculated.
+            recovery_bounds: The bounds for the recovery between 0.0 and 1.0
+            allow_moisture_coercion: if True, allow the wet mass to be modified to maintain the moisture (in the
+            case that dry mass is clipped to manage recovery)
+
+        Returns:
+            The MassComposition object with the recovery clipped to the bounds.
+        """
+        recovery: pd.DataFrame = (self.get_mass_data(include_moisture=False) /
+                                  other.get_mass_data(include_moisture=False))
+
+        # Limit the recovery to the bounds
+        before_clip = recovery.copy()
+        recovery = recovery.clip(lower=recovery_bounds[0], upper=recovery_bounds[1]).fillna(0.0)
+
+        # Check if any records were affected
+        affected_indexes = set(recovery.index[np.any(before_clip != recovery, axis=1)])
+        if affected_indexes:
+            # Recalculate the estimate from the bound recovery
+            new_mass: pd.DataFrame = recovery * other.get_mass_data(include_moisture=False)[recovery.columns]
+
+            if self.moisture_in_scope and allow_moisture_coercion:
+                # Calculate the moisture from the new mass
+                new_mass[self.mass_wet_var] = solve_mass_moisture(mass_dry=new_mass[self.mass_dry_var],
+                                                                  moisture=self.data[self.moisture_column])
+
+            # Log the top 50 records affected by the recovery coercion
+            affected_indexes_list = sorted(affected_indexes)[:50]
+            self._logger.info(f"Recovery coercion affected {len(affected_indexes)} records. "
+                              f"Affected indexes (first 50): {affected_indexes_list}")
+
+            # Update the mass data of self
+            self.update_mass_data(new_mass)
+        else:
+            self._logger.info("Recovery coercion did not affect any records.")
+
         return self
 
     def set_moisture(self, moisture: Union[pd.Series, float, int], mass_to_adjust: Literal['wet', 'dry'] = 'wet') -> MC:
