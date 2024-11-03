@@ -78,16 +78,16 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
     # Recalculate the estimate from the bound recovery
     new_mass: pd.DataFrame = recovery * input_stream.get_mass_data(include_moisture=False)[recovery.columns]
 
-    # if the dry mass has changed the moisture would change since the wet mass remains the same
-    if estimate_stream.moisture_in_scope:
-        # recalculate the wet mass for the dry mass records that have changed
-        changed_record_indexes = new_mass[
-            new_mass[estimate_stream.mass_dry_var] < original_mass_moisture[estimate_stream.mass_dry_var]].index
-        new_mass_dry: pd.Series = new_mass.loc[changed_record_indexes, estimate_stream.mass_dry_var]
-        original_moisture: pd.Series = original_mass_moisture.loc[
-            changed_record_indexes, estimate_stream.moisture_column]
-        new_wet_mass: pd.Series = solve_mass_moisture(mass_dry=new_mass_dry, moisture=original_moisture)
-        new_mass.loc[changed_record_indexes, estimate_stream.mass_wet_var] = new_wet_mass
+    # # if the dry mass has changed the moisture would change since the wet mass remains the same
+    # if estimate_stream.moisture_in_scope:
+    #     # recalculate the wet mass for the dry mass records that have changed
+    #     changed_record_indexes = new_mass[
+    #         new_mass[estimate_stream.mass_dry_var] < original_mass_moisture[estimate_stream.mass_dry_var]].index
+    #     new_mass_dry: pd.Series = new_mass.loc[changed_record_indexes, estimate_stream.mass_dry_var]
+    #     original_moisture: pd.Series = original_mass_moisture.loc[
+    #         changed_record_indexes, estimate_stream.moisture_column]
+    #     new_wet_mass: pd.Series = solve_mass_moisture(mass_dry=new_mass_dry, moisture=original_moisture)
+    #     new_mass.loc[changed_record_indexes, estimate_stream.mass_wet_var] = new_wet_mass
 
     estimate_stream.update_mass_data(new_mass)
 
@@ -97,23 +97,18 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
     # solve the complement
     complement_stream: Stream = input_stream.sub(estimate_stream, name=complement_name)
 
-    # coerce the complement component mass to within the total dry mass
+    # clip the composition to the bounds
+    complement_stream = complement_stream.clip_composition()
+
+    # coerce the estimate component mass to within the total dry mass
     complement_stream = complement_stream.balance_composition()
 
-    if complement_stream.status.ok is False:
+    # adjust the estimate to maintain the balance
+    estimate_stream = input_stream.sub(complement_stream, name=estimate_stream.name,
+                                       include_supplementary_data=True)
 
-        # clip the composition to the bounds
-        complement_stream = complement_stream.clip_composition()
-
-        # coerce the estimate component mass to within the total dry mass
-        complement_stream = complement_stream.balance_composition()
-
-        # adjust the estimate to maintain the balance
-        estimate_stream = input_stream.sub(complement_stream, name=estimate_stream.name,
-                                           include_supplementary_data=True)
-
-        if estimate_stream.status.ok is False:
-            raise ValueError('Estimate stream is not OK after adjustment')
+    if estimate_stream.status.ok is False:
+        raise ValueError('Estimate stream is not OK after adjustment')
 
     fs2: Flowsheet = Flowsheet.from_objects([input_stream, estimate_stream, complement_stream],
                                             name=f"{fs_name}: Coerced Estimates")

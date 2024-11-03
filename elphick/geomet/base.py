@@ -305,7 +305,7 @@ class MassComposition(ABC):
 
         return self
 
-    def clip_composition(self, ranges: Optional[dict[str, list[float]]] = None) -> MC:
+    def clip_composition(self, ranges: Optional[dict[str, list[float]]] = None, epsilon: float = 1.0e-05) -> MC:
         """Clip the components
 
         Clip to the components to within the range provided or the default range for each component.
@@ -314,6 +314,7 @@ class MassComposition(ABC):
         Args:
             ranges: An optional dict defining a list of [lo, hi] floats for each component.  If not provided,
             the default range from the config file will be used.
+            epsilon: A small float to ensure the clipped values lie marginally inside the specified range.
 
         Returns:
             The object with clipped composition.
@@ -323,7 +324,6 @@ class MassComposition(ABC):
         component_ranges: dict = self._get_component_ranges(ranges)
 
         # define a small value to ensure the clipped values lie marginally inside the specified range.
-        epsilon: float = 0.0  # 1.0e-05
         # clip the components
         affected_indexes = set()
         for component, component_range in component_ranges.items():
@@ -342,10 +342,11 @@ class MassComposition(ABC):
         self.aggregate = self.weight_average()
         self.status = OutOfRangeStatus(self, self.status.ranges)
 
-        self._logger.info(f"Object {self.name} has been clipped. "
-                          f"{len(affected_indexes)} records where composition has been clipped to the "
-                          f"range: {component_ranges}. "
-                          f"Affected indexes (first 50): {affected_indexes_list}")
+        if len(affected_indexes) > 0:
+            self._logger.info(f"Object {self.name} has been clipped. "
+                              f"{len(affected_indexes)} records where composition has been clipped to the "
+                              f"range: {component_ranges}. "
+                              f"Affected indexes (first 50): {affected_indexes_list}")
 
         return self
 
