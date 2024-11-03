@@ -256,7 +256,8 @@ class MassComposition(ABC):
             self._mass_data[self.composition_columns] = self._mass_data[self.composition_columns].div(ratio, axis=0)
 
             # manage the reporting
-            affected_indexes = set(self._mass_data.index[before_reduction != self._mass_data[self.composition_columns]])
+            affected_indexes = set(
+                self._mass_data.index[np.any(before_reduction != self._mass_data[self.composition_columns], axis=1)])
             # log the action, including the first 50 indexes affected
             affected_indexes_list = sorted(affected_indexes)[:50]
 
