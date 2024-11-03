@@ -49,47 +49,17 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
                                                name=f"{fs_name}: Balance prior to coercion")
         fs.table_plot(plot_type='network', table_area=0.2, table_pos='top').show()
 
+    if input_stream.status.ok is False:
+        raise ValueError('Input stream is not OK')
+
     # clip the composition to the bounds
     estimate_stream = estimate_stream.clip_composition()
 
     # coerce the estimate component mass to within the total dry mass
     estimate_stream = estimate_stream.balance_composition()
 
-    # store the original dry mass, to be used in the moisture calculation
-    original_mass_moisture: pd.DataFrame = pd.DataFrame()
-    if estimate_stream.moisture_in_scope:
-        original_mass_moisture: pd.DataFrame = estimate_stream.get_mass_data(include_moisture=True)[
-            estimate_stream.mass_columns + [estimate_stream.moisture_column]]
-
-    if estimate_stream.status.ok is False:
-        logging.info(str(estimate_stream.status.num_oor) + f' records are out of range in the estimate stream '
-                                                           f'{estimate_stream.name}.')
-
-    if input_stream.status.ok is False:
-        raise ValueError('Input stream is not OK')
-
-    # calculate the recovery
-    recovery: pd.DataFrame = (estimate_stream.get_mass_data(include_moisture=False) /
-                              input_stream.get_mass_data(include_moisture=False))
-
-    # limit the recovery to the bounds
-    recovery = recovery.clip(lower=recovery_bounds[0], upper=recovery_bounds[1]).fillna(0.0)
-
-    # Recalculate the estimate from the bound recovery
-    new_mass: pd.DataFrame = recovery * input_stream.get_mass_data(include_moisture=False)[recovery.columns]
-
-    # # if the dry mass has changed the moisture would change since the wet mass remains the same
-    # if estimate_stream.moisture_in_scope:
-    #     # recalculate the wet mass for the dry mass records that have changed
-    #     changed_record_indexes = new_mass[
-    #         new_mass[estimate_stream.mass_dry_var] < original_mass_moisture[estimate_stream.mass_dry_var]].index
-    #     new_mass_dry: pd.Series = new_mass.loc[changed_record_indexes, estimate_stream.mass_dry_var]
-    #     original_moisture: pd.Series = original_mass_moisture.loc[
-    #         changed_record_indexes, estimate_stream.moisture_column]
-    #     new_wet_mass: pd.Series = solve_mass_moisture(mass_dry=new_mass_dry, moisture=original_moisture)
-    #     new_mass.loc[changed_record_indexes, estimate_stream.mass_wet_var] = new_wet_mass
-
-    estimate_stream.update_mass_data(new_mass)
+    # clip the recovery
+    estimate_stream = estimate_stream.clip_recovery(recovery_bounds=(0.01, 0.99))
 
     if estimate_stream.status.ok is False:
         raise ValueError('Estimate stream is not OK - it should be after bounding recovery')
