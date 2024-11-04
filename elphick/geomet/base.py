@@ -372,12 +372,14 @@ class MassComposition(ABC):
         affected_indexes = set()
         for component, component_range in component_ranges.items():
             before_clip = self._mass_data[component].copy()
+            # add a small value to the range to ensure the clipped values lie marginally inside the specified range.
+            component_range = [component_range[0] + epsilon, component_range[1] - epsilon]
             # define the component mass that aligns with the lower and upper bounds
             component_mass_limits = self._mass_data[self.mass_dry_var].values[:, np.newaxis] * np.array(
                 component_range) / self.composition_factor
             # apply the clip to the mass data
-            self._mass_data[component] = self._mass_data[component].clip(lower=component_mass_limits[:, 0] + epsilon,
-                                                                         upper=component_mass_limits[:, 1] - epsilon)
+            self._mass_data[component] = self._mass_data[component].clip(lower=component_mass_limits[:, 0],
+                                                                         upper=component_mass_limits[:, 1])
             affected_indexes.update(self._mass_data.index[before_clip != self._mass_data[component]])
 
         # log the action, including the first 50 indexes affected

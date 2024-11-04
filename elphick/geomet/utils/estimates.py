@@ -49,6 +49,12 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
                                                name=f"{fs_name}: Balance prior to coercion")
         fs.table_plot(plot_type='network', table_area=0.2, table_pos='top').show()
 
+        # # debugging snippet to show a failing record
+        # qry: str = 'index==1000'
+        # fs_debug: Flowsheet = fs.query(qry)
+        # fs_debug.name = f"{fs_name}: Balance prior to coercion: [{qry}]"
+        # fs_debug.table_plot(plot_type='network', table_area=0.2, table_pos='top').show()
+
     if input_stream.status.ok is False:
         raise ValueError('Input stream is not OK')
 
@@ -78,7 +84,14 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
                                        include_supplementary_data=True)
 
     if estimate_stream.status.ok is False:
-        raise ValueError('Estimate stream is not OK after adjustment')
+        # This can occur in cases where the complement grade has been reduced (by balance_composition) to a point
+        # where the resultant estimate grade is out of range.  In this case, we need to adjust the complement grade.
+
+        estimate_stream = estimate_stream.clip_composition()
+        complement_stream = input_stream.sub(estimate_stream, name=complement_name)
+
+        if estimate_stream.status.ok is False:
+            raise ValueError('Estimate stream is not OK after adjustment')
 
     fs2: Flowsheet = Flowsheet.from_objects([input_stream, estimate_stream, complement_stream],
                                             name=f"{fs_name}: Coerced Estimates")
