@@ -757,7 +757,7 @@ class Flowsheet:
 
         results: pd.DataFrame = pd.concat(chunks, axis='index').set_index('name', append=True)
         if not tidy:  # wide format
-            results = results.unstack(level='name', sort=False)
+            results = results.unstack(level='name')
             column_order: list[str] = [f'{name}_{attr}' for name in results.columns.levels[1] for attr in
                                        results.columns.levels[0]]
             results.columns = [f'{col[1]}_{col[0]}' for col in results.columns]
