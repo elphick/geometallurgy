@@ -65,7 +65,7 @@ def coerce_estimates(estimate_stream: Stream, input_stream: Stream,
     estimate_stream = estimate_stream.balance_composition()
 
     # clip the recovery
-    estimate_stream = estimate_stream.clip_recovery(recovery_bounds=(0.01, 0.99))
+    estimate_stream = estimate_stream.clip_recovery(other=input_stream, recovery_bounds=(0.01, 0.99))
 
     if estimate_stream.status.ok is False:
         raise ValueError('Estimate stream is not OK - it should be after bounding recovery')
