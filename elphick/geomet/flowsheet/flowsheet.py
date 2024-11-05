@@ -261,7 +261,9 @@ class Flowsheet:
         unhealthy_nodes = [n for n in self.graph.nodes if
                            self.graph.nodes[n]['mc'].node_type == NodeType.BALANCE and not self.graph.nodes[n][
                                'mc'].is_balanced]
-        unhealthy_data: pd.DataFrame = pd.concat([self.graph.nodes[n]['mc'].unbalanced_records.assign(node=self.graph.nodes[n]['mc'].name) for n in unhealthy_nodes], axis=1)
+        unhealthy_data: pd.DataFrame = pd.concat(
+            [self.graph.nodes[n]['mc'].unbalanced_records.assign(node=self.graph.nodes[n]['mc'].name) for n in
+             unhealthy_nodes], axis=1)
         # move the last column to the front
         unhealthy_data = unhealthy_data[[unhealthy_data.columns[-1]] + list(unhealthy_data.columns[:-1])]
 
@@ -731,13 +733,16 @@ class Flowsheet:
 
         return fig
 
-    def to_dataframe(self, stream_names: Optional[list[str]] = None):
+    def to_dataframe(self, stream_names: Optional[list[str]] = None, tidy: bool = True,
+                     as_mass: bool = False) -> pd.DataFrame:
         """Return a tidy dataframe
 
         Adds the mc name to the index so indexes are unique.
 
         Args:
             stream_names: Optional List of names of Stream/MassComposition objects (network edges) for export
+            tidy: If True, the data will be returned in a tidy format, otherwise wide
+            as_mass: If True, the mass data will be returned instead of the mass-composition data
 
         Returns:
 
@@ -745,8 +750,17 @@ class Flowsheet:
         chunks: List[pd.DataFrame] = []
         for u, v, data in self.graph.edges(data=True):
             if (stream_names is None) or ((stream_names is not None) and (data['mc'].name in stream_names)):
-                chunks.append(data['mc'].data.assign(name=data['mc'].name))
-        return pd.concat(chunks, axis='index').set_index('name', append=True)
+                if as_mass:
+                    chunks.append(data['mc'].mass_data.assign(name=data['mc'].name))
+                else:
+                    chunks.append(data['mc'].data.assign(name=data['mc'].name))
+
+        results: pd.DataFrame = pd.concat(chunks, axis='index').set_index('name', append=True)
+        if not tidy:  # wide format
+            results = results.unstack(level='name')
+            results.columns = [f'{col[1]}_{col[0]}' for col in results.columns]
+
+        return results
 
     def plot_parallel(self,
                       names: Optional[str] = None,
