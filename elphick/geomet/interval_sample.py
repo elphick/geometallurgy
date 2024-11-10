@@ -98,7 +98,8 @@ class IntervalSample(MassComposition):
 
         return data
 
-    def split_by_partition(self, partition_definition, name_1: str = 'preferred', name_2: str = 'complement'):
+    def split_by_partition(self, partition_definition: Union[pd.Series, Callable], name_1: str = 'preferred',
+                           name_2: str = 'complement'):
         """
         Split the sample into two samples based on the partition definition.
 
@@ -106,31 +107,34 @@ class IntervalSample(MassComposition):
             K = \\frac{{m_{preferred}}}{{m_{feed}}}
 
         :param partition_definition: A function that takes a data frame and returns a boolean series with a
-         range [0, 1].
+         range [0, 1].  Alternatively a pd.Series can be provided where the indexes match the object.
         :param name_1: The name of the first sample.
         :param name_2: The name of the second sample.
         :return: A tuple of two IntervalSamples.
         """
-        if not isinstance(partition_definition, Callable):
-            raise TypeError("The definition is not a callable function")
-        if 'dim' not in partition_definition.keywords.keys():
-            raise NotImplementedError("The callable function passed does not have a dim")
+        if isinstance(partition_definition, Callable):
+            if 'dim' not in partition_definition.keywords.keys():
+                raise NotImplementedError("The callable function passed does not have a dim")
 
-        dim = partition_definition.keywords['dim']
-        partition_definition.keywords.pop('dim')
+            dim = partition_definition.keywords['dim']
+            partition_definition.keywords.pop('dim')
+            # get the mean of the intervals - the geomean if the interval is called size
+            index = self.mass_data.index.get_level_values(dim)
+            # check the index is an interval index
+            if not isinstance(index, pd.IntervalIndex):
+                raise ValueError(f"The index is not an IntervalIndex.  The index is {type(index)}")
+            index = MeanIntervalIndex(index.copy().unique())  # unique allows applying 1D partition to 2D sample.
+            pn: pd.Series = pd.Series(partition_definition(index.mean), name='K', index=index)
 
-        # get the mean of the intervals - the geomean if the interval is called size
-        index = self.mass_data.index.get_level_values(dim)
-        # check the index is an interval index
-        if not isinstance(index, pd.IntervalIndex):
-            raise ValueError(f"The index is not an IntervalIndex.  The index is {type(index)}")
-        index = MeanIntervalIndex(index.copy().unique())  # unique allows applying 1D partition to 2D sample.
-        x = index.mean
+        elif isinstance(partition_definition, pd.Series):
+            pn = partition_definition
+
+        else:
+            raise TypeError("The definition is not a callable function or pd.Series")
 
         self.to_stream()
         self: Stream
 
-        pn: pd.Series = pd.Series(partition_definition(x), name='K', index=index)
         sample_1 = self.create_congruent_object(name=name_1).to_stream()
         sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
         sample_1.set_nodes([self.nodes[1], random_int()])
