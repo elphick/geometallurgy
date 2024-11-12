@@ -63,7 +63,7 @@ class IntervalSample(MassComposition):
                 if suffixes:
                     data.reset_index(list(suffixes.keys()), inplace=True)
                     num_interval_indexes: int = int(len(suffixes.keys()) / 2)
-                    for i in range(0, num_interval_indexes):
+                    for i in range(0, num_interval_indexes + 1, 2):
                         keys = list(suffixes.keys())[i: i + 2]
                         base_name: str = '_'.join(keys[0].split('_')[:-1])
                         index = IntervalIndex.from_arrays(left=data[keys[0]], right=data[keys[1]],
