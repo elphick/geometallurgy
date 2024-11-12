@@ -8,6 +8,7 @@ from io import StringIO
 from token import STRING
 from typing import List, Dict, Optional, Literal
 
+import numpy as np
 import pandas as pd
 
 from elphick.geomet.utils.components import is_compositional, get_components
@@ -62,7 +63,7 @@ def mass_to_composition(df: pd.DataFrame,
         mass: pd.DataFrame = df[[mass_dry]]
 
     component_mass: pd.DataFrame = df[component_cols]
-    composition: pd.DataFrame = component_mass.div(mass[mass_dry], axis=0) * composition_factors[composition_units]
+    composition: pd.DataFrame = component_mass.div(mass[mass_dry].replace(0.0, np.nan), axis=0).fillna(0.0) * composition_factors[composition_units]
 
     if mass_wet and (mass_wet in df.columns):
         moisture: pd.Series = solve_mass_moisture(mass_wet=mass[mass_wet], mass_dry=mass[mass_dry]).rename(
