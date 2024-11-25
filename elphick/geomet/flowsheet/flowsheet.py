@@ -132,7 +132,7 @@ class Flowsheet:
         return cls().from_objects(objects=streams, name=name)
 
     @classmethod
-    def from_dict_old(cls, config: dict) -> FS:
+    def from_dict(cls, config: dict) -> FS:
         """Create a flowsheet from a dictionary
 
         Args:
@@ -192,7 +192,7 @@ class Flowsheet:
         with open(file_path, 'r') as file:
             config = yaml.safe_load(file)
 
-        return cls.from_dict_old(config)
+        return cls.from_dict(config)
 
     @classmethod
     def from_json(cls, file_path: Path) -> FS:
