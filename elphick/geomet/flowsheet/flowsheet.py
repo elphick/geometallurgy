@@ -19,14 +19,14 @@ from plotly.subplots import make_subplots
 from elphick.geomet import Sample
 from elphick.geomet.base import MC
 from elphick.geomet.config.config_read import get_column_config
-from elphick.geomet.flowsheet.operation import NodeType, OP
+from elphick.geomet.flowsheet.operation import NodeType, OP, PartitionOperation, Operation
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
 from elphick.geomet.flowsheet.loader import streams_from_dataframe
 from elphick.geomet.utils.sampling import random_int
 
-if TYPE_CHECKING:
-    from elphick.geomet.flowsheet.stream import Stream
+# if TYPE_CHECKING:
+from elphick.geomet.flowsheet.stream import Stream
 
 # generic type variable, used for type hinting that play nicely with subclasses
 FS = TypeVar('FS', bound='Flowsheet')
@@ -112,7 +112,7 @@ class Flowsheet:
         return cls().from_objects(objects=streams, name=name)
 
     @classmethod
-    def from_dict(cls, config: dict) -> FS:
+    def from_dict_old(cls, config: dict) -> FS:
         """Create a flowsheet from a dictionary
 
         Args:
@@ -139,7 +139,17 @@ class Flowsheet:
         graph.add_edges_from(bunch_of_edges)
         operation_objects: dict = {}
         for node in graph.nodes:
-            operation_objects[node] = Operation(name=node)
+            # create the correct type of node object
+            if node in flowsheet_config['operations']:
+                operation_type = flowsheet_config['operations'][node].get('type', 'Operation')
+                if operation_type == 'PartitionOperation':
+                    # get the output stream names from the graph
+                    output_stream_names = [d['name'] for u, v, d in graph.out_edges(node, data=True)]
+                    node_config = flowsheet_config['operations'][node]
+                    node_config['output_stream_names'] = output_stream_names
+                    operation_objects[node] = PartitionOperation.from_dict(node_config)
+                else:
+                    operation_objects[node] = Operation.from_dict(flowsheet_config['operations'][node])
         nx.set_node_attributes(graph, operation_objects, 'mc')
 
         graph = nx.convert_node_labels_to_integers(graph)
@@ -148,6 +158,26 @@ class Flowsheet:
         obj.graph = graph
 
         return obj
+
+    @classmethod
+    def from_dict(cls, config: dict) -> FS:
+        flowsheet = cls()
+
+        # Process streams
+        for stream_name, stream_data in config['FLOWSHEET']['streams'].items():
+            stream = Stream.from_dict(stream_data)
+            flowsheet.add_stream(stream)
+
+        # Process operations
+        for operation_name, operation_data in config['FLOWSHEET']['operations'].items():
+            operation_type = operation_data.get('type', 'Operation')
+            if operation_type == 'PartitionOperation':
+                operation = PartitionOperation.from_dict(operation_data)
+            else:
+                operation = Operation.from_dict(operation_data)
+            flowsheet.add_operation(operation)
+
+        return flowsheet
 
     @classmethod
     def from_yaml(cls, file_path: Path) -> FS:
@@ -162,7 +192,7 @@ class Flowsheet:
         with open(file_path, 'r') as file:
             config = yaml.safe_load(file)
 
-        return cls.from_dict(config)
+        return cls.from_dict_old(config)
 
     @classmethod
     def from_json(cls, file_path: Path) -> FS:
@@ -178,6 +208,14 @@ class Flowsheet:
             config = json.load(file)
 
         return cls.from_dict(config)
+
+    def add_stream(self, stream: 'Stream'):
+        """Add a stream to the flowsheet."""
+        self.graph.add_edge(stream.nodes[0], stream.nodes[1], mc=stream, name=stream.name)
+
+    def add_operation(self, operation: 'Operation'):
+        """Add an operation to the flowsheet."""
+        self.graph.add_node(operation.name, mc=operation)
 
     def copy_without_stream_data(self):
         """Copy without stream data"""
@@ -218,13 +256,24 @@ class Flowsheet:
                                 edge_data['mc'].name = edge_data['name']
 
                     if self.graph.nodes[node]['mc'].has_empty_output:
-                        mc: MC = self.graph.nodes[node]['mc'].solve()
-                        # copy the solved object to the empty output edges
-                        for successor in self.graph.successors(node):
-                            edge_data = self.graph.get_edge_data(node, successor)
-                            if edge_data and edge_data['mc'] is None:
-                                edge_data['mc'] = mc
-                                edge_data['mc'].name = edge_data['name']
+                        # There are two cases to be managed, 1. a single output missing,
+                        # 2. a partition operation that returns two outputs
+                        if isinstance(self.graph.nodes[node]['mc'], PartitionOperation):
+                            mc1, mc2 = self.graph.nodes[node]['mc'].solve()
+                            # copy the solved object to the empty output edges
+                            for successor in self.graph.successors(node):
+                                edge_data = self.graph.get_edge_data(node, successor)
+                                if edge_data and edge_data['mc'] is None:
+                                    edge_data['mc'] = mc1 if edge_data['name'] == 'preferred' else mc2
+                                    edge_data['mc'].name = edge_data['name']
+                        else:
+                            mc: MC = self.graph.nodes[node]['mc'].solve()
+                            # copy the solved object to the empty output edges
+                            for successor in self.graph.successors(node):
+                                edge_data = self.graph.get_edge_data(node, successor)
+                                if edge_data and edge_data['mc'] is None:
+                                    edge_data['mc'] = mc
+                                    edge_data['mc'].name = edge_data['name']
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
@@ -1037,4 +1086,3 @@ class Flowsheet:
             mc: MC = self.get_edge_by_name(stream)
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)
-

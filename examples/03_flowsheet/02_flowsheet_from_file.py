@@ -25,7 +25,7 @@ __file__ = Path(inspect.getfile(inspect.currentframe())).resolve()
 #
 # The yaml file needs to follow this structure.
 
-yaml_filepath: Path = Path(__file__).parents[2] / 'elphick/geomet/config/flowsheet_example.yaml'
+yaml_filepath: Path = Path(__file__).parents[2] / 'elphick/geomet/config/flowsheet_example_simple.yaml'
 yaml_config: str = yaml_filepath.read_text()
 yaml_config
 

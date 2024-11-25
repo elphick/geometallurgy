@@ -1,3 +1,12 @@
+Geomet 0.4.9 (2024-11-25)
+=========================
+
+Feature
+-------
+
+- Flowsheet solve supports nodes of type PartitionOperation (#47)
+
+
 Geomet 0.4.8 (2024-11-03)
 =========================
 

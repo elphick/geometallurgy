@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "geometallurgy"
 packages = [{ include = "elphick/geomet" }]
-version = "0.4.8"
+version = "0.4.9"
 description = "Tools for the geometallurgist"
 authors = ["Greg <11791585+elphick@users.noreply.github.com>"]
 repository = "https://github.com/elphick/geometallurgy"
