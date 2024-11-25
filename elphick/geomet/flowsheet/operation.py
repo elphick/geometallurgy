@@ -6,7 +6,11 @@ from typing import Optional, TypeVar
 import numpy as np
 import pandas as pd
 
+from elphick.geomet import IntervalSample
 from elphick.geomet.base import MC
+from elphick.geomet.flowsheet.stream import Stream
+from elphick.geomet.utils.pandas import MeanIntervalIndex
+from elphick.geomet.utils.partition import load_partition_function
 
 # generic type variable, used for type hinting that play nicely with subclasses
 OP = TypeVar('OP', bound='Operation')
@@ -180,6 +184,12 @@ class Operation:
         else:
             return candidates[0]
 
+    @classmethod
+    def from_dict(cls, config: dict) -> 'Operation':
+        name = config.get('name')
+
+        return cls(name=name)
+
 
 class Input(Operation):
     def __init__(self, name):
@@ -196,8 +206,41 @@ class Passthrough(Operation):
         super().__init__(name)
 
 
-class UnitOperation(Operation):
-    def __init__(self, name, num_inputs, num_outputs):
+class PartitionOperation(Operation):
+    """An operation that partitions the input stream into multiple output streams based on a partition function
+
+    The partition input is the mean of the fractions or the geomean if the fractions are in the size dimension
+    The partition function is typically a partial function so that the partition is defined for all arguments
+    other than the input mean fraction values in one or two dimensions.  The argument names must match the
+    index names in the IntervalSample.
+
+    """
+
+    def __init__(self, name, partition=None):
         super().__init__(name)
-        self.num_inputs = num_inputs
-        self.num_outputs = num_outputs
+        self.partition = partition
+        self.partition_function = None
+        if self.partition and 'module' in self.partition and 'function' in self.partition:
+            self.partition_function = load_partition_function(self.partition['module'], self.partition['function'])
+
+    def solve(self) -> [MC, MC]:
+        if self.partition_function:
+            self.apply_partition()
+            # update the balance related attributes
+            self.check_balance()
+        return self.outputs
+
+    def apply_partition(self):
+        if len(self.inputs) != 1:
+            raise ValueError("PartitionOperation must have exactly one input")
+        for input_sample in self.inputs:
+            input_sample: IntervalSample
+            if input_sample is not None:
+                output, complement = input_sample.split_by_partition(self.partition_function)
+                self.outputs = [output, complement]
+
+    @classmethod
+    def from_dict(cls, config: dict) -> 'PartitionOperation':
+        name = config.get('name')
+        partition = config.get('partition')
+        return cls(name=name, partition=partition)

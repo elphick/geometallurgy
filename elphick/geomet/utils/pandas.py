@@ -228,9 +228,9 @@ def calculate_partition(df_feed: pd.DataFrame,
 
     res: pd.DataFrame = df_preferred[[col_mass_dry]].div(df_feed[[col_mass_dry]]).rename(columns={col_mass_dry: 'K'})
     if df_preferred.index.name.lower() == 'size':
-        res.insert(loc=0, column='da', value=mean_size(res.index))
+        res.insert(loc=0, column='size', value=mean_size(res.index))
     else:
-        res.insert(loc=0, column='da', value=res.index.mid)
+        res.insert(loc=0, column=df_preferred.index.name.lower(), value=res.index.mid)
     return res
 
 
