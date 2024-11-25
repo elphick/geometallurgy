@@ -1,0 +1,84 @@
+elphick.geomet.utils.pandas.MeanIntervalArray
+=============================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autoclass:: MeanIntervalArray
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MeanIntervalArray.__init__
+      ~MeanIntervalArray.argmax
+      ~MeanIntervalArray.argmin
+      ~MeanIntervalArray.argsort
+      ~MeanIntervalArray.astype
+      ~MeanIntervalArray.contains
+      ~MeanIntervalArray.copy
+      ~MeanIntervalArray.delete
+      ~MeanIntervalArray.dropna
+      ~MeanIntervalArray.duplicated
+      ~MeanIntervalArray.equals
+      ~MeanIntervalArray.factorize
+      ~MeanIntervalArray.fillna
+      ~MeanIntervalArray.from_arrays
+      ~MeanIntervalArray.from_breaks
+      ~MeanIntervalArray.from_tuples
+      ~MeanIntervalArray.insert
+      ~MeanIntervalArray.interpolate
+      ~MeanIntervalArray.isin
+      ~MeanIntervalArray.isna
+      ~MeanIntervalArray.map
+      ~MeanIntervalArray.max
+      ~MeanIntervalArray.min
+      ~MeanIntervalArray.overlaps
+      ~MeanIntervalArray.ravel
+      ~MeanIntervalArray.repeat
+      ~MeanIntervalArray.searchsorted
+      ~MeanIntervalArray.set_closed
+      ~MeanIntervalArray.shift
+      ~MeanIntervalArray.take
+      ~MeanIntervalArray.to_numpy
+      ~MeanIntervalArray.to_tuples
+      ~MeanIntervalArray.tolist
+      ~MeanIntervalArray.transpose
+      ~MeanIntervalArray.unique
+      ~MeanIntervalArray.value_counts
+      ~MeanIntervalArray.view
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MeanIntervalArray.T
+      ~MeanIntervalArray.can_hold_na
+      ~MeanIntervalArray.closed
+      ~MeanIntervalArray.closed_left
+      ~MeanIntervalArray.closed_right
+      ~MeanIntervalArray.dtype
+      ~MeanIntervalArray.is_empty
+      ~MeanIntervalArray.is_non_overlapping_monotonic
+      ~MeanIntervalArray.left
+      ~MeanIntervalArray.length
+      ~MeanIntervalArray.mean
+      ~MeanIntervalArray.mid
+      ~MeanIntervalArray.nbytes
+      ~MeanIntervalArray.ndim
+      ~MeanIntervalArray.open_left
+      ~MeanIntervalArray.open_right
+      ~MeanIntervalArray.right
+      ~MeanIntervalArray.shape
+      ~MeanIntervalArray.size
+   
+   

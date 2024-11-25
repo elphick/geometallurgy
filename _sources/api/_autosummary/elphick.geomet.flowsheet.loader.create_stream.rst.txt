@@ -1,0 +1,6 @@
+elphick.geomet.flowsheet.loader.create\_stream
+==============================================
+
+.. currentmodule:: elphick.geomet.flowsheet.loader
+
+.. autofunction:: create_stream

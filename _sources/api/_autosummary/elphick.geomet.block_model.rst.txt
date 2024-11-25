@@ -1,0 +1,38 @@
+﻿elphick.geomet.block\_model
+===========================
+
+.. automodule:: elphick.geomet.block_model
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      import_extras
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      BlockModel
+   
+   
+
+   
+   
+   
+
+
+

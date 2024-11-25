@@ -1,0 +1,6 @@
+elphick.geomet.utils.amenability.area\_trapezoid
+================================================
+
+.. currentmodule:: elphick.geomet.utils.amenability
+
+.. autofunction:: area_trapezoid

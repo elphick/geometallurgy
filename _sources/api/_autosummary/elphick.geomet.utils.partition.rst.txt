@@ -1,0 +1,35 @@
+elphick.geomet.utils.partition
+==============================
+
+.. automodule:: elphick.geomet.utils.partition
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      load_partition_function
+      napier_munn
+      napier_munn_density
+      napier_munn_size
+      perfect
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

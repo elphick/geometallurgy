@@ -1,0 +1,6 @@
+elphick.geomet.utils.block\_model\_converter.volume\_grid\_geom\_to\_vtk
+========================================================================
+
+.. currentmodule:: elphick.geomet.utils.block_model_converter
+
+.. autofunction:: volume_grid_geom_to_vtk

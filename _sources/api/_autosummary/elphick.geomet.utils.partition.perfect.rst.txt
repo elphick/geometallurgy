@@ -1,0 +1,6 @@
+elphick.geomet.utils.partition.perfect
+======================================
+
+.. currentmodule:: elphick.geomet.utils.partition
+
+.. autofunction:: perfect

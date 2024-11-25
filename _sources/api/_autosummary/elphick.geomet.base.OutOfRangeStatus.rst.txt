@@ -1,0 +1,31 @@
+elphick.geomet.base.OutOfRangeStatus
+====================================
+
+.. currentmodule:: elphick.geomet.base
+
+.. autoclass:: OutOfRangeStatus
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OutOfRangeStatus.__init__
+      ~OutOfRangeStatus.get_ranges
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~OutOfRangeStatus.ok
+   
+   

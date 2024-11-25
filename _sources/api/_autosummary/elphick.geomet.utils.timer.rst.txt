@@ -1,0 +1,39 @@
+elphick.geomet.utils.timer
+==========================
+
+.. automodule:: elphick.geomet.utils.timer
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      get_default_logger
+      log_timer
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      MyLogger
+   
+   
+
+   
+   
+   
+
+
+

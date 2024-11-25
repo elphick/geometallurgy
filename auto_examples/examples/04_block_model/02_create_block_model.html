@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Block Model &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Load Block Model" href="03_load_block_model.html" />
+    <link rel="prev" title="Consuming OMF" href="01_consuming_omf.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.9
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#interval-samples">Interval Samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#flowsheets">Flowsheets</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#block-models">Block Models</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01_consuming_omf.html">Consuming OMF</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Create Block Model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load">Load</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#export-the-model-data">Export the model data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#profile">Profile</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03_load_block_model.html">Load Block Model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mass-balancing">Mass Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mapping">Mapping</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Example Gallery</a></li>
+      <li class="breadcrumb-item active">Create Block Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/auto_examples/examples/04_block_model/02_create_block_model.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-examples-04-block-model-02-create-block-model-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="create-block-model">
+<span id="sphx-glr-auto-examples-examples-04-block-model-02-create-block-model-py"></span><h1>Create Block Model<a class="headerlink" href="#create-block-model" title="Link to this heading"></a></h1>
+<p>We leverage the omfvista block model example.  We load the model and convert to a parquet.</p>
+<p>Later, we may use this model along with a correlation matrix for an iron ore dataset to create a pseudo-realistic
+iron ore block model for testing.</p>
+<p>We can also up-sample the grid to create larger datasets for testing.</p>
+<p># REF: <a class="reference external" href="https://opengeovis.github.io/omfvista/examples/load-project.html#sphx-glr-examples-load-project-py">https://opengeovis.github.io/omfvista/examples/load-project.html#sphx-glr-examples-load-project-py</a></p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">omfvista</span>
+<span class="kn">import</span> <span class="nn">pooch</span>
+<span class="kn">import</span> <span class="nn">pyvista</span> <span class="k">as</span> <span class="nn">pv</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">omf</span> <span class="kn">import</span> <span class="n">VolumeElement</span>
+<span class="kn">from</span> <span class="nn">ydata_profiling</span> <span class="kn">import</span> <span class="n">ProfileReport</span>
+</pre></div>
+</div>
+<section id="load">
+<h2>Load<a class="headerlink" href="#load" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Base URL and relative path</span>
+<span class="n">base_url</span> <span class="o">=</span> <span class="s2">&quot;https://github.com/OpenGeoVis/omfvista/raw/master/assets/&quot;</span>
+<span class="n">relative_path</span> <span class="o">=</span> <span class="s2">&quot;test_file.omf&quot;</span>
+
+<span class="c1"># Create a Pooch object</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">pooch</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">path</span><span class="o">=</span><span class="n">pooch</span><span class="o">.</span><span class="n">os_cache</span><span class="p">(</span><span class="s2">&quot;geometallurgy&quot;</span><span class="p">),</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="n">base_url</span><span class="p">,</span>
+    <span class="n">registry</span><span class="o">=</span><span class="p">{</span><span class="n">relative_path</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c1"># Use fetch method to download the file</span>
+<span class="n">file_path</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">relative_path</span><span class="p">)</span>
+
+<span class="c1"># Now you can load the file using omfvista</span>
+<span class="n">project</span> <span class="o">=</span> <span class="n">omfvista</span><span class="o">.</span><span class="n">load_project</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">project</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>MultiBlock (0x7f8ea829b400)
+  N Blocks    9
+  X Bounds    443941.105, 447059.611
+  Y Bounds    491941.536, 495059.859
+  Z Bounds    2330.000, 3555.942
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">project</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_02_create_block_model_001.png" srcset="../../../_images/sphx_glr_02_create_block_model_001.png" alt="02 create block model" class = "sphx-glr-single-img"/><div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">vol</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;Block Model&quot;</span><span class="p">]</span>
+<span class="n">assay</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;wolfpass_WP_assay&quot;</span><span class="p">]</span>
+<span class="n">topo</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;Topography&quot;</span><span class="p">]</span>
+<span class="n">dacite</span> <span class="o">=</span> <span class="n">project</span><span class="p">[</span><span class="s2">&quot;Dacite&quot;</span><span class="p">]</span>
+
+<span class="n">assay</span><span class="o">.</span><span class="n">set_active_scalars</span><span class="p">(</span><span class="s2">&quot;DENSITY&quot;</span><span class="p">)</span>
+
+<span class="n">p</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">assay</span><span class="o">.</span><span class="n">tube</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_02_create_block_model_002.png" srcset="../../../_images/sphx_glr_02_create_block_model_002.png" alt="02 create block model" class = "sphx-glr-single-img"/><p>Threshold the volumetric data</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">thresh_vol</span> <span class="o">=</span> <span class="n">vol</span><span class="o">.</span><span class="n">threshold</span><span class="p">([</span><span class="mf">1.09</span><span class="p">,</span> <span class="mf">4.20</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">thresh_vol</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>UnstructuredGrid (0x7f8ea828b8e0)
+  N Cells:    92525
+  N Points:   107807
+  X Bounds:   4.447e+05, 4.457e+05
+  Y Bounds:   4.929e+05, 4.942e+05
+  Z Bounds:   2.330e+03, 3.110e+03
+  N Arrays:   1
+</pre></div>
+</div>
+<p>Create a plotting window</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+<span class="c1"># Add the bounds axis</span>
+<span class="n">p</span><span class="o">.</span><span class="n">show_bounds</span><span class="p">()</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_bounding_box</span><span class="p">()</span>
+
+<span class="c1"># Add our datasets</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">topo</span><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span>
+    <span class="n">dacite</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;orange&quot;</span><span class="p">,</span>
+    <span class="n">opacity</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># p.add_mesh(thresh_vol, cmap=&quot;coolwarm&quot;, clim=vol.get_data_range())</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh_threshold</span><span class="p">(</span><span class="n">vol</span><span class="p">,</span> <span class="n">scalars</span><span class="o">=</span><span class="s2">&quot;CU_pct&quot;</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="c1"># Add the assay logs: use a tube filter that varius the radius by an attribute</span>
+<span class="n">p</span><span class="o">.</span><span class="n">add_mesh</span><span class="p">(</span><span class="n">assay</span><span class="o">.</span><span class="n">tube</span><span class="p">(</span><span class="n">radius</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+
+<span class="n">p</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_02_create_block_model_003.png" srcset="../../../_images/sphx_glr_02_create_block_model_003.png" alt="02 create block model" class = "sphx-glr-single-img"/></section>
+<section id="export-the-model-data">
+<h2>Export the model data<a class="headerlink" href="#export-the-model-data" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create DataFrame</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">vol</span><span class="o">.</span><span class="n">cell_centers</span><span class="p">()</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">])</span>
+
+<span class="c1"># Add the array data to the DataFrame</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">vol</span><span class="o">.</span><span class="n">array_names</span><span class="p">:</span>
+    <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">vol</span><span class="o">.</span><span class="n">get_array</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># set the index to the cell centroids</span>
+<span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">],</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Write DataFrame to parquet file</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s1">&#39;block_model_copper.parquet&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="profile">
+<h2>Profile<a class="headerlink" href="#profile" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">profile</span> <span class="o">=</span> <span class="n">ProfileReport</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Profiling Report&quot;</span><span class="p">)</span>
+<span class="n">profile</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s2">&quot;block_model_copper_profile.html&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Summarize dataset:   0%|          | 0/5 [00:00&lt;?, ?it/s]
+Summarize dataset:   0%|          | 0/9 [00:01&lt;?, ?it/s, Describe variable:y]
+Summarize dataset:  11%|█         | 1/9 [00:01&lt;00:12,  1.54s/it, Describe variable:y]
+Summarize dataset:  11%|█         | 1/9 [00:01&lt;00:12,  1.54s/it, Describe variable:x]
+Summarize dataset:  22%|██▏       | 2/9 [00:01&lt;00:10,  1.54s/it, Describe variable:z]
+Summarize dataset:  33%|███▎      | 3/9 [00:02&lt;00:09,  1.54s/it, Describe variable:CU_pct]
+Summarize dataset:  44%|████▍     | 4/9 [00:02&lt;00:03,  1.49it/s, Describe variable:CU_pct]
+Summarize dataset:  44%|████▍     | 4/9 [00:02&lt;00:03,  1.49it/s, Get variable types]
+Summarize dataset:  50%|█████     | 5/10 [00:02&lt;00:03,  1.49it/s, Get dataframe statistics]
+Summarize dataset:  55%|█████▍    | 6/11 [00:02&lt;00:03,  1.49it/s, Calculate auto correlation]
+Summarize dataset:  64%|██████▎   | 7/11 [00:03&lt;00:01,  2.01it/s, Calculate auto correlation]
+Summarize dataset:  64%|██████▎   | 7/11 [00:03&lt;00:01,  2.01it/s, Get scatter matrix]
+Summarize dataset:  26%|██▌       | 7/27 [00:03&lt;00:09,  2.01it/s, scatter x, x]
+Summarize dataset:  30%|██▉       | 8/27 [00:04&lt;00:08,  2.27it/s, scatter x, x]
+Summarize dataset:  30%|██▉       | 8/27 [00:04&lt;00:08,  2.27it/s, scatter y, x]
+Summarize dataset:  33%|███▎      | 9/27 [00:04&lt;00:07,  2.54it/s, scatter y, x]
+Summarize dataset:  33%|███▎      | 9/27 [00:04&lt;00:07,  2.54it/s, scatter z, x]
+Summarize dataset:  37%|███▋      | 10/27 [00:04&lt;00:05,  2.90it/s, scatter z, x]
+Summarize dataset:  37%|███▋      | 10/27 [00:04&lt;00:05,  2.90it/s, scatter CU_pct, x]
+Summarize dataset:  41%|████      | 11/27 [00:04&lt;00:04,  3.27it/s, scatter CU_pct, x]
+Summarize dataset:  41%|████      | 11/27 [00:04&lt;00:04,  3.27it/s, scatter x, y]
+Summarize dataset:  44%|████▍     | 12/27 [00:05&lt;00:04,  3.60it/s, scatter x, y]
+Summarize dataset:  44%|████▍     | 12/27 [00:05&lt;00:04,  3.60it/s, scatter y, y]
+Summarize dataset:  48%|████▊     | 13/27 [00:05&lt;00:03,  3.95it/s, scatter y, y]
+Summarize dataset:  48%|████▊     | 13/27 [00:05&lt;00:03,  3.95it/s, scatter z, y]
+Summarize dataset:  52%|█████▏    | 14/27 [00:05&lt;00:03,  4.25it/s, scatter z, y]
+Summarize dataset:  52%|█████▏    | 14/27 [00:05&lt;00:03,  4.25it/s, scatter CU_pct, y]
+Summarize dataset:  56%|█████▌    | 15/27 [00:05&lt;00:02,  4.43it/s, scatter CU_pct, y]
+Summarize dataset:  56%|█████▌    | 15/27 [00:05&lt;00:02,  4.43it/s, scatter x, z]
+Summarize dataset:  59%|█████▉    | 16/27 [00:05&lt;00:02,  4.65it/s, scatter x, z]
+Summarize dataset:  59%|█████▉    | 16/27 [00:05&lt;00:02,  4.65it/s, scatter y, z]
+Summarize dataset:  63%|██████▎   | 17/27 [00:05&lt;00:02,  4.76it/s, scatter y, z]
+Summarize dataset:  63%|██████▎   | 17/27 [00:05&lt;00:02,  4.76it/s, scatter z, z]
+Summarize dataset:  67%|██████▋   | 18/27 [00:06&lt;00:01,  5.06it/s, scatter z, z]
+Summarize dataset:  67%|██████▋   | 18/27 [00:06&lt;00:01,  5.06it/s, scatter CU_pct, z]
+Summarize dataset:  70%|███████   | 19/27 [00:06&lt;00:01,  5.13it/s, scatter CU_pct, z]
+Summarize dataset:  70%|███████   | 19/27 [00:06&lt;00:01,  5.13it/s, scatter x, CU_pct]
+Summarize dataset:  74%|███████▍  | 20/27 [00:06&lt;00:01,  5.13it/s, scatter x, CU_pct]
+Summarize dataset:  74%|███████▍  | 20/27 [00:06&lt;00:01,  5.13it/s, scatter y, CU_pct]
+Summarize dataset:  78%|███████▊  | 21/27 [00:06&lt;00:01,  5.03it/s, scatter y, CU_pct]
+Summarize dataset:  78%|███████▊  | 21/27 [00:06&lt;00:01,  5.03it/s, scatter z, CU_pct]
+Summarize dataset:  81%|████████▏ | 22/27 [00:06&lt;00:00,  5.09it/s, scatter z, CU_pct]
+Summarize dataset:  81%|████████▏ | 22/27 [00:06&lt;00:00,  5.09it/s, scatter CU_pct, CU_pct]
+Summarize dataset:  85%|████████▌ | 23/27 [00:07&lt;00:00,  5.20it/s, scatter CU_pct, CU_pct]
+Summarize dataset:  79%|███████▉  | 23/29 [00:07&lt;00:01,  5.20it/s, Missing diagram bar]
+Summarize dataset:  83%|████████▎ | 24/29 [00:07&lt;00:00,  5.89it/s, Missing diagram bar]
+Summarize dataset:  83%|████████▎ | 24/29 [00:07&lt;00:00,  5.89it/s, Missing diagram matrix]
+Summarize dataset:  86%|████████▌ | 25/29 [00:07&lt;00:01,  3.10it/s, Missing diagram matrix]
+Summarize dataset:  86%|████████▌ | 25/29 [00:07&lt;00:01,  3.10it/s, Take sample]
+Summarize dataset:  90%|████████▉ | 26/29 [00:07&lt;00:00,  3.10it/s, Detecting duplicates]
+Summarize dataset:  93%|█████████▎| 27/29 [00:08&lt;00:00,  3.87it/s, Detecting duplicates]
+Summarize dataset:  93%|█████████▎| 27/29 [00:08&lt;00:00,  3.87it/s, Get alerts]
+Summarize dataset:  97%|█████████▋| 28/29 [00:08&lt;00:00,  3.87it/s, Get reproduction details]
+Summarize dataset: 100%|██████████| 29/29 [00:08&lt;00:00,  3.87it/s, Completed]
+Summarize dataset: 100%|██████████| 29/29 [00:08&lt;00:00,  3.50it/s, Completed]
+
+Generate report structure:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Generate report structure: 100%|██████████| 1/1 [00:01&lt;00:00,  1.22s/it]
+Generate report structure: 100%|██████████| 1/1 [00:01&lt;00:00,  1.22s/it]
+
+Render HTML:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Render HTML: 100%|██████████| 1/1 [00:00&lt;00:00,  1.93it/s]
+Render HTML: 100%|██████████| 1/1 [00:00&lt;00:00,  1.93it/s]
+
+Export report to file:   0%|          | 0/1 [00:00&lt;?, ?it/s]
+Export report to file: 100%|██████████| 1/1 [00:00&lt;00:00, 474.09it/s]
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 22.253 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-examples-04-block-model-02-create-block-model-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/97e005582aff685efb473cea4c1dd07b/02_create_block_model.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">02_create_block_model.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/8a944d5ad19aa8baee3cecf50d676098/02_create_block_model.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">02_create_block_model.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_consuming_omf.html" class="btn btn-neutral float-left" title="Consuming OMF" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_load_block_model.html" class="btn btn-neutral float-right" title="Load Block Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

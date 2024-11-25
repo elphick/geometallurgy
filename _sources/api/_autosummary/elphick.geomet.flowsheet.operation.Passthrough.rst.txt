@@ -1,0 +1,41 @@
+elphick.geomet.flowsheet.operation.Passthrough
+==============================================
+
+.. currentmodule:: elphick.geomet.flowsheet.operation
+
+.. autoclass:: Passthrough
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Passthrough.__init__
+      ~Passthrough.check_balance
+      ~Passthrough.from_dict
+      ~Passthrough.get_input_mass
+      ~Passthrough.get_output_mass
+      ~Passthrough.solve
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Passthrough.has_empty_input
+      ~Passthrough.has_empty_output
+      ~Passthrough.inputs
+      ~Passthrough.is_balanced
+      ~Passthrough.node_type
+      ~Passthrough.outputs
+      ~Passthrough.unbalanced_records
+   
+   
