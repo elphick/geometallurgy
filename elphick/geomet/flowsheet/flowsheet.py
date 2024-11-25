@@ -132,7 +132,7 @@ class Flowsheet:
         return cls().from_objects(objects=streams, name=name)
 
     @classmethod
-    def from_dict_old(cls, config: dict) -> FS:
+    def from_dict(cls, config: dict) -> FS:
         """Create a flowsheet from a dictionary
 
         Args:
