@@ -37,7 +37,7 @@ from scipy.interpolate import PchipInterpolator
 from elphick.geomet import IntervalSample
 from elphick.geomet.datasets.sample_data import size_by_assay
 from elphick.geomet.flowsheet import Flowsheet
-from elphick.geomet.utils.partition import napier_munn
+from elphick.geomet.utils.partition import napier_munn, napier_munn_size
 from elphick.geomet.utils.pandas import calculate_partition
 
 # sphinx_gallery_thumbnail_number = -1
@@ -57,10 +57,11 @@ print(mc_feed)
 # Define and Apply the Partition
 # ------------------------------
 #
-# We partially initialise the partition function
-# The dim argument is added to inform the split method which dimension to apply the function/split to
+# We partially initialise the partition function.  The unfilled argument must be named the same as the index in the
+# IntervalSample object upon which the partition is applied.  In this example the unfilled argument is 'size',
+# so the partition will be applied to the size dimension of the index.
 
-part_cyclone = partial(napier_munn, d50=0.150, ep=0.1, dim='size')
+part_cyclone = partial(napier_munn_size, d50=0.150, ep=0.1)
 
 # %%
 # Separate the object using the defined partitions.  UF = Underflow, OF = Overflow
@@ -81,20 +82,20 @@ df_partition
 # %%
 # Create an interpolator from the data.  As a Callable, the spline can be used to split a MassComposition object.
 
-da = np.linspace(0.01, df_partition.index.right.max(), num=500)
-spline_partition = PchipInterpolator(x=df_partition.sort_index()['da'], y=df_partition.sort_index()['K'])
-pn_extracted = spline_partition(da)
+size_grid = np.linspace(0.01, df_partition.index.right.max(), num=500)
+spline_partition = PchipInterpolator(x=df_partition.sort_index()['size'], y=df_partition.sort_index()['K'])
+pn_extracted = spline_partition(size_grid)
 
 # %%
 # Plot the extracted data, and the spline on the input partition curve to visually validate.
 
-pn_original = part_cyclone(da)
+pn_original = part_cyclone(size_grid)
 
-fig = go.Figure(go.Scatter(x=da, y=pn_original, name='Input Partition', line=dict(width=5, color='DarkSlateGrey')))
-fig.add_trace(go.Scatter(x=df_partition['da'], y=df_partition['K'], name='Extracted Partition Data', mode='markers',
+fig = go.Figure(go.Scatter(x=size_grid, y=pn_original, name='Input Partition', line=dict(width=5, color='DarkSlateGrey')))
+fig.add_trace(go.Scatter(x=df_partition['size'], y=df_partition['K'], name='Extracted Partition Data', mode='markers',
                          marker=dict(size=12, color='red', line=dict(width=2, color='DarkSlateGrey'))))
 fig.add_trace(
-    go.Scatter(x=da, y=pn_extracted, name='Extracted Partition Curve', line=dict(width=2, color='red', dash='dash')))
+    go.Scatter(x=size_grid, y=pn_extracted, name='Extracted Partition Curve', line=dict(width=2, color='red', dash='dash')))
 
 fig.update_xaxes(type="log")
 fig.update_layout(title='Partition Round Trip Check', xaxis_title='da', yaxis_title='K', yaxis_range=[0, 1.05])

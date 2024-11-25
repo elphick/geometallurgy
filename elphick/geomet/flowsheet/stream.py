@@ -36,3 +36,10 @@ class Stream(MassComposition):
     #     stream = cls(**filtered_kwargs)
     #     stream.__class__ = type(obj.__class__.__name__, (obj.__class__, cls), {})
     #     return stream
+
+    @classmethod
+    def from_dict(cls, config: dict) -> 'Stream':
+        name = config.get('name')
+        node_in = config.get('node_in')
+        node_out = config.get('node_out')
+        return cls(name=name).set_nodes([node_in, node_out])

@@ -1,4 +1,6 @@
 from __future__ import annotations
+
+import functools
 from pathlib import Path
 from typing import Optional, Literal, Callable, Union, Iterable, TYPE_CHECKING
 
@@ -104,31 +106,45 @@ class IntervalSample(MassComposition):
             K = \\frac{{m_{preferred}}}{{m_{feed}}}
 
         :param partition_definition: A function that takes a data frame and returns a boolean series with a
-         range [0, 1].
+         range [0, 1]. A 1D function must have an argument that matches the dimension of the interval index.
+         A 2D function must have two arguments that match the dimensions of the interval index.
         :param name_1: The name of the first sample.
         :param name_2: The name of the second sample.
         :return: A tuple of two IntervalSamples.
         """
         if not isinstance(partition_definition, Callable):
             raise TypeError("The definition is not a callable function")
-        if 'dim' not in partition_definition.keywords.keys():
-            raise NotImplementedError("The callable function passed does not have a dim")
 
-        dim = partition_definition.keywords['dim']
-        partition_definition.keywords.pop('dim')
+        # Check that the partition definition has the correct number of arguments and that the names match
+        if isinstance(self.mass_data.index, pd.MultiIndex):
+            interval_levels = [level for level in self.mass_data.index.levels if isinstance(level, pd.IntervalIndex)]
+        else:
+            interval_levels = [self.mass_data.index] if isinstance(self.mass_data.index, pd.IntervalIndex) else []
 
-        # get the mean of the intervals - the geomean if the interval is called size
-        index = self.mass_data.index.get_level_values(dim)
-        # check the index is an interval index
-        if not isinstance(index, pd.IntervalIndex):
-            raise ValueError(f"The index is not an IntervalIndex.  The index is {type(index)}")
-        index = MeanIntervalIndex(index)
-        x = index.mean
+        # Get the function from the partial object if necessary
+        partition_func = partition_definition.func if isinstance(partition_definition,
+                                                                 functools.partial) else partition_definition
+
+        # Check that the required argument names are present in the IntervalIndex levels
+        required_args = partition_func.__code__.co_varnames[:len(interval_levels)]
+        for arg, level in zip(required_args, interval_levels):
+            if arg != level.name:
+                raise ValueError(f"The partition definition argument name does not match the index name. "
+                                 f"Expected {level.name}, found {arg}")
+
+        fraction_means: dict = {}
+        # iterate the Index or MultiIndex
+        if isinstance(self.mass_data.index, pd.MultiIndex):
+            for idx in self.mass_data.index.levels[0]:
+                # get the mean of the fractions, by converting to a MeanIntervalIndex
+                fraction_means[idx] = MeanIntervalIndex(self.mass_data.index.get_loc_level(idx)).mean
+        else:
+            fraction_means[self.mass_data.index.name] = MeanIntervalIndex(self.mass_data.index).mean
 
         self.to_stream()
-        self: Stream
+        self: 'Stream'
 
-        pn: pd.Series = pd.Series(partition_definition(x), name='K', index=index)
+        pn: pd.Series = pd.Series(partition_definition(**fraction_means), name='K', index=self._mass_data.index)
         sample_1 = self.create_congruent_object(name=name_1).to_stream()
         sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
         sample_1.set_nodes([self.nodes[1], random_int()])

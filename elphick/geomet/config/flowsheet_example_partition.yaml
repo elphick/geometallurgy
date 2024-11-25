@@ -1,0 +1,32 @@
+FLOWSHEET:
+  flowsheet:
+    name: Flowsheet
+  streams:  # graph edges
+    Feed:
+      name: Feed
+      node_in: feed
+      node_out: screen
+    Coarse:
+      name: Coarse
+      node_in: screen
+      node_out: lump
+    Fine:
+      name: Fine
+      node_in: screen
+      node_out: fines
+  operations:  # graph nodes
+    feed:
+      name: feed
+    screen:
+      name: screen
+      type: PartitionOperation
+      partition:
+        module: elphick.geomet.utils.partition
+        function: napier_munn_size_1mm
+        args: null  # e.g. d50, ep if not defined in the (partial) function
+        output_stream: Lump
+        complement_stream: Fines
+    lump:
+      name: lump
+    fines:
+      name: fines

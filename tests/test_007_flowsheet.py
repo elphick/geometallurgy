@@ -1,10 +1,14 @@
-import pytest
+from pathlib import Path
 
-from elphick.geomet import Sample
+import pandas as pd
+import pytest
+import yaml
+
+from elphick.geomet import Sample, IntervalSample
 from elphick.geomet.flowsheet import Flowsheet
 from elphick.geomet.flowsheet.operation import Operation
 from elphick.geomet.flowsheet.stream import Stream
-from fixtures import sample_data
+from fixtures import sample_data, interval_sample_data
 
 
 def test_flowsheet_init(sample_data):
@@ -140,3 +144,50 @@ def test_filter_by_index(sample_data):
     assert fs.get_input_streams()[0].data.equals(fs_reduced.get_input_streams()[0].data)
     assert fs.get_output_streams()[0].data.equals(fs_reduced.get_output_streams()[0].data)
     assert fs.get_output_streams()[1].data.equals(fs_reduced.get_output_streams()[1].data)
+
+
+def test_flowsheet_from_yaml():
+    # Create the flowsheet object
+    flowsheet = Flowsheet.from_yaml(Path(__file__).parents[1] / 'elphick/geomet/config'
+                                                                '/flowsheet_example_simple.yaml')
+
+    # Verify the flowsheet object has been created
+    assert isinstance(flowsheet, Flowsheet), "Flowsheet object has not been created"
+
+
+def test_solve_flowsheet_simple(interval_sample_data):
+    # Create the flowsheet object
+    flowsheet = Flowsheet.from_yaml(Path(__file__).parents[1] / 'elphick/geomet/config'
+                                                                '/flowsheet_example_simple.yaml')
+
+    feed_sample: IntervalSample = IntervalSample(interval_sample_data, name='Feed')
+
+    df_coarse: pd.DataFrame = interval_sample_data.copy()
+    df_coarse['wet_mass'] = df_coarse['wet_mass'] * 0.4
+    df_coarse['mass_dry'] = df_coarse['mass_dry'] * 0.4
+    obj_coarse: Stream = Stream(df_coarse, name='Coarse')
+
+    flowsheet.set_stream_data(stream_data={'Feed': feed_sample, 'Coarse': obj_coarse})
+
+    flowsheet.plot().show()
+
+    # Solve the flowsheet
+    flowsheet.solve()
+
+    flowsheet.plot().show()
+
+
+def test_solve_flowsheet_partition(interval_sample_data):
+    # Create the flowsheet object
+    flowsheet = Flowsheet.from_yaml(Path(__file__).parents[1] / 'elphick/geomet/config'
+                                                                '/flowsheet_example_partition.yaml')
+
+    # add the feed sample to the flowsheet
+    feed_sample: IntervalSample = IntervalSample(interval_sample_data, name='Feed')
+    flowsheet.set_stream_data({'Feed': feed_sample})
+    flowsheet.plot().show()
+
+    # Solve the flowsheet
+    flowsheet.solve()
+
+    flowsheet.plot().show()

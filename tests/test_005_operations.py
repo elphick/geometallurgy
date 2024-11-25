@@ -1,9 +1,11 @@
 import pandas as pd
 import pytest
 
-from elphick.geomet import Sample
-from elphick.geomet.flowsheet.operation import Operation
+from elphick.geomet import Sample, IntervalSample
+from elphick.geomet.flowsheet.operation import Operation, PartitionOperation
 from elphick.geomet.utils.data import sample_data
+from elphick.geomet.utils.pandas import MeanIntervalIndex
+from elphick.geomet.utils.partition import napier_munn_size_1mm
 
 
 @pytest.fixture
@@ -23,12 +25,14 @@ def sample_split() -> tuple[Sample, Sample, Sample]:
     ref, comp = smpl.split(fraction=0.5, include_supplementary_data=False)
     return ref, comp, smpl
 
+
 @pytest.fixture
 def sample_split_with_supp() -> tuple[Sample, Sample, Sample]:
     data = sample_data()
     smpl = Sample(data=data, name='sample')
     ref, comp = smpl.split(fraction=0.5, include_supplementary_data=True)
     return ref, comp, smpl
+
 
 def test_operation_split(sample_split, expected_data):
     ref, comp, smpl = sample_split
@@ -199,3 +203,31 @@ def test_solve_missing_count():
     op.inputs = [input1]
     op.outputs = [output1, output2]
     op.solve()  # This should not raise any exceptions
+
+
+def test_solve_by_partition():
+    """Test solving an Operation object by partitioning the input data using napier_munn_size_1mm."""
+    # Create some MassComposition objects
+    data = pd.DataFrame({'wet_mass': [1000., 2000.], 'mass_dry': [800., 1600.], 'Fe': [55.0, 60.0]})
+    data.index = pd.IntervalIndex.from_arrays([1., 2.], [2., 3.], closed='left', name='size')
+    input1 = IntervalSample(data=data, name='input1')
+
+    # Create a PartitionOperation object and set its inputs and outputs
+    partition_op = PartitionOperation(name='partition_operation', partition={'module': 'elphick.geomet.utils.partition',
+                                                                             'function': 'napier_munn_size_1mm',
+                                                                             'output_stream': 'Lump',
+                                                                             'complement_stream': 'Fines'})
+    partition_op.inputs = [input1]
+    partition_op.outputs = [None, None]  # Output will be calculated
+
+    # Solve the operation to apply the partition function
+    partition_op.solve()
+
+    # Check if the operation is balanced
+    assert partition_op.is_balanced
+
+    # Verify the output data
+    expected_output_data = input1.mass_data.copy()[['mass_dry']]
+    expected_output_data['mass_dry'] *= napier_munn_size_1mm(MeanIntervalIndex(expected_output_data.index).mean)
+    pd.testing.assert_frame_equal(partition_op.outputs[0].mass_data[['mass_dry']], expected_output_data)
+
