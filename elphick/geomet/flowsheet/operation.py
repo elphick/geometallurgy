@@ -74,7 +74,10 @@ class Operation:
         inputs = [i for i in self.inputs if i is not None]
 
         if not inputs:
-            return self._create_zero_mass()
+            try:
+                return self._create_zero_mass()
+            except:
+                return pd.DataFrame()
         elif len(inputs) == 1:
             return inputs[0].mass_data
         else:
@@ -84,7 +87,10 @@ class Operation:
         outputs = [o for o in self.outputs if o is not None]
 
         if not outputs:
-            return self._create_zero_mass()
+            try:
+                return self._create_zero_mass()
+            except:
+                return pd.DataFrame()
         elif len(outputs) == 1:
             return outputs[0].mass_data
         else:
