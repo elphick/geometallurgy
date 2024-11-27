@@ -1,12 +1,11 @@
 from copy import copy
 from enum import Enum
 from functools import reduce
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 
-from elphick.geomet import IntervalSample
 from elphick.geomet.base import MC
 from elphick.geomet.flowsheet.stream import Stream
 from elphick.geomet.utils.pandas import MeanIntervalIndex
@@ -14,6 +13,9 @@ from elphick.geomet.utils.partition import load_partition_function
 
 # generic type variable, used for type hinting that play nicely with subclasses
 OP = TypeVar('OP', bound='Operation')
+
+if TYPE_CHECKING:
+    from elphick.geomet import IntervalSample
 
 
 class NodeType(Enum):
@@ -234,7 +236,7 @@ class PartitionOperation(Operation):
         if len(self.inputs) != 1:
             raise ValueError("PartitionOperation must have exactly one input")
         for input_sample in self.inputs:
-            input_sample: IntervalSample
+            input_sample: 'IntervalSample'
             if input_sample is not None:
                 output, complement = input_sample.split_by_partition(self.partition_function)
                 self.outputs = [output, complement]
