@@ -293,12 +293,13 @@ class Flowsheet:
                         # There are two cases to be managed, 1. a single output missing,
                         # 2. a partition operation that returns two outputs
                         if isinstance(self.graph.nodes[node]['mc'], PartitionOperation):
+                            partition_stream: str = self.graph.nodes[node]['mc'].partition['partition_stream']
                             mc1, mc2 = self.graph.nodes[node]['mc'].solve()
                             # copy the solved object to the empty output edges
                             for successor in self.graph.successors(node):
                                 edge_data = self.graph.get_edge_data(node, successor)
                                 if edge_data and edge_data['mc'] is None:
-                                    edge_data['mc'] = mc1 if edge_data['name'] == 'preferred' else mc2
+                                    edge_data['mc'] = mc1 if edge_data['name'] == partition_stream else mc2
                                     edge_data['mc'].name = edge_data['name']
                         else:
                             mc: MC = self.graph.nodes[node]['mc'].solve()
