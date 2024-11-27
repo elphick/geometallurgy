@@ -128,8 +128,10 @@ class IntervalSample(MassComposition):
                                                                      functools.partial) else partition_definition
             # Check that the required argument names are present in the IntervalIndex levels
             required_args = partition_func.__code__.co_varnames[:len(dim_cols)]
+            pn: pd.Series = pd.Series(partition_definition(**fraction_means), name='K', index=self._mass_data.index)
         elif isinstance(partition_definition, pd.Series):
             required_args = partition_definition.index.names
+            pn: pd.Series = partition_definition
         else:
             raise TypeError(f"The partition definition must be a function or a pandas Series:"
                             f" type = {type(partition_definition)}")
@@ -141,7 +143,6 @@ class IntervalSample(MassComposition):
         self.to_stream()
         self: 'Stream'
 
-        pn: pd.Series = pd.Series(partition_definition(**fraction_means), name='K', index=self._mass_data.index)
         sample_1 = self.create_congruent_object(name=name_1).to_stream()
         sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
         sample_1.set_nodes([self.nodes[1], random_int()])
