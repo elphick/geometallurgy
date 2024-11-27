@@ -170,6 +170,11 @@ class Flowsheet:
                     operation_objects[node] = PartitionOperation.from_dict(node_config)
                 else:
                     operation_objects[node] = Operation.from_dict(flowsheet_config['operations'][node])
+
+                # set the input and output streams on the operation object for the selected node
+                operation_objects[node].inputs = [graph.get_edge_data(e[0], e[1])['mc'] for e in graph.in_edges(node)]
+                operation_objects[node].outputs = [graph.get_edge_data(e[0], e[1])['mc'] for e in graph.out_edges(node)]
+
         nx.set_node_attributes(graph, operation_objects, 'mc')
 
         graph = nx.convert_node_labels_to_integers(graph)
@@ -288,6 +293,7 @@ class Flowsheet:
                             if edge_data and edge_data['mc'] is None:
                                 edge_data['mc'] = mc
                                 edge_data['mc'].name = edge_data['name']
+                                self.set_operation_data(predecessor)
 
                     if self.graph.nodes[node]['mc'].has_empty_output:
                         # There are two cases to be managed, 1. a single output missing,
@@ -301,6 +307,8 @@ class Flowsheet:
                                 if edge_data and edge_data['mc'] is None:
                                     edge_data['mc'] = mc1 if edge_data['name'] == partition_stream else mc2
                                     edge_data['mc'].name = edge_data['name']
+                                    self.set_operation_data(successor)
+
                         else:
                             mc: MC = self.graph.nodes[node]['mc'].solve()
                             # copy the solved object to the empty output edges
@@ -309,6 +317,8 @@ class Flowsheet:
                                 if edge_data and edge_data['mc'] is None:
                                     edge_data['mc'] = mc
                                     edge_data['mc'].name = edge_data['name']
+                                    self.set_operation_data(successor)
+                        self.set_operation_data(node)
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
@@ -1017,6 +1027,15 @@ class Flowsheet:
                                                            self.graph.in_edges(node)]
                     self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
                                                             self.graph.out_edges(node)]
+
+    def set_operation_data(self, node):
+        """Set the input and output data for a node.
+        Uses the data on the edges (streams) connected to the node to refresh the data and check for node balance.
+        """
+        node_data: Operation = self.graph.nodes[node]['mc']
+        node_data.inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.in_edges(node)]
+        node_data.outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.out_edges(node)]
+        node_data.check_balance()
 
     def streams_to_dict(self) -> Dict[str, MC]:
         """Export the Stream objects to a Dict

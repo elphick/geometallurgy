@@ -117,9 +117,9 @@ class IntervalSample(MassComposition):
         """
 
         # Check that the partition definition has the correct number of arguments and that the names match
-        dim_cols = [col for col in self.mass_data.index.names if
-                    col != isinstance(self.mass_data.index.get_level_values(col), pd.IntervalIndex)]
-        fraction_means: pd.DataFrame = self.mass_data.index.to_frame()[dim_cols].apply(
+        sample_fraction_dims = [col for col in self.mass_data.index.names if
+                                col != isinstance(self.mass_data.index.get_level_values(col), pd.IntervalIndex)]
+        fraction_means: pd.DataFrame = self.mass_data.index.to_frame()[sample_fraction_dims].apply(
             lambda x: MeanIntervalIndex(x).mean, axis=0)
 
         # Get the function from the partial object if necessary
@@ -127,15 +127,16 @@ class IntervalSample(MassComposition):
             partition_func = partition_definition.func if isinstance(partition_definition,
                                                                      functools.partial) else partition_definition
             # Check that the required argument names are present in the IntervalIndex levels
-            required_args = partition_func.__code__.co_varnames[:len(dim_cols)]
-            pn: pd.Series = pd.Series(partition_definition(**fraction_means), name='K', index=self._mass_data.index)
+            required_args = [col for col in partition_func.__code__.co_varnames if col in sample_fraction_dims]
+            pn: pd.Series = pd.Series(partition_definition(**fraction_means[required_args]), name='K',
+                                      index=self._mass_data.index)
         elif isinstance(partition_definition, pd.Series):
             required_args = partition_definition.index.names
             pn: pd.Series = partition_definition
         else:
             raise TypeError(f"The partition definition must be a function or a pandas Series:"
                             f" type = {type(partition_definition)}")
-        for arg, dim in zip(required_args, dim_cols):
+        for arg, dim in zip(required_args, sample_fraction_dims):
             if arg != dim:
                 raise ValueError(f"The partition definition argument name does not match the index name. "
                                  f"Expected {dim}, found {arg}")
