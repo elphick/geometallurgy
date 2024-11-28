@@ -902,7 +902,7 @@ class Flowsheet:
                                           line=dict(width=2, color=edge_color_map[data['mc'].status.ok]),
                                           hoverinfo='none',
                                           mode='lines+markers',
-                                          text=data['mc'].name,
+                                          text=str(data['mc'].name),
                                           marker=dict(
                                               symbol="arrow",
                                               color=edge_color_map[data['mc'].status.ok],
