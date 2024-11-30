@@ -311,7 +311,7 @@ class Flowsheet:
 
         while 0 < missing_count < prev_missing_count:
             prev_missing_count = missing_count
-            for node in self.graph.nodes:
+            for node in nx.topological_sort(self.graph):
                 if self.graph.nodes[node]['mc'].node_type == NodeType.BALANCE:
                     if self.graph.nodes[node]['mc'].has_empty_input:
                         mc: MC = self.graph.nodes[node]['mc'].solve()
