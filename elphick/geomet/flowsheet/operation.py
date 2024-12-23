@@ -143,7 +143,8 @@ class Operation:
                                                           mass_dry=ref_object.mass_dry_var,
                                                           moisture_column_name=ref_object.moisture_column,
                                                           component_columns=ref_object.composition_columns,
-                                                          composition_units=ref_object.composition_units)
+                                                          composition_units=ref_object.composition_units,
+                                                          moisture_in_scope=ref_object.moisture_in_scope)
                 # Replace None with the new input
                 self.inputs[none_index] = mc
 
@@ -164,7 +165,8 @@ class Operation:
                                                               mass_dry=ref_object.mass_dry_var,
                                                               moisture_column_name=ref_object.moisture_column,
                                                               component_columns=ref_object.composition_columns,
-                                                              composition_units=ref_object.composition_units)
+                                                              composition_units=ref_object.composition_units,
+                                                              moisture_in_scope=ref_object.moisture_in_scope)
 
                 # Replace None with the new output
                 self.outputs[none_index] = mc
