@@ -132,7 +132,7 @@ class Flowsheet:
         return cls().from_objects(objects=streams, name=name)
 
     @classmethod
-    def from_dict(cls, config: dict) -> FS:
+    def from_dict_old(cls, config: dict) -> FS:
         """Create a flowsheet from a dictionary
 
         Args:
@@ -275,14 +275,6 @@ class Flowsheet:
         # todo: append  the streams around the node
 
         return unhealthy_data
-
-    def add_stream(self, stream: 'Stream'):
-        """Add a stream to the flowsheet."""
-        self.graph.add_edge(stream.nodes[0], stream.nodes[1], mc=stream, name=stream.name)
-
-    def add_operation(self, operation: 'Operation'):
-        """Add an operation to the flowsheet."""
-        self.graph.add_node(operation.name, mc=operation)
 
     def copy_without_stream_data(self):
         """Copy without stream data"""

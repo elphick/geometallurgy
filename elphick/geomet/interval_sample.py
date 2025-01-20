@@ -100,7 +100,8 @@ class IntervalSample(MassComposition):
 
         return data
 
-    def split_by_partition(self, partition_definition, name_1: str = 'preferred', name_2: str = 'complement'):
+    def split_by_partition(self, partition_definition: Union[pd.Series, Callable], name_1: str = 'preferred',
+                           name_2: str = 'complement'):
         """
         Split the sample into two samples based on the partition definition.
 
