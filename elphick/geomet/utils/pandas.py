@@ -8,8 +8,8 @@ from io import StringIO
 from token import STRING
 from typing import List, Dict, Optional, Literal
 
+import numpy as np
 import pandas as pd
-from scipy.stats import gmean
 
 from elphick.geomet.utils.components import is_compositional, get_components
 from elphick.geomet.utils.moisture import solve_mass_moisture, detect_moisture_column
@@ -63,7 +63,7 @@ def mass_to_composition(df: pd.DataFrame,
         mass: pd.DataFrame = df[[mass_dry]]
 
     component_mass: pd.DataFrame = df[component_cols]
-    composition: pd.DataFrame = component_mass.div(mass[mass_dry], axis=0) * composition_factors[composition_units]
+    composition: pd.DataFrame = component_mass.div(mass[mass_dry].replace(0.0, np.nan), axis=0).fillna(0.0) * composition_factors[composition_units]
 
     if mass_wet and (mass_wet in df.columns):
         moisture: pd.Series = solve_mass_moisture(mass_wet=mass[mass_wet], mass_dry=mass[mass_dry]).rename(
@@ -325,31 +325,26 @@ class MeanIntervalIndex(pd.IntervalIndex):
             return (self.right + self.left) / 2
 
 
-import pandas as pd
-import numpy as np
-from scipy.stats import gmean
-
-
-class MeanIntervalArray(pd.arrays.IntervalArray):
-    def __init__(self, data, dtype=None, copy=False):
-        super().__init__(data, dtype, copy)
-        if self.name == 'size':
-            # Calculate geometric mean
-            self.mean_values = gmean([self.right, self.left], axis=0)
-        else:
-            # Calculate arithmetic mean
-            self.mean_values = (self.right + self.left) / 2
-
-    @property
-    def mean(self):
-        if self.mean_values is not None:
-            return self.mean_values
-        elif self.name == 'size':
-            # Calculate geometric mean
-            return gmean([self.right, self.left], axis=0)
-        else:
-            # Calculate arithmetic mean
-            return (self.right + self.left) / 2
+# class MeanIntervalArray(pd.arrays.IntervalArray):
+#     def __init__(self, data, dtype=None, copy=False):
+#         super().__init__(data, dtype, copy)
+#         if self.name == 'size':
+#             # Calculate geometric mean
+#             self.mean_values = gmean([self.right, self.left], axis=0)
+#         else:
+#             # Calculate arithmetic mean
+#             self.mean_values = (self.right + self.left) / 2
+#
+#     @property
+#     def mean(self):
+#         if self.mean_values is not None:
+#             return self.mean_values
+#         elif self.name == 'size':
+#             # Calculate geometric mean
+#             return gmean([self.right, self.left], axis=0)
+#         else:
+#             # Calculate arithmetic mean
+#             return (self.right + self.left) / 2
 
 
 def parse_vars_from_expr(expr: str) -> list[str]:

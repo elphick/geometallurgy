@@ -49,7 +49,7 @@ fs_query: Flowsheet = fs.query(expr='Fe>58', stream_name='Feed', inplace=False)
 fs_query.report()
 
 # %%
-fs_query.get_edge_by_name('Feed').data
+fs_query.get_stream_by_name('Feed').data
 
 # %%
 # Filter using `filter_by_index`
@@ -61,4 +61,4 @@ fs_filter: Flowsheet = fs.filter_by_index(index=new_index, inplace=False)
 fs_filter.report()
 
 # %%
-fs_filter.get_edge_by_name('Feed').data
+fs_filter.get_stream_by_name('Feed').data

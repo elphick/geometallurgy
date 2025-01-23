@@ -3,12 +3,13 @@ Methods for converting volumetric data objects
 REF: omfvista.volume - copied to facilitate loading selected columns/dataarrays
 """
 from collections import defaultdict
-from typing import Optional
-from uuid import UUID
+from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 import pyvista
-from omf import VolumeElement
+
+if TYPE_CHECKING:
+    from omf import VolumeElement
 
 from omfvista.utilities import check_orientation
 
@@ -59,7 +60,7 @@ def volume_grid_geom_to_vtk(volgridgeom, origin=(0.0, 0.0, 0.0)):
     return output
 
 
-def volume_to_vtk(volelement: VolumeElement,
+def volume_to_vtk(volelement: 'VolumeElement',
                   origin=(0.0, 0.0, 0.0),
                   columns: Optional[list[str]] = None):
     """Convert the volume element to a VTK data object.

@@ -3,6 +3,7 @@ import json
 import logging
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union, TypeVar, TYPE_CHECKING
+import re
 
 import matplotlib
 import matplotlib.cm as cm
@@ -34,15 +35,34 @@ FS = TypeVar('FS', bound='Flowsheet')
 
 class Flowsheet:
     def __init__(self, name: str = 'Flowsheet'):
-        self.name: str = name
-        self.graph: nx.DiGraph = nx.DiGraph()
+        self.graph: nx.DiGraph = nx.DiGraph(name=name)
         self._logger: logging.Logger = logging.getLogger(__class__.__name__)
 
     @property
-    def balanced(self) -> bool:
+    def name(self) -> str:
+        return self.graph.name
+
+    @name.setter
+    def name(self, value: str):
+        self.graph.name = value
+
+    @property
+    def healthy(self) -> bool:
+        return self.all_nodes_healthy and self.all_streams_healthy
+
+    @property
+    def all_nodes_healthy(self) -> bool:
         bal_vals: List = [self.graph.nodes[n]['mc'].is_balanced for n in self.graph.nodes]
         bal_vals = [bv for bv in bal_vals if bv is not None]
         return all(bal_vals)
+
+    @property
+    def all_streams_healthy(self) -> bool:
+        """Check if all streams are healthy"""
+        # account for the fact that some edges may not have an mc object
+        if not all([d['mc'] for u, v, d in self.graph.edges(data=True)]):
+            return False
+        return all([self.graph.edges[u, v]['mc'].status.ok for u, v in self.graph.edges])
 
     @classmethod
     def from_objects(cls, objects: list[MC],
@@ -112,7 +132,7 @@ class Flowsheet:
         return cls().from_objects(objects=streams, name=name)
 
     @classmethod
-    def from_dict_old(cls, config: dict) -> FS:
+    def from_dict(cls, config: dict) -> FS:
         """Create a flowsheet from a dictionary
 
         Args:
@@ -150,6 +170,11 @@ class Flowsheet:
                     operation_objects[node] = PartitionOperation.from_dict(node_config)
                 else:
                     operation_objects[node] = Operation.from_dict(flowsheet_config['operations'][node])
+
+                # set the input and output streams on the operation object for the selected node
+                operation_objects[node].inputs = [graph.get_edge_data(e[0], e[1])['mc'] for e in graph.in_edges(node)]
+                operation_objects[node].outputs = [graph.get_edge_data(e[0], e[1])['mc'] for e in graph.out_edges(node)]
+
         nx.set_node_attributes(graph, operation_objects, 'mc')
 
         graph = nx.convert_node_labels_to_integers(graph)
@@ -159,25 +184,26 @@ class Flowsheet:
 
         return obj
 
-    @classmethod
-    def from_dict(cls, config: dict) -> FS:
-        flowsheet = cls()
-
-        # Process streams
-        for stream_name, stream_data in config['FLOWSHEET']['streams'].items():
-            stream = Stream.from_dict(stream_data)
-            flowsheet.add_stream(stream)
-
-        # Process operations
-        for operation_name, operation_data in config['FLOWSHEET']['operations'].items():
-            operation_type = operation_data.get('type', 'Operation')
-            if operation_type == 'PartitionOperation':
-                operation = PartitionOperation.from_dict(operation_data)
-            else:
-                operation = Operation.from_dict(operation_data)
-            flowsheet.add_operation(operation)
-
-        return flowsheet
+    # @classmethod
+    # def from_dict_todo(cls, config: dict) -> FS:
+    # TODO: This method is not yet implemented - fails because the Operations do not have inputs or outputs set.
+    #     flowsheet = cls()
+    #
+    #     # Process streams
+    #     for stream_name, stream_data in config['FLOWSHEET']['streams'].items():
+    #         stream = Stream.from_dict(stream_data)
+    #         flowsheet.add_stream(stream)
+    #
+    #     # Process operations
+    #     for operation_name, operation_data in config['FLOWSHEET']['operations'].items():
+    #         operation_type = operation_data.get('type', 'Operation')
+    #         if operation_type == 'PartitionOperation':
+    #             operation = PartitionOperation.from_dict(operation_data)
+    #         else:
+    #             operation = Operation.from_dict(operation_data)
+    #         flowsheet.add_operation(operation)
+    #
+    #     return flowsheet
 
     @classmethod
     def from_yaml(cls, file_path: Path) -> FS:
@@ -192,7 +218,7 @@ class Flowsheet:
         with open(file_path, 'r') as file:
             config = yaml.safe_load(file)
 
-        return cls.from_dict_old(config)
+        return cls.from_dict(config)
 
     @classmethod
     def from_json(cls, file_path: Path) -> FS:
@@ -216,6 +242,48 @@ class Flowsheet:
     def add_operation(self, operation: 'Operation'):
         """Add an operation to the flowsheet."""
         self.graph.add_node(operation.name, mc=operation)
+
+    def unhealthy_stream_records(self) -> pd.DataFrame:
+        """Return on unhealthy streams
+
+        Return the records for all streams that are not healthy.
+        Returns:
+            DataFrame: A DataFrame containing the unhealthy stream records
+        """
+        unhealthy_edges = [e for e in self.graph.edges if not self.graph.edges[e]['mc'].status.ok]
+        unhealthy_data: pd.DataFrame = pd.concat(
+            [self.graph.edges[e]['mc'].status.oor.assign(stream=self.graph.edges[e]['mc'].name) for e in
+             unhealthy_edges], axis=1)
+        # move the last column to the front
+        unhealthy_data = unhealthy_data[[unhealthy_data.columns[-1]] + list(unhealthy_data.columns[:-1])]
+
+        # append the flowsheet records for additional context
+        records: pd.DataFrame = self.to_dataframe()
+        records = records.unstack(level='name').swaplevel(axis=1).sort_index(axis=1, level=0, sort_remaining=False)
+        records.columns = [f"{col[0]}_{col[1]}" for col in records.columns]
+
+        result = unhealthy_data.merge(records, left_index=True, right_index=True, how='left')
+        return result
+
+    def unhealthy_node_records(self) -> pd.DataFrame:
+        """Return unhealthy nodes
+
+        Return the records for all nodes that are not healthy.
+        Returns:
+            DataFrame: A DataFrame containing the unhealthy node records
+        """
+        unhealthy_nodes = [n for n in self.graph.nodes if
+                           self.graph.nodes[n]['mc'].node_type == NodeType.BALANCE and not self.graph.nodes[n][
+                               'mc'].is_balanced]
+        unhealthy_data: pd.DataFrame = pd.concat(
+            [self.graph.nodes[n]['mc'].unbalanced_records.assign(node=self.graph.nodes[n]['mc'].name) for n in
+             unhealthy_nodes], axis=1)
+        # move the last column to the front
+        unhealthy_data = unhealthy_data[[unhealthy_data.columns[-1]] + list(unhealthy_data.columns[:-1])]
+
+        # todo: append  the streams around the node
+
+        return unhealthy_data
 
     def copy_without_stream_data(self):
         """Copy without stream data"""
@@ -244,7 +312,7 @@ class Flowsheet:
 
         while 0 < missing_count < prev_missing_count:
             prev_missing_count = missing_count
-            for node in self.graph.nodes:
+            for node in nx.topological_sort(self.graph):
                 if self.graph.nodes[node]['mc'].node_type == NodeType.BALANCE:
                     if self.graph.nodes[node]['mc'].has_empty_input:
                         mc: MC = self.graph.nodes[node]['mc'].solve()
@@ -254,18 +322,22 @@ class Flowsheet:
                             if edge_data and edge_data['mc'] is None:
                                 edge_data['mc'] = mc
                                 edge_data['mc'].name = edge_data['name']
+                                self.set_operation_data(predecessor)
 
                     if self.graph.nodes[node]['mc'].has_empty_output:
                         # There are two cases to be managed, 1. a single output missing,
                         # 2. a partition operation that returns two outputs
                         if isinstance(self.graph.nodes[node]['mc'], PartitionOperation):
+                            partition_stream: str = self.graph.nodes[node]['mc'].partition['partition_stream']
                             mc1, mc2 = self.graph.nodes[node]['mc'].solve()
                             # copy the solved object to the empty output edges
                             for successor in self.graph.successors(node):
                                 edge_data = self.graph.get_edge_data(node, successor)
                                 if edge_data and edge_data['mc'] is None:
-                                    edge_data['mc'] = mc1 if edge_data['name'] == 'preferred' else mc2
+                                    edge_data['mc'] = mc1 if edge_data['name'] == partition_stream else mc2
                                     edge_data['mc'].name = edge_data['name']
+                                    self.set_operation_data(successor)
+
                         else:
                             mc: MC = self.graph.nodes[node]['mc'].solve()
                             # copy the solved object to the empty output edges
@@ -274,6 +346,8 @@ class Flowsheet:
                                 if edge_data and edge_data['mc'] is None:
                                     edge_data['mc'] = mc
                                     edge_data['mc'].name = edge_data['name']
+                                    self.set_operation_data(successor)
+                        self.set_operation_data(node)
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
 
@@ -293,7 +367,7 @@ class Flowsheet:
         if stream_name is None:
             input_stream: MC = self.get_input_streams()[0]
         else:
-            input_stream: MC = self.get_edge_by_name(name=stream_name)
+            input_stream: MC = self.get_stream_by_name(name=stream_name)
         filtered_index: pd.Index = input_stream.data.query(expr).index
         return self._filter(filtered_index, inplace)
 
@@ -417,14 +491,18 @@ class Flowsheet:
         return hf
 
     def _plot_title(self, html: bool = True, compact: bool = False):
-        title = self.name
-        # title = f"{self.name}<br><br><sup>Balanced: {self.balanced}<br>Edge Status OK: {self.edge_status[0]}</sup>"
+        # title = self.name
+        title = (f"{self.name}<br><sup>Nodes Healthy: "
+                 f"<span style='color: {'red' if not self.all_nodes_healthy else 'black'}'>{self.all_nodes_healthy}</span>, "
+                 f"Streams Healthy: "
+                 f"<span style='color: {'red' if not self.all_streams_healthy else 'black'}'>{self.all_streams_healthy}</span></sup>")
         # if compact:
         #     title = title.replace("<br><br>", "<br>").replace("<br>Edge", ", Edge")
         # if not self.edge_status[0]:
         #     title = title.replace("</sup>", "") + f", {self.edge_status[1]}</sup>"
-        # if not html:
-        #     title = title.replace('<br><br>', '\n').replace('<br>', '\n').replace('<sup>', '').replace('</sup>', '')
+        if not html:
+            title = title.replace('<br><br>', '\n').replace('<br>', '\n').replace('<sup>', '').replace('</sup>', '')
+            title = re.sub(r'<span style=.*?>(.*?)</span>', r'\1', title)
         return title
 
     def report(self, apply_formats: bool = False) -> pd.DataFrame:
@@ -667,13 +745,16 @@ class Flowsheet:
 
         return fig
 
-    def to_dataframe(self, stream_names: Optional[list[str]] = None):
+    def to_dataframe(self, stream_names: Optional[list[str]] = None, tidy: bool = True,
+                     as_mass: bool = False) -> pd.DataFrame:
         """Return a tidy dataframe
 
         Adds the mc name to the index so indexes are unique.
 
         Args:
             stream_names: Optional List of names of Stream/MassComposition objects (network edges) for export
+            tidy: If True, the data will be returned in a tidy format, otherwise wide
+            as_mass: If True, the mass data will be returned instead of the mass-composition data
 
         Returns:
 
@@ -681,8 +762,20 @@ class Flowsheet:
         chunks: List[pd.DataFrame] = []
         for u, v, data in self.graph.edges(data=True):
             if (stream_names is None) or ((stream_names is not None) and (data['mc'].name in stream_names)):
-                chunks.append(data['mc'].data.assign(name=data['mc'].name))
-        return pd.concat(chunks, axis='index').set_index('name', append=True)
+                if as_mass:
+                    chunks.append(data['mc'].mass_data.assign(name=data['mc'].name))
+                else:
+                    chunks.append(data['mc'].data.assign(name=data['mc'].name))
+
+        results: pd.DataFrame = pd.concat(chunks, axis='index').set_index('name', append=True)
+        if not tidy:  # wide format
+            results = results.unstack(level='name')
+            column_order: list[str] = [f'{name}_{attr}' for name in results.columns.levels[1] for attr in
+                                       results.columns.levels[0]]
+            results.columns = [f'{col[1]}_{col[0]}' for col in results.columns]
+            results = results[column_order]
+
+        return results
 
     def plot_parallel(self,
                       names: Optional[str] = None,
@@ -810,7 +903,7 @@ class Flowsheet:
                                           line=dict(width=2, color=edge_color_map[data['mc'].status.ok]),
                                           hoverinfo='none',
                                           mode='lines+markers',
-                                          text=data['mc'].name,
+                                          text=str(data['mc'].name),
                                           marker=dict(
                                               symbol="arrow",
                                               color=edge_color_map[data['mc'].status.ok],
@@ -964,6 +1057,15 @@ class Flowsheet:
                     self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
                                                             self.graph.out_edges(node)]
 
+    def set_operation_data(self, node):
+        """Set the input and output data for a node.
+        Uses the data on the edges (streams) connected to the node to refresh the data and check for node balance.
+        """
+        node_data: Operation = self.graph.nodes[node]['mc']
+        node_data.inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.in_edges(node)]
+        node_data.outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.out_edges(node)]
+        node_data.check_balance()
+
     def streams_to_dict(self) -> Dict[str, MC]:
         """Export the Stream objects to a Dict
 
@@ -991,7 +1093,7 @@ class Flowsheet:
         return nodes
 
     def set_nodes(self, stream: str, nodes: Tuple[int, int]):
-        mc: MC = self.get_edge_by_name(stream)
+        mc: MC = self.get_stream_by_name(stream)
         mc._nodes = nodes
         self._update_graph(mc)
 
@@ -1013,7 +1115,7 @@ class Flowsheet:
                 streams[k] = v.set_nodes([random_int(), random_int()])
             self.graph = Flowsheet(name=self.name).from_objects(objects=list(streams.values())).graph
         else:
-            mc: MC = self.get_edge_by_name(stream)
+            mc: MC = self.get_stream_by_name(stream)
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)
 
@@ -1029,17 +1131,17 @@ class Flowsheet:
         # brutal approach - rebuild from streams
         strms: List[Union[Stream, MC]] = []
         for u, v, a in self.graph.edges(data=True):
-            if a['mc'].name == mc.name:
+            if a.get('mc') and a['mc'].name == mc.name:
                 strms.append(mc)
             else:
                 strms.append(a['mc'])
         self.graph = Flowsheet(name=self.name).from_objects(objects=strms).graph
 
-    def get_edge_by_name(self, name: str) -> MC:
-        """Get the MC object from the network by its name
+    def get_stream_by_name(self, name: str) -> MC:
+        """Get the Stream object from the network by its name
 
         Args:
-            name: The string name of the MassComposition object stored on an edge in the network.
+            name: The string name of the Stream object stored on an edge in the network.
 
         Returns:
 
@@ -1047,7 +1149,7 @@ class Flowsheet:
 
         res: Optional[Union[Stream, MC]] = None
         for u, v, a in self.graph.edges(data=True):
-            if a['mc'].name == name:
+            if a.get('mc') and a['mc'].name == name:
                 res = a['mc']
 
         if not res:
@@ -1056,13 +1158,13 @@ class Flowsheet:
         return res
 
     def set_stream_parent(self, stream: str, parent: str):
-        mc: MC = self.get_edge_by_name(stream)
-        mc.set_parent_node(self.get_edge_by_name(parent))
+        mc: MC = self.get_stream_by_name(stream)
+        mc.set_parent_node(self.get_stream_by_name(parent))
         self._update_graph(mc)
 
     def set_stream_child(self, stream: str, child: str):
-        mc: MC = self.get_edge_by_name(stream)
-        mc.set_child_node(self.get_edge_by_name(child))
+        mc: MC = self.get_stream_by_name(stream)
+        mc.set_child_node(self.get_stream_by_name(child))
         self._update_graph(mc)
 
     def reset_stream_nodes(self, stream: Optional[str] = None):
@@ -1083,6 +1185,6 @@ class Flowsheet:
                 streams[k] = v.set_nodes([random_int(), random_int()])
             self.graph = Flowsheet(name=self.name).from_objects(objects=list(streams.values())).graph
         else:
-            mc: MC = self.get_edge_by_name(stream)
+            mc: MC = self.get_stream_by_name(stream)
             mc.set_nodes([random_int(), random_int()])
             self._update_graph(mc)

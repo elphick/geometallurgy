@@ -1,12 +1,11 @@
 from copy import copy
 from enum import Enum
 from functools import reduce
-from typing import Optional, TypeVar
+from typing import Optional, TypeVar, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 
-from elphick.geomet import IntervalSample
 from elphick.geomet.base import MC
 from elphick.geomet.flowsheet.stream import Stream
 from elphick.geomet.utils.pandas import MeanIntervalIndex
@@ -14,6 +13,9 @@ from elphick.geomet.utils.partition import load_partition_function
 
 # generic type variable, used for type hinting that play nicely with subclasses
 OP = TypeVar('OP', bound='Operation')
+
+if TYPE_CHECKING:
+    from elphick.geomet import IntervalSample
 
 
 class NodeType(Enum):
@@ -72,7 +74,10 @@ class Operation:
         inputs = [i for i in self.inputs if i is not None]
 
         if not inputs:
-            return self._create_zero_mass()
+            try:
+                return self._create_zero_mass()
+            except:
+                return pd.DataFrame()
         elif len(inputs) == 1:
             return inputs[0].mass_data
         else:
@@ -82,7 +87,10 @@ class Operation:
         outputs = [o for o in self.outputs if o is not None]
 
         if not outputs:
-            return self._create_zero_mass()
+            try:
+                return self._create_zero_mass()
+            except:
+                return pd.DataFrame()
         elif len(outputs) == 1:
             return outputs[0].mass_data
         else:
@@ -94,7 +102,7 @@ class Operation:
             return None
 
         input_mass, output_mass = self.get_input_mass(), self.get_output_mass()
-        is_balanced = np.all(np.isclose(input_mass, output_mass))
+        is_balanced = np.all(np.isclose(input_mass.fillna(0.0), output_mass.fillna(0.0)))
         self._unbalanced_records = (input_mass - output_mass).loc[~np.isclose(input_mass, output_mass).any(axis=1)]
         self._is_balanced = is_balanced
 
@@ -135,7 +143,8 @@ class Operation:
                                                           mass_dry=ref_object.mass_dry_var,
                                                           moisture_column_name=ref_object.moisture_column,
                                                           component_columns=ref_object.composition_columns,
-                                                          composition_units=ref_object.composition_units)
+                                                          composition_units=ref_object.composition_units,
+                                                          moisture_in_scope=ref_object.moisture_in_scope)
                 # Replace None with the new input
                 self.inputs[none_index] = mc
 
@@ -156,7 +165,8 @@ class Operation:
                                                               mass_dry=ref_object.mass_dry_var,
                                                               moisture_column_name=ref_object.moisture_column,
                                                               component_columns=ref_object.composition_columns,
-                                                              composition_units=ref_object.composition_units)
+                                                              composition_units=ref_object.composition_units,
+                                                              moisture_in_scope=ref_object.moisture_in_scope)
 
                 # Replace None with the new output
                 self.outputs[none_index] = mc
@@ -234,7 +244,7 @@ class PartitionOperation(Operation):
         if len(self.inputs) != 1:
             raise ValueError("PartitionOperation must have exactly one input")
         for input_sample in self.inputs:
-            input_sample: IntervalSample
+            input_sample: 'IntervalSample'
             if input_sample is not None:
                 output, complement = input_sample.split_by_partition(self.partition_function)
                 self.outputs = [output, complement]

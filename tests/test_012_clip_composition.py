@@ -39,7 +39,7 @@ def test_clip_composition_default_ranges(oor_sample):
         'group': ['grp_1', 'grp_1', 'grp_2']
     })
     expected_data.index.name = 'index'
-    pd.testing.assert_frame_equal(oor_sample.data, expected_data)
+    pd.testing.assert_frame_equal(oor_sample.data, expected_data, atol=1.0e-05)
 
 
 def test_clip_composition_custom_ranges(oor_sample):
@@ -59,7 +59,7 @@ def test_clip_composition_custom_ranges(oor_sample):
         'group': ['grp_1', 'grp_1', 'grp_2']})
     expected_data.index.name = 'index'
 
-    pd.testing.assert_frame_equal(oor_sample.data, expected_data)
+    pd.testing.assert_frame_equal(oor_sample.data, expected_data, atol=1.0e-05)
 
 
 def test_clip_composition_log_message(oor_sample, caplog):

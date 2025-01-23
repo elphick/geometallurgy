@@ -122,7 +122,8 @@ class MassComposition(ABC):
                                                  mass_wet=self.mass_wet_var, mass_dry=self.mass_dry_var,
                                                  moisture_column_name=self.moisture_column,
                                                  component_columns=composition.columns,
-                                                 composition_units=self.composition_units)
+                                                 composition_units=self.composition_units,
+                                                 return_moisture=False)
             self._logger.debug(f"Data has been set.")
 
         else:
@@ -229,19 +230,24 @@ class MassComposition(ABC):
                 (self.mass_columns + [self.moisture_column] + self.composition_columns + self.supplementary_columns) if
                 col is not None]
 
-    def balance_composition(self) -> MC:
+    def balance_composition(self, epsilon: float = 1.0e-6) -> MC:
         """Balance the composition data
 
         For records where the component mass exceeds the dry mass, the component masses are reduced proportionally
         to equal the dry mass.  Records where the component mass is less than the dry mass are left unchanged.
 
+        epsilon: A small float to avoid component sums marginally over 100.0
+
+        Returns:
+            The object with balanced composition.
         """
         if self._mass_data is not None:
             # calculate the ratio of the sum of the components to the dry mass
             ratio = self._mass_data[self.composition_columns].sum(axis=1) / self._mass_data[self.mass_dry_var]
             if ratio.max() <= 1.0:
                 return self
-            epsilon = 1e-6
+
+            before_reduction = self._mass_data[self.composition_columns].copy()
             # add a small value to the ratio to avoid component sums marginally over 100.0
             ratio[ratio > 1.0] = ratio[ratio > 1.0] + epsilon
             # to avoid reducing compliant records, clip the ratio at the lower side to 1.0
@@ -249,6 +255,19 @@ class MassComposition(ABC):
             # apply the ratio to the components
             self._mass_data[self.composition_columns] = self._mass_data[self.composition_columns].div(ratio, axis=0)
 
+            # manage the reporting
+            affected_indexes = set(
+                self._mass_data.index[np.any(before_reduction != self._mass_data[self.composition_columns], axis=1)])
+            # log the action, including the first 50 indexes affected
+            affected_indexes_list = sorted(affected_indexes)[:50]
+
+            self.aggregate = self.weight_average()
+            self.status = OutOfRangeStatus(self, self.status.ranges)
+
+            self._logger.info(f"Object {self.name} has been balanced. "
+                              f"{len(affected_indexes)} records where composition has been reduced "
+                              f"to conform to dry mass. "
+                              f"Affected indexes (first 50): {affected_indexes_list}")
         return self
 
     def clip_recovery(self, other: MC, recovery_bounds: tuple[float, float] = (0.01, 0.99),
@@ -325,9 +344,12 @@ class MassComposition(ABC):
         else:
             raise ValueError(f"mass_to_adjust must be 'wet' or 'dry', not {mass_to_adjust}")
 
+        self.aggregate = self.weight_average()
+        self.status = OutOfRangeStatus(self, self.status.ranges)
+
         return self
 
-    def clip_composition(self, ranges: Optional[dict[str, list[float]]] = None) -> MC:
+    def clip_composition(self, ranges: Optional[dict[str, list[float]]] = None, epsilon: float = 1.0e-05) -> MC:
         """Clip the components
 
         Clip to the components to within the range provided or the default range for each component.
@@ -336,6 +358,7 @@ class MassComposition(ABC):
         Args:
             ranges: An optional dict defining a list of [lo, hi] floats for each component.  If not provided,
             the default range from the config file will be used.
+            epsilon: A small float to ensure the clipped values lie marginally inside the specified range.
 
         Returns:
             The object with clipped composition.
@@ -345,24 +368,31 @@ class MassComposition(ABC):
         component_ranges: dict = self._get_component_ranges(ranges)
 
         # define a small value to ensure the clipped values lie marginally inside the specified range.
-        epsilon: float = 0.0  # 1.0e-05
         # clip the components
         affected_indexes = set()
         for component, component_range in component_ranges.items():
             before_clip = self._mass_data[component].copy()
+            # add a small value to the range to ensure the clipped values lie marginally inside the specified range.
+            component_range = [component_range[0] + epsilon, component_range[1] - epsilon]
             # define the component mass that aligns with the lower and upper bounds
             component_mass_limits = self._mass_data[self.mass_dry_var].values[:, np.newaxis] * np.array(
                 component_range) / self.composition_factor
             # apply the clip to the mass data
-            self._mass_data[component] = self._mass_data[component].clip(lower=component_mass_limits[:, 0] + epsilon,
-                                                                         upper=component_mass_limits[:, 1] - epsilon)
+            self._mass_data[component] = self._mass_data[component].clip(lower=component_mass_limits[:, 0],
+                                                                         upper=component_mass_limits[:, 1])
             affected_indexes.update(self._mass_data.index[before_clip != self._mass_data[component]])
 
         # log the action, including the first 50 indexes affected
         affected_indexes_list = sorted(affected_indexes)[:50]
-        self._logger.info(
-            f"{len(affected_indexes)} records where composition has been clipped to the range: {component_ranges}."
-            f" Affected indexes (first 50): {affected_indexes_list}")
+
+        self.aggregate = self.weight_average()
+        self.status = OutOfRangeStatus(self, self.status.ranges)
+
+        if len(affected_indexes) > 0:
+            self._logger.info(f"Object {self.name} has been clipped. "
+                              f"{len(affected_indexes)} records where composition has been clipped to the "
+                              f"range: {component_ranges}. "
+                              f"Affected indexes (first 50): {affected_indexes_list}")
 
         return self
 
@@ -505,7 +535,8 @@ class MassComposition(ABC):
 
             # Create a DataFrame from the weighted averages
             weighted_averages_df = pd.concat([mass_sum, composition], axis=1)
-        else:
+
+        else:  # group by a variable
             group_var: pd.Series = self._supplementary_data[group_by]
             weighted_averages_df = self._mass_data.groupby(group_var).apply(
                 lambda x: pd.DataFrame(
@@ -600,7 +631,7 @@ class MassComposition(ABC):
                 non_mass_cols: list[str] = [col for col in value.columns if
                                             col not in [self.mass_wet_var, self.mass_dry_var, self.moisture_var, 'h2o',
                                                         'H2O', 'H2O']]
-                component_cols: list[str] = get_components(value[non_mass_cols], strict=False)
+                component_cols: list[str] = get_components(value[non_mass_cols].columns, strict=False)
             else:
                 component_cols: list[str] = self.component_vars
             composition = value[component_cols]
@@ -632,6 +663,7 @@ class MassComposition(ABC):
                 self._supplementary_data.index = self._mass_data.index
             self._supplementary_data = self._supplementary_data.loc[value.index]
         self.aggregate = self.weight_average()
+        self.status = OutOfRangeStatus(self, self.status.ranges)
 
     def filter_by_index(self, index: pd.Index):
         """Update the data by index"""
@@ -702,6 +734,10 @@ class MassComposition(ABC):
 
         res: MC = self.create_congruent_object(name=name, include_mc_data=True,
                                                include_supp_data=include_supplementary_data)
+
+        if set(self._mass_data.columns) != set(other._mass_data.columns):
+            raise ValueError(f"Mass data columns do not match: {set(self._mass_data.columns)} != "
+                             f"{set(other._mass_data.columns)}")
         res.update_mass_data(self._mass_data + other._mass_data)
 
         # Ensure self and other are Stream objects
@@ -729,6 +765,11 @@ class MassComposition(ABC):
         """
         res = self.create_congruent_object(name=name, include_mc_data=True,
                                            include_supp_data=include_supplementary_data)
+
+        if set(self._mass_data.columns) != set(other._mass_data.columns):
+            raise ValueError(f"Mass data columns do not match: {set(self._mass_data.columns)} != "
+                             f"{set(other._mass_data.columns)}")
+
         res.update_mass_data(self._mass_data - other._mass_data)
 
         # Ensure self and other are Stream objects
@@ -738,6 +779,7 @@ class MassComposition(ABC):
         other: 'Stream'
 
         # create the relationships
+        other.nodes = [self.nodes[1], other.nodes[1]]
         res.nodes = [self.nodes[1], random_int()]
 
         return res
@@ -890,6 +932,41 @@ class MassComposition(ABC):
 
         return res
 
+    def compare(self, other: 'MassComposition', comparisons: Union[str, list[str]] = 'recovery',
+                explicit_names: bool = True) -> pd.DataFrame:
+
+        comparisons = [comparisons] if isinstance(comparisons, str) else comparisons
+        valid_comparisons: set = {'recovery', 'difference', 'divide', 'all'}
+
+        cols = [col for col in self.data.data_vars if col not in self.data.mc.mc_vars_attrs]
+
+        chunks: list[pd.DataFrame] = []
+        if 'recovery' in comparisons or comparisons == ['all']:
+            df: pd.DataFrame = self._mass_data[self.component_vars] / other._mass_data[self.component_vars]
+            if explicit_names:
+                df.columns = [f"{self.name}_{col}_{self.config['comparisons']['recovery']}_{other.name}" for col in
+                              df.columns]
+            chunks.append(df)
+        if 'difference' in comparisons or comparisons == ['all']:
+            df: pd.DataFrame = self.data[cols] - other.data[cols]
+            if explicit_names:
+                df.columns = [f"{self.name}_{col}_{self.config['comparisons']['difference']}_{other.name}" for col in
+                              df.columns]
+            chunks.append(df)
+        if 'divide' in comparisons or comparisons == ['all']:
+            df: pd.DataFrame = self.data[cols] / other.data[cols]
+            if explicit_names:
+                df.columns = [f"{self.name}_{col}_{self.config['comparisons']['divide']}_{other.name}" for col in
+                              df.columns]
+            chunks.append(df)
+
+        if not chunks:
+            raise ValueError(f"The comparison argument is not valid: {valid_comparisons}")
+
+        res: pd.DataFrame = pd.concat(chunks, axis=1)
+
+        return res
+
     def reset_index(self, index_name: str) -> MC:
         res = self.create_congruent_object(name=f"{self.name} (reset_index)", include_mc_data=True,
                                            include_supp_data=True)
@@ -934,7 +1011,7 @@ class OutOfRangeStatus:
             self.oor: pd.DataFrame = self._check_range()
             self.num_oor: int = len(self.oor)
             self.failing_components: Optional[list[str]] = list(
-                self.oor.dropna(axis=1).columns) if self.num_oor > 0 else None
+                self.oor.dropna(axis=1, how='all').columns) if self.num_oor > 0 else None
 
     def get_ranges(self, ranges: dict[str, list]) -> dict[str, list]:
 
@@ -977,4 +1054,80 @@ class OutOfRangeStatus:
         """Return True if other Status has the same out-of-range records."""
         if isinstance(other, OutOfRangeStatus):
             return self.oor.equals(other.oor)
+        return False
+
+
+class SampleStatus:
+    """A class to check and report sample status in an MC object.
+
+    A MassComposition object (Sample, Stream, etc) can be unhealthy if:
+    1. the total mass of components is greater than the dry mass
+    2. any of the masses are negative
+    3. the component values are out of range
+    """
+
+    def __init__(self, mc: 'MC', component_limits: dict):
+        """Initialize with an MC object."""
+        self._logger = logging.getLogger(__name__)
+        self.mc: 'MC' = mc
+        self.sample_status: Optional[dict] = None
+        self.num_samples: Optional[int] = None
+        self.failing_samples: Optional[list[str]] = None
+
+        if mc.mass_data is not None:
+            self.sample_status = self.get_sample_status(component_limits)
+            self.num_samples = len(self.sample_status)
+            self.failing_samples = [sample for sample, status in self.sample_status.items() if not status['ok']]
+
+    def get_sample_status(self, component_limits: dict) -> dict:
+        """Check if all records are within the constraints."""
+        sample_status = {}
+        if self.mc._mass_data is not None:
+            df: pd.DataFrame = self.mc.data[self.mc.composition_columns]
+            mass_dry = self.mc._mass_data[self.mc.mass_dry_var]
+
+            # Check for component limits
+            for component, limits in component_limits.items():
+                oor = df[(df[component] < limits[0]) | (df[component] > limits[1])]
+                for sample in oor.index:
+                    if sample not in sample_status:
+                        sample_status[sample] = {'ok': True, 'causes': []}
+                    sample_status[sample]['ok'] = False
+                    sample_status[sample]['causes'].append(f"{component} out of range")
+
+            # Check if total mass of components is greater than dry mass
+            total_component_mass = df.sum(axis=1)
+            for sample in total_component_mass.index:
+                if sample not in sample_status:
+                    sample_status[sample] = {'ok': True, 'causes': []}
+                if total_component_mass[sample] > mass_dry[sample]:
+                    sample_status[sample]['ok'] = False
+                    sample_status[sample]['causes'].append("Total mass of components greater than dry mass")
+
+            # Check for negative masses
+            negative_masses = df[df < 0].dropna(how='all')
+            for sample in negative_masses.index:
+                if sample not in sample_status:
+                    sample_status[sample] = {'ok': True, 'causes': []}
+                sample_status[sample]['ok'] = False
+                sample_status[sample]['causes'].append("Negative mass detected")
+        return sample_status
+
+    @property
+    def ok(self) -> bool:
+        """Return True if all records are within range, False otherwise."""
+        if self.num_samples > 0:
+            self._logger.warning(f'{self.num_samples} unhealthy samples exist.')
+        return True if self.num_samples == 0 else False
+
+    def __str__(self) -> str:
+        """Return a string representation of the status."""
+        res: str = f'status.ok: {self.ok}\n'
+        res += f'num_samples: {self.num_samples}'
+        return res
+
+    def __eq__(self, other: object) -> bool:
+        """Return True if other Status has the same out-of-range records."""
+        if isinstance(other, SampleStatus):
+            return self.sample_status == other.sample_status
         return False

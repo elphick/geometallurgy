@@ -1,3 +1,12 @@
+Geomet 0.4.10 (2025-01-23)
+==========================
+
+Other Tasks
+-----------
+
+- Numerous bugfixes; coercion, nans, balance. Foundational work for 2d resampling, however NOTE - results incorrect - more work required. (#20)
+
+
 Geomet 0.4.9 (2024-11-25)
 =========================
 

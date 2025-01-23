@@ -12,8 +12,10 @@ from pandas.core.indexes.frozen import FrozenList
 import plotly.graph_objects as go
 import plotly.express as px
 
+import elphick.geomet.flowsheet.stream
 from elphick.geomet.utils.amenability import amenability_index
 from elphick.geomet.utils.interp import mass_preserving_interp
+from elphick.geomet.utils.interp2 import mass_preserving_interp_2d
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
     cumulate, mass_to_composition
 from elphick.geomet.utils.sampling import random_int
@@ -63,7 +65,7 @@ class IntervalSample(MassComposition):
                 if suffixes:
                     data.reset_index(list(suffixes.keys()), inplace=True)
                     num_interval_indexes: int = int(len(suffixes.keys()) / 2)
-                    for i in range(0, num_interval_indexes):
+                    for i in range(0, num_interval_indexes + 1, 2):
                         keys = list(suffixes.keys())[i: i + 2]
                         base_name: str = '_'.join(keys[0].split('_')[:-1])
                         index = IntervalIndex.from_arrays(left=data[keys[0]], right=data[keys[1]],
@@ -98,7 +100,8 @@ class IntervalSample(MassComposition):
 
         return data
 
-    def split_by_partition(self, partition_definition, name_1: str = 'preferred', name_2: str = 'complement'):
+    def split_by_partition(self, partition_definition: Union[pd.Series, Callable], name_1: str = 'preferred',
+                           name_2: str = 'complement'):
         """
         Split the sample into two samples based on the partition definition.
 
@@ -112,39 +115,35 @@ class IntervalSample(MassComposition):
         :param name_2: The name of the second sample.
         :return: A tuple of two IntervalSamples.
         """
-        if not isinstance(partition_definition, Callable):
-            raise TypeError("The definition is not a callable function")
 
         # Check that the partition definition has the correct number of arguments and that the names match
-        if isinstance(self.mass_data.index, pd.MultiIndex):
-            interval_levels = [level for level in self.mass_data.index.levels if isinstance(level, pd.IntervalIndex)]
-        else:
-            interval_levels = [self.mass_data.index] if isinstance(self.mass_data.index, pd.IntervalIndex) else []
+        sample_fraction_dims = [col for col in self.mass_data.index.names if
+                                col != isinstance(self.mass_data.index.get_level_values(col), pd.IntervalIndex)]
+        fraction_means: pd.DataFrame = self.mass_data.index.to_frame()[sample_fraction_dims].apply(
+            lambda x: MeanIntervalIndex(x).mean, axis=0)
 
         # Get the function from the partial object if necessary
-        partition_func = partition_definition.func if isinstance(partition_definition,
-                                                                 functools.partial) else partition_definition
-
-        # Check that the required argument names are present in the IntervalIndex levels
-        required_args = partition_func.__code__.co_varnames[:len(interval_levels)]
-        for arg, level in zip(required_args, interval_levels):
-            if arg != level.name:
-                raise ValueError(f"The partition definition argument name does not match the index name. "
-                                 f"Expected {level.name}, found {arg}")
-
-        fraction_means: dict = {}
-        # iterate the Index or MultiIndex
-        if isinstance(self.mass_data.index, pd.MultiIndex):
-            for idx in self.mass_data.index.levels[0]:
-                # get the mean of the fractions, by converting to a MeanIntervalIndex
-                fraction_means[idx] = MeanIntervalIndex(self.mass_data.index.get_loc_level(idx)).mean
+        if isinstance(partition_definition, Callable):
+            partition_func = partition_definition.func if isinstance(partition_definition,
+                                                                     functools.partial) else partition_definition
+            # Check that the required argument names are present in the IntervalIndex levels
+            required_args = [col for col in partition_func.__code__.co_varnames if col in sample_fraction_dims]
+            pn: pd.Series = pd.Series(partition_definition(**fraction_means[required_args]), name='K',
+                                      index=self._mass_data.index)
+        elif isinstance(partition_definition, pd.Series):
+            required_args = partition_definition.index.names
+            pn: pd.Series = partition_definition
         else:
-            fraction_means[self.mass_data.index.name] = MeanIntervalIndex(self.mass_data.index).mean
+            raise TypeError(f"The partition definition must be a function or a pandas Series:"
+                            f" type = {type(partition_definition)}")
+        for arg, dim in zip(required_args, sample_fraction_dims):
+            if arg != dim:
+                raise ValueError(f"The partition definition argument name does not match the index name. "
+                                 f"Expected {dim}, found {arg}")
 
         self.to_stream()
         self: 'Stream'
 
-        pn: pd.Series = pd.Series(partition_definition(**fraction_means), name='K', index=self._mass_data.index)
         sample_1 = self.create_congruent_object(name=name_1).to_stream()
         sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
         sample_1.set_nodes([self.nodes[1], random_int()])
@@ -244,13 +243,22 @@ class IntervalSample(MassComposition):
         return res
 
     def _check_one_dim_interval(self):
-        if self.mass_data.index.ndim > 1:
+        if len(self.mass_data.index.names) != 1:
             raise NotImplementedError(f"This object is {self.mass_data.index.ndim} dimensional. "
                                       f"Only 1D interval objects are valid")
         index_var: str = self.mass_data.index.name
         if not isinstance(self.mass_data.index, pd.IntervalIndex):
             raise NotImplementedError(f"The {index_var} of this object is not a pd.Interval. "
                                       f" Only 1D interval objects are valid")
+
+    def _check_two_dim_interval(self):
+        if len(self.mass_data.index.names) != 2:
+            raise NotImplementedError(f"This object is {self.mass_data.index.ndim} dimensional. "
+                                      f"Only 2D interval objects are valid")
+        for indx in self.mass_data.index.levels:
+            if not isinstance(indx, pd.IntervalIndex):
+                raise NotImplementedError(f"The {indx.name} of this object is not a pd.Interval. "
+                                          f" Only 1D interval objects are valid")
 
     def ideal_incremental_composition(self, discard_from: Literal["lowest", "highest"] = "lowest") -> pd.DataFrame:
         """Incrementally separate a fractionated sample.
@@ -318,8 +326,8 @@ class IntervalSample(MassComposition):
 
         # convert IntervalIndex to nominal values df.index = df.index.map(lambda x: x.mid)
 
-        x_label = self.mass_data.index.names[1]
-        y_label = self.mass_data.index.names[0]
+        x_label = self.mass_data.index.names[0]
+        y_label = self.mass_data.index.names[1]
         z_label = self.mass_data.columns[0]
 
         # create a pivot table for the heatmap
@@ -347,11 +355,15 @@ class IntervalSample(MassComposition):
             hoverinfo='text'))
 
         # update the layout to use logarithmic x-axis
-        fig.update_layout(yaxis_type="log")
+        if x_label == 'size':
+            fig.update_layout(xaxis_type="log")
+        elif y_label == 'size':
+            fig.update_layout(yaxis_type="log")
+
         # set the title and x and y labels dynamically
         fig.update_layout(title=f'{self.name} Heatmap',
-                          xaxis_title=self.mass_data.index.names[1],
-                          yaxis_title=self.mass_data.index.names[0])
+                          xaxis_title=self.mass_data.index.names[0],
+                          yaxis_title=self.mass_data.index.names[1])
 
         return fig
 
@@ -570,10 +582,59 @@ class IntervalSample(MassComposition):
         # test the index contains a single interval index
         self._check_one_dim_interval()
 
-        df_upsampled: pd.DataFrame = mass_preserving_interp(self.data,
+        df_upsampled: pd.DataFrame = mass_preserving_interp(self.mass_data,
                                                             interval_edges=interval_edges, precision=precision,
-                                                            include_original_edges=include_original_edges)
+                                                            include_original_edges=include_original_edges,
+                                                            interval_data_as_mass=True)
 
-        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False)
+        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False,
+                                             mass_dry_var=self.mass_dry_var)
         obj.status.ranges = self.status.ranges
         return obj
+
+    def resample_2d(self, interval_edges: dict[str, Iterable],
+                    precision: Optional[int] = None) -> 'IntervalSample':
+        """Resample a 2D fractional dim/index
+
+        Args:
+            interval_edges: A dict keyed by index name containing the grid the data is resampled to.
+            precision: Optional integer for the number of decimal places to round the grid values to.
+
+        Returns:
+            A new IntervalSample object interpolated onto the new grid
+        """
+
+        # TODO: add support for supplementary variables
+
+        # test the index contains a single interval index
+        self._check_two_dim_interval()
+
+        df_upsampled_specific_mass: pd.DataFrame = mass_preserving_interp_2d(self._specific_mass(),
+                                                                             interval_edges=interval_edges,
+                                                                             precision=precision,
+                                                                             mass_dry=self.mass_dry_var)
+
+        # convert from specific mass to mass
+        df_upsampled = df_upsampled_specific_mass.mul(self.mass_data[self.mass_dry_var].sum(), axis=0)
+        df_upsampled[self.composition_columns] = df_upsampled[self.composition_columns].div(
+            df_upsampled[self.mass_dry_var], axis=0).mul(self.composition_factor, axis=0)
+
+        obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False,
+                                             mass_dry_var=self.mass_dry_var)
+        if hasattr(obj, 'nodes'):
+            obj.nodes = self.nodes
+        obj.status.ranges = self.status.ranges
+        return obj
+
+    def _specific_mass(self) -> Optional[pd.DataFrame]:
+        """Calculate the specific mass of the sample
+
+        Specific mass is the mass of the sample fractions divided by the mass of all fractions.
+        The sum of the specific mass (for mass_dry) is 1.0 by definition.
+        """
+        res = None
+        if self.data is not None:
+            res = self.mass_data.div(self.mass_data[self.mass_dry_var].sum(), axis=0)
+            if self.moisture_in_scope:
+                res.drop(columns=[self.mass_wet_var], inplace=True)
+        return res

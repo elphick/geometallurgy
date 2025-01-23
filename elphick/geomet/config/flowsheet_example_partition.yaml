@@ -23,9 +23,8 @@ FLOWSHEET:
       partition:
         module: elphick.geomet.utils.partition
         function: napier_munn_size_1mm
+        partition_stream: Lump  # the stream that the partition model defines
         args: null  # e.g. d50, ep if not defined in the (partial) function
-        output_stream: Lump
-        complement_stream: Fines
     lump:
       name: lump
     fines:
