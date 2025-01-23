@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.column\_prefixes
+============================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: column_prefixes

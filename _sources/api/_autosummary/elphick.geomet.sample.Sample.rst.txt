@@ -1,0 +1,59 @@
+elphick.geomet.sample.Sample
+============================
+
+.. currentmodule:: elphick.geomet.sample
+
+.. autoclass:: Sample
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Sample.__init__
+      ~Sample.add
+      ~Sample.balance_composition
+      ~Sample.clip_composition
+      ~Sample.clip_recovery
+      ~Sample.compare
+      ~Sample.create_congruent_object
+      ~Sample.div
+      ~Sample.filter_by_index
+      ~Sample.from_mass_dataframe
+      ~Sample.get_mass_data
+      ~Sample.plot_comparison
+      ~Sample.plot_parallel
+      ~Sample.plot_ternary
+      ~Sample.query
+      ~Sample.reset_index
+      ~Sample.set_moisture
+      ~Sample.split
+      ~Sample.sub
+      ~Sample.to_stream
+      ~Sample.update_mass_data
+      ~Sample.weight_average
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Sample.aggregate
+      ~Sample.composition_columns
+      ~Sample.data
+      ~Sample.data_columns
+      ~Sample.mass_columns
+      ~Sample.mass_data
+      ~Sample.moisture_column
+      ~Sample.supplementary_columns
+      ~Sample.variable_map
+   
+   

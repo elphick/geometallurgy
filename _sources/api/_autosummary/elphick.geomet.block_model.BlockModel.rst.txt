@@ -1,0 +1,69 @@
+elphick.geomet.block\_model.BlockModel
+======================================
+
+.. currentmodule:: elphick.geomet.block_model
+
+.. autoclass:: BlockModel
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BlockModel.__init__
+      ~BlockModel.add
+      ~BlockModel.balance_composition
+      ~BlockModel.clip_composition
+      ~BlockModel.clip_recovery
+      ~BlockModel.common_block_size
+      ~BlockModel.compare
+      ~BlockModel.create_congruent_object
+      ~BlockModel.create_structured_grid
+      ~BlockModel.create_unstructured_grid
+      ~BlockModel.create_voxels
+      ~BlockModel.div
+      ~BlockModel.filter_by_index
+      ~BlockModel.from_mass_dataframe
+      ~BlockModel.from_omf
+      ~BlockModel.get_blocks
+      ~BlockModel.get_mass_data
+      ~BlockModel.is_regular
+      ~BlockModel.plot
+      ~BlockModel.plot_comparison
+      ~BlockModel.plot_parallel
+      ~BlockModel.plot_ternary
+      ~BlockModel.query
+      ~BlockModel.reset_index
+      ~BlockModel.set_moisture
+      ~BlockModel.split
+      ~BlockModel.sub
+      ~BlockModel.to_omf
+      ~BlockModel.to_stream
+      ~BlockModel.update_mass_data
+      ~BlockModel.voxelise
+      ~BlockModel.weight_average
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BlockModel.aggregate
+      ~BlockModel.composition_columns
+      ~BlockModel.data
+      ~BlockModel.data_columns
+      ~BlockModel.mass_columns
+      ~BlockModel.mass_data
+      ~BlockModel.moisture_column
+      ~BlockModel.supplementary_columns
+      ~BlockModel.variable_map
+   
+   

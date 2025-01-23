@@ -1,0 +1,67 @@
+elphick.geomet.flowsheet.flowsheet.Flowsheet
+============================================
+
+.. currentmodule:: elphick.geomet.flowsheet.flowsheet
+
+.. autoclass:: Flowsheet
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Flowsheet.__init__
+      ~Flowsheet.add_operation
+      ~Flowsheet.add_stream
+      ~Flowsheet.copy_without_stream_data
+      ~Flowsheet.filter_by_index
+      ~Flowsheet.from_dataframe
+      ~Flowsheet.from_dict
+      ~Flowsheet.from_json
+      ~Flowsheet.from_objects
+      ~Flowsheet.from_yaml
+      ~Flowsheet.get_input_streams
+      ~Flowsheet.get_output_streams
+      ~Flowsheet.get_stream_by_name
+      ~Flowsheet.nodes_to_dict
+      ~Flowsheet.plot
+      ~Flowsheet.plot_balance
+      ~Flowsheet.plot_network
+      ~Flowsheet.plot_parallel
+      ~Flowsheet.plot_sankey
+      ~Flowsheet.query
+      ~Flowsheet.report
+      ~Flowsheet.reset_nodes
+      ~Flowsheet.reset_stream_nodes
+      ~Flowsheet.set_node_names
+      ~Flowsheet.set_nodes
+      ~Flowsheet.set_operation_data
+      ~Flowsheet.set_stream_child
+      ~Flowsheet.set_stream_data
+      ~Flowsheet.set_stream_parent
+      ~Flowsheet.solve
+      ~Flowsheet.streams_to_dict
+      ~Flowsheet.table_plot
+      ~Flowsheet.to_dataframe
+      ~Flowsheet.unhealthy_node_records
+      ~Flowsheet.unhealthy_stream_records
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Flowsheet.all_nodes_healthy
+      ~Flowsheet.all_streams_healthy
+      ~Flowsheet.healthy
+      ~Flowsheet.name
+   
+   

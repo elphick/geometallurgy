@@ -1,0 +1,6 @@
+elphick.geomet.utils.components.oxides
+======================================
+
+.. currentmodule:: elphick.geomet.utils.components
+
+.. autofunction:: oxides

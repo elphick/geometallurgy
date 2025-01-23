@@ -1,0 +1,40 @@
+﻿elphick.geomet.base
+===================
+
+.. automodule:: elphick.geomet.base
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      filter_kwargs
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      MassComposition
+      OutOfRangeStatus
+      SampleStatus
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,25 @@
+elphick.geomet.utils.timer.MyLogger
+===================================
+
+.. currentmodule:: elphick.geomet.utils.timer
+
+.. autoclass:: MyLogger
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MyLogger.__init__
+      ~MyLogger.get_logger
+   
+   
+
+   
+   
+   

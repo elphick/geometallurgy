@@ -1,0 +1,72 @@
+elphick.geomet.interval\_sample.IntervalSample
+==============================================
+
+.. currentmodule:: elphick.geomet.interval_sample
+
+.. autoclass:: IntervalSample
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~IntervalSample.__init__
+      ~IntervalSample.add
+      ~IntervalSample.balance_composition
+      ~IntervalSample.calculate_partition
+      ~IntervalSample.clip_composition
+      ~IntervalSample.clip_recovery
+      ~IntervalSample.compare
+      ~IntervalSample.create_congruent_object
+      ~IntervalSample.div
+      ~IntervalSample.filter_by_index
+      ~IntervalSample.from_mass_dataframe
+      ~IntervalSample.get_mass_data
+      ~IntervalSample.ideal_incremental_composition
+      ~IntervalSample.ideal_incremental_recovery
+      ~IntervalSample.ideal_incremental_separation
+      ~IntervalSample.is_2d_grid
+      ~IntervalSample.plot_amenability
+      ~IntervalSample.plot_comparison
+      ~IntervalSample.plot_grade_recovery
+      ~IntervalSample.plot_heatmap
+      ~IntervalSample.plot_intervals
+      ~IntervalSample.plot_parallel
+      ~IntervalSample.plot_ternary
+      ~IntervalSample.query
+      ~IntervalSample.resample_1d
+      ~IntervalSample.resample_2d
+      ~IntervalSample.reset_index
+      ~IntervalSample.set_moisture
+      ~IntervalSample.split
+      ~IntervalSample.split_by_partition
+      ~IntervalSample.sub
+      ~IntervalSample.to_stream
+      ~IntervalSample.update_mass_data
+      ~IntervalSample.weight_average
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~IntervalSample.aggregate
+      ~IntervalSample.composition_columns
+      ~IntervalSample.data
+      ~IntervalSample.data_columns
+      ~IntervalSample.is_rectilinear_grid
+      ~IntervalSample.mass_columns
+      ~IntervalSample.mass_data
+      ~IntervalSample.moisture_column
+      ~IntervalSample.supplementary_columns
+      ~IntervalSample.variable_map
+   
+   

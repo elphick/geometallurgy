@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.weight\_average
+===========================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: weight_average

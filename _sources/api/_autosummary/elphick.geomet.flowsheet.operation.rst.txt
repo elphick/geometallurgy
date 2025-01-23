@@ -1,0 +1,35 @@
+﻿elphick.geomet.flowsheet.operation
+==================================
+
+.. automodule:: elphick.geomet.flowsheet.operation
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Input
+      NodeType
+      Operation
+      Output
+      PartitionOperation
+      Passthrough
+   
+   
+
+   
+   
+   
+
+
+

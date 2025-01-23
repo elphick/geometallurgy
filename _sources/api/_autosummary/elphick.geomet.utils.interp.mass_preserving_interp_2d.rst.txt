@@ -1,0 +1,6 @@
+elphick.geomet.utils.interp.mass\_preserving\_interp\_2d
+========================================================
+
+.. currentmodule:: elphick.geomet.utils.interp
+
+.. autofunction:: mass_preserving_interp_2d

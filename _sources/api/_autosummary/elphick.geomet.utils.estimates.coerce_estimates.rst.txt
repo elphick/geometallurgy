@@ -1,0 +1,6 @@
+elphick.geomet.utils.estimates.coerce\_estimates
+================================================
+
+.. currentmodule:: elphick.geomet.utils.estimates
+
+.. autofunction:: coerce_estimates

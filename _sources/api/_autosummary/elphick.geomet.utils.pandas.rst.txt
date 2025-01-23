@@ -1,0 +1,47 @@
+elphick.geomet.utils.pandas
+===========================
+
+.. automodule:: elphick.geomet.utils.pandas
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      calculate_partition
+      calculate_recovery
+      column_prefix_counts
+      column_prefixes
+      composition_to_mass
+      cumulate
+      mass_to_composition
+      parse_vars_from_expr
+      prepare_columns
+      weight_average
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      MeanIntervalIndex
+   
+   
+
+   
+   
+   
+
+
+

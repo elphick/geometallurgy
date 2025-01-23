@@ -1,0 +1,42 @@
+elphick.geomet.flowsheet.operation.PartitionOperation
+=====================================================
+
+.. currentmodule:: elphick.geomet.flowsheet.operation
+
+.. autoclass:: PartitionOperation
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PartitionOperation.__init__
+      ~PartitionOperation.apply_partition
+      ~PartitionOperation.check_balance
+      ~PartitionOperation.from_dict
+      ~PartitionOperation.get_input_mass
+      ~PartitionOperation.get_output_mass
+      ~PartitionOperation.solve
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PartitionOperation.has_empty_input
+      ~PartitionOperation.has_empty_output
+      ~PartitionOperation.inputs
+      ~PartitionOperation.is_balanced
+      ~PartitionOperation.node_type
+      ~PartitionOperation.outputs
+      ~PartitionOperation.unbalanced_records
+   
+   

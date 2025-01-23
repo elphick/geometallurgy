@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.mass\_to\_composition
+=================================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: mass_to_composition

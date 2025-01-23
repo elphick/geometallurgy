@@ -1,0 +1,6 @@
+elphick.geomet.utils.sampling.random\_int
+=========================================
+
+.. currentmodule:: elphick.geomet.utils.sampling
+
+.. autofunction:: random_int

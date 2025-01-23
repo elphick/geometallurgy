@@ -1,0 +1,31 @@
+elphick.geomet.utils.parallel.TqdmParallel
+==========================================
+
+.. currentmodule:: elphick.geomet.utils.parallel
+
+.. autoclass:: TqdmParallel
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TqdmParallel.__init__
+      ~TqdmParallel.debug
+      ~TqdmParallel.dispatch_next
+      ~TqdmParallel.dispatch_one_batch
+      ~TqdmParallel.format
+      ~TqdmParallel.info
+      ~TqdmParallel.print_progress
+      ~TqdmParallel.warn
+   
+   
+
+   
+   
+   
