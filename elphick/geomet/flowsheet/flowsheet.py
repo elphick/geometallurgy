@@ -132,7 +132,7 @@ class Flowsheet:
         return cls().from_objects(objects=streams, name=name)
 
     @classmethod
-    def from_dict_old(cls, config: dict) -> FS:
+    def from_dict(cls, config: dict) -> FS:
         """Create a flowsheet from a dictionary
 
         Args:
@@ -184,25 +184,26 @@ class Flowsheet:
 
         return obj
 
-    @classmethod
-    def from_dict(cls, config: dict) -> FS:
-        flowsheet = cls()
-
-        # Process streams
-        for stream_name, stream_data in config['FLOWSHEET']['streams'].items():
-            stream = Stream.from_dict(stream_data)
-            flowsheet.add_stream(stream)
-
-        # Process operations
-        for operation_name, operation_data in config['FLOWSHEET']['operations'].items():
-            operation_type = operation_data.get('type', 'Operation')
-            if operation_type == 'PartitionOperation':
-                operation = PartitionOperation.from_dict(operation_data)
-            else:
-                operation = Operation.from_dict(operation_data)
-            flowsheet.add_operation(operation)
-
-        return flowsheet
+    # @classmethod
+    # def from_dict_todo(cls, config: dict) -> FS:
+    # TODO: This method is not yet implemented - fails because the Operations do not have inputs or outputs set.
+    #     flowsheet = cls()
+    #
+    #     # Process streams
+    #     for stream_name, stream_data in config['FLOWSHEET']['streams'].items():
+    #         stream = Stream.from_dict(stream_data)
+    #         flowsheet.add_stream(stream)
+    #
+    #     # Process operations
+    #     for operation_name, operation_data in config['FLOWSHEET']['operations'].items():
+    #         operation_type = operation_data.get('type', 'Operation')
+    #         if operation_type == 'PartitionOperation':
+    #             operation = PartitionOperation.from_dict(operation_data)
+    #         else:
+    #             operation = Operation.from_dict(operation_data)
+    #         flowsheet.add_operation(operation)
+    #
+    #     return flowsheet
 
     @classmethod
     def from_yaml(cls, file_path: Path) -> FS:
@@ -233,6 +234,14 @@ class Flowsheet:
             config = json.load(file)
 
         return cls.from_dict(config)
+
+    def add_stream(self, stream: 'Stream'):
+        """Add a stream to the flowsheet."""
+        self.graph.add_edge(stream.nodes[0], stream.nodes[1], mc=stream, name=stream.name)
+
+    def add_operation(self, operation: 'Operation'):
+        """Add an operation to the flowsheet."""
+        self.graph.add_node(operation.name, mc=operation)
 
     def unhealthy_stream_records(self) -> pd.DataFrame:
         """Return on unhealthy streams

@@ -39,12 +39,13 @@ periodictable = "^1.7.0"
 pyarrow = ">=16.1.0,<18.0.0"
 folium = { version = "^0.16.0", optional = true }
 pandera = { version = ">=0.19.3,<0.21.0", extras = ['io'], optional = true }
+#omfpandas = { version = ">=0.2.1", optional = true }  # last omfv1 version
 omfvista = { version = ">=0.3.0", optional = true }
 
 [tool.poetry.extras]
 map = ["folium"]
 validation = ["pandera"]
-blockmodel = ["omfvista", "omfpandas"]
+blockmodel = ["omfvista"]  #, "omfpandas"]
 all = ["map", "validation", "blockmodel"]
 
 [tool.poetry.group.dev.dependencies]

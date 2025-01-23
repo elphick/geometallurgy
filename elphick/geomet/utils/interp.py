@@ -9,13 +9,14 @@ from elphick.geomet.utils.pandas import composition_to_mass, mass_to_composition
 
 def mass_preserving_interp(df_intervals: pd.DataFrame, interval_edges: Union[Iterable, int],
                            include_original_edges: bool = True, precision: Optional[int] = None,
-                           mass_wet: str = 'mass_wet', mass_dry: str = 'mass_dry') -> pd.DataFrame:
+                           mass_wet: str = 'mass_wet', mass_dry: str = 'mass_dry',
+                           interval_data_as_mass: bool = False) -> pd.DataFrame:
     """Interpolate with zero mass loss using pchip
 
     This interpolates data_vars independently for a single dimension (coord) at a time.
 
     The function will:
-    - convert from relative composition (%) to absolute (mass)
+    - convert from relative composition (%) to absolute (mass) (subject to interval_data_as_mass argument)
     - convert the index from interval to a float representing the right edge of the interval
     - cumsum to provide monotonic increasing data
     - interpolate with a pchip spline to preserve mass
@@ -31,6 +32,8 @@ def mass_preserving_interp(df_intervals: pd.DataFrame, interval_edges: Union[Ite
         precision: Number of decimal places to round the index (edge) values.
         mass_wet: The wet mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
         mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
+        interval_data_as_mass: If True, the data is assumed to be mass data, not composition data, negating the need
+            to convert to mass.
 
     Returns:
 
@@ -38,7 +41,7 @@ def mass_preserving_interp(df_intervals: pd.DataFrame, interval_edges: Union[Ite
 
     if not isinstance(df_intervals.index, pd.IntervalIndex):
         raise NotImplementedError(f"The index `{df_intervals.index}` of the dataframe is not a pd.Interval. "
-                                  f" Only 1D interval indexes are valid")
+                                  f"Only 1D interval indexes are valid")
 
     composition_in: pd.DataFrame = df_intervals.copy()
 
@@ -62,8 +65,11 @@ def mass_preserving_interp(df_intervals: pd.DataFrame, interval_edges: Union[Ite
     if not isinstance(grid_vals, np.ndarray):
         grid_vals = np.array(grid_vals)
 
-    # convert from relative composition (%) to absolute (mass)
-    mass_in: pd.DataFrame = composition_to_mass(composition_in, mass_wet=mass_wet, mass_dry=mass_dry)
+    if not interval_data_as_mass:
+        # convert from relative composition (%) to absolute (mass)
+        mass_in: pd.DataFrame = composition_to_mass(composition_in, mass_wet=mass_wet, mass_dry=mass_dry)
+    else:
+        mass_in: pd.DataFrame = composition_in.copy()
     # convert the index from interval to a float representing the right edge of the interval
     mass_in.index = mass_in.index.right
     # add a row of zeros

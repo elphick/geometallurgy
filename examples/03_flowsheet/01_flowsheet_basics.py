@@ -145,7 +145,7 @@ print(stream_data.keys())
 # %%
 # We will replace stream 2 with the same data as stream 1.
 
-new_stream: Stream = deepcopy(fs.get_edge_by_name('stream 1'))
+new_stream: Stream = deepcopy(fs.get_stream_by_name('stream 1'))
 # we need to rename to avoid a creating a duplicate stream name
 new_stream.name = 'stream 1 copy'
 fs.set_stream_data({'stream 2': new_stream})
