@@ -585,6 +585,7 @@ class IntervalSample(MassComposition):
         df_upsampled: pd.DataFrame = mass_preserving_interp(self.mass_data,
                                                             interval_edges=interval_edges, precision=precision,
                                                             include_original_edges=include_original_edges,
+                                                            mass_wet=None, mass_dry=self.mass_dry_var,
                                                             interval_data_as_mass=True)
 
         obj: IntervalSample = IntervalSample(df_upsampled, name=self.name, moisture_in_scope=False,
