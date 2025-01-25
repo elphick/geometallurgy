@@ -88,7 +88,7 @@ def composition_to_mass(df: pd.DataFrame,
         df: The pd.DataFrame containing mass.  H2O if provided will be ignored.  All columns other than the
          mass_wet and mass_dry are assumed to be `additive`, that is, dry mass weighting is valid.
          Assumes composition is in %w/w units.
-        mass_wet: The wet mass column, optional. If not provided, it's assumed to be equal to mass_dry.
+        mass_wet: The wet mass column, optional.
         mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.
         moisture_column_name: if mass_wet is provided, the resultant moisture will be returned with this column name.
          If None, and moisture is detected in the input, that column name will be used instead.

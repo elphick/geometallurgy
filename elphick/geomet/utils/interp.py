@@ -9,7 +9,7 @@ from elphick.geomet.utils.pandas import composition_to_mass, mass_to_composition
 
 def mass_preserving_interp(df_intervals: pd.DataFrame, interval_edges: Union[Iterable, int],
                            include_original_edges: bool = True, precision: Optional[int] = None,
-                           mass_wet: str = 'mass_wet', mass_dry: str = 'mass_dry',
+                           mass_wet: Optional[str] = 'mass_wet', mass_dry: str = 'mass_dry',
                            interval_data_as_mass: bool = False) -> pd.DataFrame:
     """Interpolate with zero mass loss using pchip
 
@@ -81,7 +81,7 @@ def mass_preserving_interp(df_intervals: pd.DataFrame, interval_edges: Union[Ite
     # if the new grid extrapolates (on the coarse side), mass will be lost, so we assume that when extrapolating.
     # the mass in the extrapolated fractions is zero.  By inserting these records the spline will conform.
     x_extra = grid_vals[grid_vals > mass_cum.index.max()]
-    if x_extra:
+    if len(x_extra) > 0:
         cum_max: pd.Series = mass_cum.iloc[-1, :]
         mass_cum = mass_cum.reindex(index=mass_cum.index.append(pd.Index(x_extra)))  # reindex to enable insert
         mass_cum.loc[x_extra, :] = cum_max.values
@@ -180,7 +180,8 @@ def mass_preserving_interp_2d(intervals: pd.DataFrame, interval_edges: dict[str,
             # proportion the dim_1 interpolated values by the dim_2 recovery
             new_vals: pd.DataFrame = dim_2_deportment.mul(filtered_intervals_mass.loc[dim_1_interp_interval].values)
             # create a multiindex by combining the dim_1 and dim_2 intervals
-            new_index = pd.MultiIndex.from_arrays([pd.IntervalIndex([dim_1_interp_interval] * len(new_vals)), new_vals.index])
+            new_index = pd.MultiIndex.from_arrays(
+                [pd.IntervalIndex([dim_1_interp_interval] * len(new_vals)), new_vals.index])
             new_vals.index = new_index
             chunks.append(new_vals)
 
@@ -190,4 +191,3 @@ def mass_preserving_interp_2d(intervals: pd.DataFrame, interval_edges: dict[str,
     # convert to composition
     res = mass_to_composition(res, mass_dry=mass_dry)
     return res
-
