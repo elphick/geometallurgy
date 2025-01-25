@@ -15,6 +15,7 @@ import seaborn as sns
 import yaml
 from matplotlib import pyplot as plt
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+from networkx.algorithms.dag import is_directed_acyclic_graph
 from plotly.subplots import make_subplots
 
 from elphick.geomet import Sample
@@ -305,6 +306,8 @@ class Flowsheet:
 
     def solve(self):
         """Solve missing streams"""
+
+        assert is_directed_acyclic_graph(self.graph), "Graph is not a Directed Acyclic Graph (DAG), so cannot be solved."
 
         # Check the number of missing mc's on edges in the network
         missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
