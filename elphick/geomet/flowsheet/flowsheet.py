@@ -1,6 +1,7 @@
 import copy
 import json
 import logging
+import uuid
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union, TypeVar, TYPE_CHECKING
 import re
@@ -25,7 +26,6 @@ from elphick.geomet.flowsheet.operation import NodeType, OP, PartitionOperation,
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
 from elphick.geomet.flowsheet.loader import streams_from_dataframe
-from elphick.geomet.utils.sampling import random_int
 
 # if TYPE_CHECKING:
 from elphick.geomet.flowsheet.stream import Stream
@@ -307,7 +307,11 @@ class Flowsheet:
     def solve(self):
         """Solve missing streams"""
 
-        assert is_directed_acyclic_graph(self.graph), "Graph is not a Directed Acyclic Graph (DAG), so cannot be solved."
+        if not is_directed_acyclic_graph(self.graph):
+            self._logger.error("Graph is not a Directed Acyclic Graph (DAG), so cannot be solved.")
+            self._logger.debug(f"Graph nodes: {self.graph.nodes(data=True)}")
+            self._logger.debug(f"Graph edges: {self.graph.edges(data=True)}")
+            raise ValueError("Graph is not a Directed Acyclic Graph (DAG), so cannot be solved.")
 
         # Check the number of missing mc's on edges in the network
         missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
@@ -353,6 +357,12 @@ class Flowsheet:
                         self.set_operation_data(node)
 
             missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
+            self._logger.info(f"Missing count: {missing_count}")
+
+        if missing_count > 0:
+            self._logger.error(f"Failed to solve the flowsheet. Missing count: {missing_count}")
+            raise ValueError(
+                f"Failed to solve the flowsheet. Some streams are still missing. Missing count: {missing_count}")
 
     def query(self, expr: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
         """Reduce the Flowsheet Stream records with a query
@@ -427,6 +437,8 @@ class Flowsheet:
         degrees = {n: d for n, d in self.graph.degree()}
 
         res: list[MC] = [d['mc'] for u, v, d in self.graph.edges(data=True) if degrees[u] == 1]
+        if not res:
+            raise ValueError("No input streams found")
         return res
 
     def get_output_streams(self) -> list[MC]:
@@ -440,6 +452,8 @@ class Flowsheet:
         degrees = {n: d for n, d in self.graph.degree()}
 
         res: list[MC] = [d['mc'] for u, v, d in self.graph.edges(data=True) if degrees[v] == 1]
+        if not res:
+            raise ValueError("No output streams found")
         return res
 
     @staticmethod
@@ -1039,6 +1053,7 @@ class Flowsheet:
             if ('mc' in self.graph.nodes[node].keys()) and (node in node_names.keys()):
                 self.graph.nodes[node]['mc'].name = node_names[node]
 
+
     def set_stream_data(self, stream_data: dict[str, Optional[MC]]):
         """Set the data (MassComposition) of network edges (streams) with a Dict"""
         for stream_name, stream_data in stream_data.items():
@@ -1060,6 +1075,7 @@ class Flowsheet:
                     self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
                                                             self.graph.out_edges(node)]
 
+
     def set_operation_data(self, node):
         """Set the input and output data for a node.
         Uses the data on the edges (streams) connected to the node to refresh the data and check for node balance.
@@ -1068,6 +1084,7 @@ class Flowsheet:
         node_data.inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.in_edges(node)]
         node_data.outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.out_edges(node)]
         node_data.check_balance()
+
 
     def streams_to_dict(self) -> Dict[str, MC]:
         """Export the Stream objects to a Dict
@@ -1082,6 +1099,7 @@ class Flowsheet:
                 streams[data['mc'].name] = data['mc']
         return streams
 
+
     def nodes_to_dict(self) -> Dict[int, OP]:
         """Export the MCNode objects to a Dict
 
@@ -1095,13 +1113,14 @@ class Flowsheet:
                 nodes[node] = self.graph.nodes[node]['mc']
         return nodes
 
+
     def set_nodes(self, stream: str, nodes: Tuple[int, int]):
         mc: MC = self.get_stream_by_name(stream)
         mc._nodes = nodes
         self._update_graph(mc)
 
-    def reset_nodes(self, stream: Optional[str] = None):
 
+    def reset_nodes(self, stream: Optional[str] = None):
         """Reset stream nodes to break relationships
 
         Args:
@@ -1115,12 +1134,13 @@ class Flowsheet:
         if stream is None:
             streams: Dict[str, MC] = self.streams_to_dict()
             for k, v in streams.items():
-                streams[k] = v.set_nodes([random_int(), random_int()])
+                streams[k] = v.set_nodes([uuid.uuid4(), uuid.uuid4()])
             self.graph = Flowsheet(name=self.name).from_objects(objects=list(streams.values())).graph
         else:
             mc: MC = self.get_stream_by_name(stream)
-            mc.set_nodes([random_int(), random_int()])
+            mc.set_nodes([uuid.uuid4(), uuid.uuid4()])
             self._update_graph(mc)
+
 
     def _update_graph(self, mc: MC):
         """Update the graph with an existing stream object
@@ -1139,6 +1159,7 @@ class Flowsheet:
             else:
                 strms.append(a['mc'])
         self.graph = Flowsheet(name=self.name).from_objects(objects=strms).graph
+
 
     def get_stream_by_name(self, name: str) -> MC:
         """Get the Stream object from the network by its name
@@ -1160,18 +1181,20 @@ class Flowsheet:
 
         return res
 
+
     def set_stream_parent(self, stream: str, parent: str):
         mc: MC = self.get_stream_by_name(stream)
         mc.set_parent_node(self.get_stream_by_name(parent))
         self._update_graph(mc)
+
 
     def set_stream_child(self, stream: str, child: str):
         mc: MC = self.get_stream_by_name(stream)
         mc.set_child_node(self.get_stream_by_name(child))
         self._update_graph(mc)
 
-    def reset_stream_nodes(self, stream: Optional[str] = None):
 
+    def reset_stream_nodes(self, stream: Optional[str] = None):
         """Reset stream nodes to break relationships
 
         Args:
@@ -1185,9 +1208,9 @@ class Flowsheet:
         if stream is None:
             streams: Dict[str, MC] = self.streams_to_dict()
             for k, v in streams.items():
-                streams[k] = v.set_nodes([random_int(), random_int()])
+                streams[k] = v.set_nodes([uuid.uuid4(), uuid.uuid4()])
             self.graph = Flowsheet(name=self.name).from_objects(objects=list(streams.values())).graph
         else:
             mc: MC = self.get_stream_by_name(stream)
-            mc.set_nodes([random_int(), random_int()])
+            mc.set_nodes([uuid.uuid4(), uuid.uuid4()])
             self._update_graph(mc)
