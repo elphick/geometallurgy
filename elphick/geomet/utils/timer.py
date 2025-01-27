@@ -10,7 +10,7 @@ from typing import Union
 
 class MyLogger:
     def __init__(self):
-        logging.basicConfig(level=logging.INFO,
+        logging.basicConfig(level=logging.DEBUG,
                             format=' %(asctime)s - %(levelname)s - %(message)s')
 
     def get_logger(self, name=None):

@@ -2,6 +2,7 @@ import copy
 import inspect
 import logging
 import re
+import uuid
 from abc import ABC
 from pathlib import Path
 from typing import Optional, Union, Literal, TypeVar, TYPE_CHECKING
@@ -15,7 +16,6 @@ from elphick.geomet.config import read_yaml
 from elphick.geomet.utils.components import get_components, is_compositional
 from elphick.geomet.utils.moisture import solve_mass_moisture
 from elphick.geomet.utils.pandas import mass_to_composition, composition_to_mass, composition_factors
-from elphick.geomet.utils.sampling import random_int
 from elphick.geomet.utils.timer import log_timer
 from .config.config_read import get_column_config
 from .plot import parallel_plot, comparison_plot
@@ -714,8 +714,8 @@ class MassComposition(ABC):
         comp: 'Stream'
 
         # create the relationships
-        ref.nodes = [self.nodes[1], random_int()]
-        comp.nodes = [self.nodes[1], random_int()]
+        ref.nodes = [self.nodes[1], uuid.uuid4()]
+        comp.nodes = [self.nodes[1], uuid.uuid4()]
 
         return ref, comp
 
@@ -747,7 +747,7 @@ class MassComposition(ABC):
 
         # create the relationships
         other.nodes = [other.nodes[0], self.nodes[1]]
-        res.nodes = [self.nodes[1], random_int()]
+        res.nodes = [self.nodes[1], uuid.uuid4()]
 
         return res
 
@@ -780,7 +780,7 @@ class MassComposition(ABC):
 
         # create the relationships
         other.nodes = [self.nodes[1], other.nodes[1]]
-        res.nodes = [self.nodes[1], random_int()]
+        res.nodes = [self.nodes[1], uuid.uuid4()]
 
         return res
 

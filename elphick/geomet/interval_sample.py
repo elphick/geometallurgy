@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import uuid
 from pathlib import Path
 from typing import Optional, Literal, Callable, Union, Iterable, TYPE_CHECKING
 
@@ -18,7 +19,6 @@ from elphick.geomet.utils.interp import mass_preserving_interp
 from elphick.geomet.utils.interp2 import mass_preserving_interp_2d
 from elphick.geomet.utils.pandas import MeanIntervalIndex, weight_average, calculate_recovery, calculate_partition, \
     cumulate, mass_to_composition
-from elphick.geomet.utils.sampling import random_int
 
 from elphick.geomet.base import MassComposition
 
@@ -146,10 +146,10 @@ class IntervalSample(MassComposition):
 
         sample_1 = self.create_congruent_object(name=name_1).to_stream()
         sample_1.mass_data = self.mass_data.copy().multiply(pn, axis=0)
-        sample_1.set_nodes([self.nodes[1], random_int()])
+        sample_1.set_nodes([self.nodes[1], uuid.uuid4()])
         sample_2 = self.create_congruent_object(name=name_2)
         sample_2.mass_data = self.mass_data.copy().multiply((1 - pn), axis=0)
-        sample_2.set_nodes([self.nodes[1], random_int()])
+        sample_2.set_nodes([self.nodes[1], uuid.uuid4()])
 
         return sample_1, sample_2
 

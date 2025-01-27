@@ -1,10 +1,12 @@
+import uuid
+
 from elphick.geomet.base import MassComposition
 
 
 class Stream(MassComposition):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.nodes = [self.random_int(), self.random_int()]
+        self.nodes = [uuid.uuid4(), uuid.uuid4()]
 
     def set_parent_node(self, parent: 'Stream') -> 'Stream':
         self.nodes = [parent.nodes[1], self.nodes[1]]
@@ -15,13 +17,12 @@ class Stream(MassComposition):
         return self
 
     def set_nodes(self, nodes: list) -> 'Stream':
+        if len(nodes) != 2:
+            raise ValueError('Nodes must be a list of length 2')
+        if nodes[0] == nodes[1]:
+            raise ValueError('Nodes must be different')
         self.nodes = nodes
         return self
-
-    @staticmethod
-    def random_int():
-        import random
-        return random.randint(0, 100)
 
     # @classmethod
     # def from_mass_composition(cls, obj: MassComposition) -> 'Stream':

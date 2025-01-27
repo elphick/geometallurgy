@@ -2,13 +2,16 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
-import yaml
 
 from elphick.geomet import Sample, IntervalSample
 from elphick.geomet.flowsheet import Flowsheet
 from elphick.geomet.flowsheet.operation import Operation
 from elphick.geomet.flowsheet.stream import Stream
 from fixtures import sample_data, interval_sample_data
+
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 
 def test_flowsheet_init(sample_data):
@@ -191,3 +194,55 @@ def test_solve_flowsheet_partition(interval_sample_data):
     flowsheet.solve()
 
     flowsheet.plot().show()
+
+
+@pytest.mark.skip("This test is slow, and for a solved problem. #52")
+def test_flowsheet_multiple_runs(sample_data):
+    success_count = 0
+    num_runs = 500
+
+    for i in range(num_runs):
+        try:
+            # Create a new Flowsheet object
+            obj_in = Sample(sample_data, name='Feed')
+            obj_out_1, obj_out_2 = obj_in.split(0.4, name_1='stream 1', name_2='stream 2')
+            fs = Flowsheet.from_objects([obj_in, obj_out_1, obj_out_2])
+
+            # set the input edge to None
+            fs.set_stream_data(stream_data={'Feed': None})
+
+            # Call the solve method
+            fs.solve()
+
+            # Check that the solve method has filled in the missing MC object
+            for u, v, data in fs.graph.edges(data=True):
+                assert data[
+                           'mc'] is not None, f"Edge ({u}, {v}) has not been filled in by solve method for iteration {i}"
+
+            # Check that the missing_count is zero
+            missing_count = sum([1 for u, v, d in fs.graph.edges(data=True) if d['mc'] is None])
+            assert missing_count == 0, f"There are still missing MC objects after calling solve method for iteration {i}"
+
+            success_count += 1
+        except Exception as e:
+            print(f"Run failed with exception: {e} for iteration {i}")
+
+    print(f"Number of successful runs: {success_count}/{num_runs}")
+    assert success_count == num_runs, f"Only {success_count} out of {num_runs} runs were successful"
+
+
+@pytest.mark.skip("This test is slow, and for a solved problem. #52")
+def test_no_self_loop_edges(sample_data):
+    num_runs = 500
+    for _ in range(num_runs):
+        obj_in = Sample(sample_data, name='Feed')
+        obj_out_1, obj_out_2 = obj_in.split(0.4, name_1='stream 1', name_2='stream 2')
+        fs = Flowsheet.from_objects([obj_in, obj_out_1, obj_out_2])
+
+        # Check for self-loop edges
+        for u, v in fs.graph.edges():
+            assert u != v, f"Self-loop edge ({u}, {u}) found"
+
+
+if __name__ == "__main__":
+    pytest.main([__file__])

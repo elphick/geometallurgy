@@ -1,3 +1,13 @@
+Geomet 0.4.12 (2025-01-27)
+==========================
+
+Bugfix
+------
+
+- Fixed intermittent flowsheet errors.
+- Changed timer decorator default logger level from info to debug. (#52)
+
+
 Geomet 0.4.11 (2025-01-25)
 ==========================
 
