@@ -105,8 +105,8 @@ class BlockModel(MassComposition):
             raise ValueError(f"Geometry type '{geom.__class__.__name__}' not supported.")
 
         if density is not None:
-            blocks['mass'] = volume * density
-        moisture_in_scope = False
+            blocks['mass_dry'] = volume * density
+            moisture_in_scope = False
 
         return cls(data=blocks, name=element_name, mass_dry_var='mass_dry', moisture_in_scope=moisture_in_scope)
 
