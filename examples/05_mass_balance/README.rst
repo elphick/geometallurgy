@@ -1,4 +1,4 @@
 Mass Balancing
 ==============
 
-Below is a gallery of examples based on the BlockModel class.
+Below is a gallery of examples to deliver mass balancing.

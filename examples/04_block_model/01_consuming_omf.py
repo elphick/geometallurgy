@@ -2,32 +2,60 @@
 Consuming OMF
 =============
 
-This example demonstrates how to consume and Open Mining Format file
+This example demonstrates how to consume an Open Mining Format file
 """
-import omf
+import tempfile
+from pathlib import Path
+
+import pandas as pd
 import pooch
-import json
+from omfpandas import OMFPandasReader
+
+from elphick.geomet.block_model import BlockModel
 
 # %%
 # Load
 # ----
 
-# Base URL and relative path
-base_url = "https://github.com/OpenGeoVis/omfvista/raw/master/assets/"
-relative_path = "test_file.omf"
+# Cache an omf2 file locally
+filepath: Path = Path(pooch.retrieve(
+    url="https://raw.githubusercontent.com/elphick/omfpandas/main/assets/copper_deposit.omf",
+    known_hash=None,
+    path=Path(tempfile.gettempdir()) / "geometallurgy"))
 
-# Create a Pooch object
-p = pooch.create(
-    path=pooch.os_cache("geometallurgy"),
-    base_url=base_url,
-    registry={relative_path: None}
-)
+omfpr: OMFPandasReader = OMFPandasReader(filepath=filepath)
+blocks: pd.DataFrame = omfpr.read_blockmodel(blockmodel_name='Block Model')
 
-# Use fetch method to download the file
-file_path = p.fetch(relative_path)
+# %%
+# Create mass
+# -----------
+# The mass of each block is calculated from the volume and a density of 2.265 g/cm3.
 
-reader = omf.OMFReader(file_path)
-project: omf.Project = reader.get_project()
-print(project.name)
-print(project.elements)
-print(project.description)
+blocks.reset_index(level=['dx', 'dy', 'dz'], inplace=True)
+blocks['volume'] = blocks.dx * blocks.dy * blocks.dz
+blocks.reset_index().set_index(keys=['x', 'y', 'z', 'dx', 'dy', 'dz'], inplace=True)
+blocks.rename(columns={'CU_pct': 'Cu'}, inplace=True)
+blocks['mass'] = blocks['volume'] * 2.265
+
+# %%
+# Create a BlockModel
+# -------------------
+# The BlockModel is created from the DataFrame and visualised.
+# This model can be used in a Flowsheet model to make metallurgical predictions and preserve the spatial context.
+
+bm: BlockModel = BlockModel(name=filepath.stem, data=blocks, mass_dry_var='mass', moisture_in_scope=False)
+
+p = bm.plot(scalar='Cu')
+p.title = filepath.stem
+p.show()
+
+# %%
+# Create from the omf directly
+# ----------------------------
+# The BlockModel can be created directly from the OMF file. This is useful when the data is not yet in a DataFrame.
+#
+# .. note::
+#     This requires components to be chemical symbols.  This is not the case for the sample omf file (at this stage).
+
+# bm: BlockModel = BlockModel.from_omf(omf_filepath=filepath, element_name='Block Model', mass_dry_var='mass',
+#                                      moisture_in_scope=False)

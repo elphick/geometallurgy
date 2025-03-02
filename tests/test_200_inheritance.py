@@ -46,7 +46,7 @@ def test_inheritance_interval_sample():
 
 
 def test_inheritance_block_model(omf_model_path):
-    obj: BlockModel = BlockModel.from_omf(omf_filepath=omf_model_path, columns=['CU_pct'])
+    obj: BlockModel = BlockModel.from_omf(omf_filepath=omf_model_path, element_name='Block Model', columns=['CU_pct'])
     assert isinstance(obj, BlockModel)
     assert isinstance(obj, MassComposition)
     assert not isinstance(obj, Stream)

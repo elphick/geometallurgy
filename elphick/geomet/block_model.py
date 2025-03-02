@@ -10,7 +10,6 @@ from scipy import stats
 from elphick.geomet import extras
 from elphick.geomet.base import MassComposition
 from elphick.geomet.extras import BlockmodelExtras
-from elphick.geomet.utils.block_model_converter import volume_to_vtk
 from elphick.geomet.utils.timer import log_timer
 
 if TYPE_CHECKING:
@@ -21,8 +20,8 @@ if TYPE_CHECKING:
 def import_extras(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        omf, omfvista, pv = extras.import_blockmodel_packages()
-        extras_instance = BlockmodelExtras(omf, omfvista, pv)
+        omfpandas, omfvista, pv = extras.import_blockmodel_packages()
+        extras_instance = BlockmodelExtras(omfpandas, omfvista, pv)
         return func(*args, imports=extras_instance, **kwargs)
 
     return wrapper
@@ -66,105 +65,67 @@ class BlockModel(MassComposition):
     @classmethod
     @import_extras
     def from_omf(cls, omf_filepath: Path, imports,
-                 name: Optional[str] = None,
-                 columns: Optional[list[str]] = None) -> 'BlockModel':
+                 element_name: Optional[str] = None,
+                 columns: Optional[list[str]] = None,
+                 query: Optional[str] = None,
+                 density: float = 2.5) -> 'BlockModel':
+        """Create a BlockModel from an OMF file.
 
-        reader = imports.omf.OMFReader(str(omf_filepath))
-        project: imports.omf.Project = reader.get_project()
-        # get the first block model detected in the omf project
-        block_model_candidates = [obj for obj in project.elements if isinstance(obj, imports.omf.volume.VolumeElement)]
-        if name:
-            omf_bm = [obj for obj in block_model_candidates if obj.name == name]
-            if len(omf_bm) == 0:
-                raise ValueError(f"No block model named '{name}' found in the OMF file.")
-            else:
-                omf_bm = omf_bm[0]
-        elif len(block_model_candidates) > 1:
-            names: list[str] = [obj.name for obj in block_model_candidates]
-            raise ValueError(f"Multiple block models detected in the OMF file - provide a name argument from: {names}")
+        Args:
+            omf_filepath: Path to the OMF file.
+            imports: internally used to import the necessary packages.
+            element_name: The name of the element in the OMF file.
+            columns: The columns to extract from the OMF file.
+            query: The query to filter the DataFrame.
+            density: The density of the material in g/cm3, used to calculate DMT (Dry Mass Tonnes).  A workaround.
+
+        Returns:
+            BlockModel: The BlockModel instance.
+
+        """
+
+        omfpr: imports.omfpandas.OMFPandasReader = imports.omfpandas.OMFPandasReader(filepath=omf_filepath)
+        blocks: pd.DataFrame = omfpr.read_blockmodel(blockmodel_name=element_name, attributes=columns,
+                                                     query=query)
+
+        # get the block volume
+
+        volume: Union[float, np.ndarray[float]]
+        from omfpandas.blockmodel import OMFBlockModel
+        from omfpandas.blockmodels.convert_blockmodel import df_to_blockmodel
+        from omfpandas.blockmodels.geometry import Geometry
+        geom: Geometry = OMFBlockModel(df_to_blockmodel(blocks, blockmodel_name=element_name)).geometry
+
+        if geom.__class__.__name__ == 'RegularGeometry':
+            volume = geom.block_size[0] * geom.block_size[1] * geom.block_size[2]
+        elif geom.__class__.__name__ == 'TensorGeometry':
+            # TODO: Implement the volume calculation for TensorGeometry - this is a placeholder.
+            volume = geom.block_sizes[0][0] * geom.block_sizes[0][1] * geom.block_sizes[0][2]
         else:
-            omf_bm = block_model_candidates[0]
+            raise ValueError(f"Geometry type '{geom.__class__.__name__}' not supported.")
 
-        origin = np.array(project.origin)
-        bm = volume_to_vtk(omf_bm, origin=origin, columns=columns)
+        if density is not None:
+            blocks['mass_dry'] = volume * density
+            moisture_in_scope = False
 
-        # Create DataFrame
-        df = pd.DataFrame(bm.cell_centers().points, columns=['x', 'y', 'z'])
-
-        # set the index to the cell centroids
-        df.set_index(['x', 'y', 'z'], drop=True, inplace=True)
-
-        if not isinstance(bm, imports.pv.RectilinearGrid):
-            for d, t in zip(['dx', 'dy', 'dz'], ['tensor_u', 'tensor_v', 'tensor_w']):
-                # todo: fix - wrong shape
-                df[d] = eval(f"omf_bm.geometry.{t}")
-            df.set_index(['dx', 'dy', 'dz'], append=True, inplace=True)
-
-        # Add the array data to the DataFrame
-        for name in bm.array_names:
-            df[name] = bm.get_array(name)
-
-        # temporary workaround for no mass
-        df['DMT'] = 2000
-        moisture_in_scope = False
-
-        return cls(data=df, name=omf_bm.name, moisture_in_scope=moisture_in_scope)
+        return cls(data=blocks, name=element_name, mass_dry_var='mass_dry', moisture_in_scope=moisture_in_scope)
 
     @import_extras
-    def to_omf(self, omf_filepath: Path, imports, name: str = 'Block Model', description: str = 'A block model'):
+    def to_omf(self, omf_filepath: Path, imports, element_name: str = 'Block Model',
+               description: str = 'A block model'):
+        """Write the BlockModel to an OMF file.
 
-        # Create a Project instance
-        project = imports.omf.Project(name=name, description=description)
+        Args:
+            omf_filepath: Path to the OMF file.
+            imports: internally used to import the necessary packages.
+            element_name: The name of the element in the OMF file.
+            description: Description of the block model.
+        """
+        # Create an OMFPandasWriter instance
+        writer = imports.omfpandas.OMFPandasWriter(filepath=omf_filepath)
 
-        # Create a VolumeElement instance for the block model
-        block_model = imports.omf.VolumeElement(name=name, description=description,
-                                                geometry=imports.omf.VolumeGridGeometry())
-
-        # Set the geometry of the block model
-        block_model.geometry.origin = self.data.index.get_level_values('x').min(), \
-            self.data.index.get_level_values('y').min(), \
-            self.data.index.get_level_values('z').min()
-
-        # Set the axis directions
-        block_model.geometry.axis_u = [1, 0, 0]  # Set the u-axis to point along the x-axis
-        block_model.geometry.axis_v = [0, 1, 0]  # Set the v-axis to point along the y-axis
-        block_model.geometry.axis_w = [0, 0, 1]  # Set the w-axis to point along the z-axis
-
-        # Set the tensor locations and dimensions
-        if 'dx' not in self.data.index.names:
-            # Calculate the dimensions of the cells
-            x_dims = np.diff(self.data.index.get_level_values('x').unique())
-            y_dims = np.diff(self.data.index.get_level_values('y').unique())
-            z_dims = np.diff(self.data.index.get_level_values('z').unique())
-
-            # Append an extra value to the end of the dimensions arrays
-            x_dims = np.append(x_dims, x_dims[-1])
-            y_dims = np.append(y_dims, y_dims[-1])
-            z_dims = np.append(z_dims, z_dims[-1])
-
-            # Assign the dimensions to the tensor attributes
-            block_model.geometry.tensor_u = x_dims
-            block_model.geometry.tensor_v = y_dims
-            block_model.geometry.tensor_w = z_dims
-        else:
-            block_model.geometry.tensor_u = self.data.index.get_level_values('dx').unique().tolist()
-            block_model.geometry.tensor_v = self.data.index.get_level_values('dy').unique().tolist()
-            block_model.geometry.tensor_w = self.data.index.get_level_values('dz').unique().tolist()
-
-        # Sort the blocks by their x, y, and z coordinates
-        blocks: pd.DataFrame = self.data.sort_index()
-
-        # Add the data to the block model
-        data = [imports.omf.ScalarData(name=col, location='cells', array=blocks[col].values) for col in blocks.columns]
-        block_model.data = data
-
-        # Add the block model to the project
-        project.elements = [block_model]
-
-        assert project.validate()
-
-        # Write the project to a file
-        imports.omf.OMFWriter(project, str(omf_filepath))
+        # Write the block model to the OMF file
+        writer.write_blockmodel(blockmodel_name=element_name, description=description, dataframe=self.data)
 
     @log_timer
     def get_blocks(self) -> Union['pv.StructuredGrid', 'pv.UnstructuredGrid']:
@@ -235,7 +196,7 @@ class BlockModel(MassComposition):
     def create_structured_grid(self, imports) -> 'pv.StructuredGrid':
 
         # Get the unique x, y, z coordinates (centroids)
-        data = self.data
+        data = self.data.sort_values(['z', 'y', 'x'])  # ensure the data is sorted F-style
         x_centroids = data.index.get_level_values('x').unique()
         y_centroids = data.index.get_level_values('y').unique()
         z_centroids = data.index.get_level_values('z').unique()
@@ -274,7 +235,7 @@ class BlockModel(MassComposition):
         """
 
         # Get the x, y, z coordinates and cell dimensions
-        blocks = self.data.reset_index().sort_values(['z', 'y', 'x'])
+        blocks = self.data.reset_index().sort_values(['z', 'y', 'x'])  # ensure the data is sorted F-style
         # if no dims are passed, estimate them
         if 'dx' not in blocks.columns:
             dx, dy, dz = self.common_block_size()

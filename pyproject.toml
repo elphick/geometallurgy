@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "geometallurgy"
 packages = [{ include = "elphick/geomet" }]
-version = "0.4.12"
+version = "0.4.13"
 description = "Tools for the geometallurgist"
 authors = ["Greg <11791585+elphick@users.noreply.github.com>"]
 repository = "https://github.com/elphick/geometallurgy"
@@ -36,22 +36,25 @@ showcontent = true
 #log_cli_format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.13"
+python = ">=3.10,<3.13"
 plotly = "^5.22.0"
 pandas = ">=1.0"
 periodictable = "^1.7.0"
 #geoh5py = ">=0.8.0,<10.0.0"
 pyarrow = ">=16.1.0,<18.0.0"
 folium = { version = "^0.16.0", optional = true }
+rioxarray = { version = "^0.18.2", optional = true }
 pandera = { version = ">=0.19.3,<0.21.0", extras = ['io'], optional = true }
-#omfpandas = { version = ">=0.2.1", optional = true }  # last omfv1 version
+omfpandas = { version = "^0.8.1", optional = true }
+#omf = { version = "<2.0" }
+
 omfvista = { version = ">=0.3.0", optional = true }
 
 [tool.poetry.extras]
-map = ["folium"]
 validation = ["pandera"]
-blockmodel = ["omfvista"]  #, "omfpandas"]
-all = ["map", "validation", "blockmodel"]
+blockmodel = ["omfvista", "omfpandas"]
+spatial = ["folium", "rioxarray"]
+all = ["validation", "blockmodel", "spatial"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.1"

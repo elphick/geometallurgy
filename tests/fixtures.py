@@ -1,3 +1,4 @@
+import tempfile
 from pathlib import Path
 
 import pandas as pd
@@ -78,18 +79,9 @@ def interval_sample_data() -> pd.DataFrame:
 
 @pytest.fixture
 def omf_model_path() -> Path:
-    # Base URL and relative path
-    base_url = "https://github.com/OpenGeoVis/omfvista/raw/master/assets/"
-    relative_path = "test_file.omf"
+    filepath: str = pooch.retrieve(
+        url="https://raw.githubusercontent.com/elphick/omfpandas/main/assets/copper_deposit.omf",
+        known_hash=None,
+        path=Path(tempfile.gettempdir()) / "geometallurgy")
 
-    # Create a Pooch object
-    p = pooch.create(
-        path=pooch.os_cache("geometallurgy"),
-        base_url=base_url,
-        registry={relative_path: None}
-    )
-
-    # Use fetch method to download the file
-    file_path = p.fetch(relative_path)
-
-    return Path(file_path)
+    return Path(filepath)

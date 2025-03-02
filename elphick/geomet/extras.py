@@ -3,8 +3,8 @@ _blockmodel_imports = None
 
 # Define the Extras class to encapsulate the imported modules
 class BlockmodelExtras:
-    def __init__(self, omf, omfvista, pv):
-        self.omf = omf
+    def __init__(self, omfpandas, omfvista, pv):
+        self.omfpandas = omfpandas
         self.omfvista = omfvista
         self.pv = pv
 
@@ -15,7 +15,7 @@ def import_blockmodel_packages():
 
     # Optional imports
     try:
-        import omf
+        import omfpandas
         import omfvista
         import pyvista as pv
         from pyvista import CellType
@@ -25,10 +25,10 @@ def import_blockmodel_packages():
 
     if _blockmodel_imports is None:
         try:
-            import omf
+            import omfpandas
             import omfvista
             import pyvista as pv
-            _blockmodel_imports = (omf, omfvista, pv)
+            _blockmodel_imports = (omfpandas, omfvista, pv)
         except ImportError:
             raise ImportError("Failed to import blockmodel related packages. "
                               "Consider executing: 'poetry install --extras blockmodel'")
