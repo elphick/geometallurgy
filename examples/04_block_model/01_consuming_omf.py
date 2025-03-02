@@ -44,6 +44,18 @@ blocks['mass'] = blocks['volume'] * 2.265
 # This model can be used in a Flowsheet model to make metallurgical predictions and preserve the spatial context.
 
 bm: BlockModel = BlockModel(name=filepath.stem, data=blocks, mass_dry_var='mass', moisture_in_scope=False)
+
 p = bm.plot(scalar='Cu')
 p.title = filepath.stem
 p.show()
+
+# %%
+# Create from the omf directly
+# ----------------------------
+# The BlockModel can be created directly from the OMF file. This is useful when the data is not yet in a DataFrame.
+#
+# .. note::
+#     This requires components to be chemical symbols.  This is not the case for the sample omf file (at this stage).
+
+# bm: BlockModel = BlockModel.from_omf(omf_filepath=filepath, element_name='Block Model', mass_dry_var='mass',
+#                                      moisture_in_scope=False)
