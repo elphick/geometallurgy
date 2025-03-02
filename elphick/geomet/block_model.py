@@ -235,7 +235,7 @@ class BlockModel(MassComposition):
     def create_structured_grid(self, imports) -> 'pv.StructuredGrid':
 
         # Get the unique x, y, z coordinates (centroids)
-        data = self.data
+        data = self.data.sort_values(['z', 'y', 'x'])  # ensure the data is sorted F-style
         x_centroids = data.index.get_level_values('x').unique()
         y_centroids = data.index.get_level_values('y').unique()
         z_centroids = data.index.get_level_values('z').unique()
@@ -274,7 +274,7 @@ class BlockModel(MassComposition):
         """
 
         # Get the x, y, z coordinates and cell dimensions
-        blocks = self.data.reset_index().sort_values(['z', 'y', 'x'])
+        blocks = self.data.reset_index().sort_values(['z', 'y', 'x'])   # ensure the data is sorted F-style
         # if no dims are passed, estimate them
         if 'dx' not in blocks.columns:
             dx, dy, dz = self.common_block_size()

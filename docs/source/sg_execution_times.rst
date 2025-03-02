@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:59.952** total execution time for 18 files **from all galleries**:
+**00:20.910** total execution time for 19 files **from all galleries**:
 
 .. container::
 
@@ -32,32 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_03_incremental_separation.py` (``..\..\examples\02_interval_sample\03_incremental_separation.py``)
-     - 00:22.251
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``..\..\examples\02_interval_sample\01_interval_sample.py``)
-     - 00:15.470
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_05_resampling_interval_data.py` (``..\..\examples\02_interval_sample\05_resampling_interval_data.py``)
-     - 00:07.126
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_01_flowsheet_basics.py` (``..\..\examples\03_flowsheet\01_flowsheet_basics.py``)
-     - 00:05.359
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_02_flowsheet_from_file.py` (``..\..\examples\03_flowsheet\02_flowsheet_from_file.py``)
-     - 00:02.471
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_03_filtering_flowsheet.py` (``..\..\examples\03_flowsheet\03_filtering_flowsheet.py``)
-     - 00:01.982
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_06_resampling_interval_data_2d.py` (``..\..\examples\02_interval_sample\06_resampling_interval_data_2d.py``)
-     - 00:01.978
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_04_partition_models.py` (``..\..\examples\02_interval_sample\04_partition_models.py``)
-     - 00:01.849
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``..\..\examples\02_interval_sample\02_interval_data_sink_float.py``)
-     - 00:01.467
+   * - :ref:`sphx_glr_auto_examples_examples_07_dem_01_pyvista_dem.py` (``..\..\examples\07_dem\01_pyvista_dem.py``)
+     - 00:20.910
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_01_create_sample.py` (``..\..\examples\01_getting_started\01_create_sample.py``)
      - 00:00.000
@@ -69,6 +45,33 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_01_getting_started_04_filtering.py` (``..\..\examples\01_getting_started\04_filtering.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``..\..\examples\02_interval_sample\01_interval_sample.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``..\..\examples\02_interval_sample\02_interval_data_sink_float.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_03_incremental_separation.py` (``..\..\examples\02_interval_sample\03_incremental_separation.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_04_partition_models.py` (``..\..\examples\02_interval_sample\04_partition_models.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_05_resampling_interval_data.py` (``..\..\examples\02_interval_sample\05_resampling_interval_data.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_06_resampling_interval_data_2d.py` (``..\..\examples\02_interval_sample\06_resampling_interval_data_2d.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_01_flowsheet_basics.py` (``..\..\examples\03_flowsheet\01_flowsheet_basics.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_02_flowsheet_from_file.py` (``..\..\examples\03_flowsheet\02_flowsheet_from_file.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_03_flowsheet_03_filtering_flowsheet.py` (``..\..\examples\03_flowsheet\03_filtering_flowsheet.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_examples_04_block_model_01_consuming_omf.py` (``..\..\examples\04_block_model\01_consuming_omf.py``)
