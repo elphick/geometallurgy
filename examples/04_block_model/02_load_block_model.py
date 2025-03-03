@@ -20,7 +20,7 @@ logging.basicConfig(level=logging.DEBUG)
 # Load
 # ----
 
-block_model_filepath: Path = Path("block_model_copper.parquet")
+block_model_filepath: Path = Path("../../assets/copper_deposit.parquet")
 
 # Load the parquet file into a DataFrame
 df = pd.read_parquet(block_model_filepath)
