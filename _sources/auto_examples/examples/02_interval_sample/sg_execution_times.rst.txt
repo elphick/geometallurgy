@@ -1,0 +1,52 @@
+
+:orphan:
+
+.. _sphx_glr_auto_examples_examples_02_interval_sample_sg_execution_times:
+
+
+Computation times
+=================
+**00:17.292** total execution time for 6 files **from auto_examples/examples/02_interval_sample**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_03_incremental_separation.py` (``03_incremental_separation.py``)
+     - 00:08.581
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_01_interval_sample.py` (``01_interval_sample.py``)
+     - 00:03.682
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_05_resampling_interval_data.py` (``05_resampling_interval_data.py``)
+     - 00:03.104
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_06_resampling_interval_data_2d.py` (``06_resampling_interval_data_2d.py``)
+     - 00:00.781
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_04_partition_models.py` (``04_partition_models.py``)
+     - 00:00.586
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_examples_02_interval_sample_02_interval_data_sink_float.py` (``02_interval_data_sink_float.py``)
+     - 00:00.558
+     - 0.0

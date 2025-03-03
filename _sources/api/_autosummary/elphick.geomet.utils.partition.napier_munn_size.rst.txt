@@ -1,0 +1,6 @@
+elphick.geomet.utils.partition.napier\_munn\_size
+=================================================
+
+.. currentmodule:: elphick.geomet.utils.partition
+
+.. autofunction:: napier_munn_size

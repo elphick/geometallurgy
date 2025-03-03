@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.flowsheet.flowsheet.Flowsheet &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="elphick.geomet.flowsheet.stream" href="elphick.geomet.flowsheet.stream.html" />
+    <link rel="prev" title="elphick.geomet.flowsheet.flowsheet" href="elphick.geomet.flowsheet.flowsheet.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.base.html">elphick.geomet.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.sample.html">elphick.geomet.sample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.interval_sample.html">elphick.geomet.interval_sample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.block_model.html">elphick.geomet.block_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.utils.html">elphick.geomet.utils</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="elphick.geomet.flowsheet.flowsheet.html">elphick.geomet.flowsheet.flowsheet</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">elphick.geomet.flowsheet.flowsheet.Flowsheet</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet"><code class="docutils literal notranslate"><span class="pre">Flowsheet</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.stream.html">elphick.geomet.flowsheet.stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.operation.html">elphick.geomet.flowsheet.operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.loader.html">elphick.geomet.flowsheet.loader</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="elphick.geomet.flowsheet.flowsheet.html">elphick.geomet.flowsheet.flowsheet</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.flowsheet.flowsheet.Flowsheet</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/elphick.geomet.flowsheet.flowsheet.Flowsheet.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="elphick-geomet-flowsheet-flowsheet-flowsheet">
+<h1>elphick.geomet.flowsheet.flowsheet.Flowsheet<a class="headerlink" href="#elphick-geomet-flowsheet-flowsheet-flowsheet" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">elphick.geomet.flowsheet.flowsheet.</span></span><span class="sig-name descname"><span class="pre">Flowsheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Flowsheet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Flowsheet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.__init__" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([name])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.add_operation" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.add_operation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_operation</span></code></a>(operation)</p></td>
+<td><p>Add an operation to the flowsheet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.add_stream" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.add_stream"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_stream</span></code></a>(stream)</p></td>
+<td><p>Add a stream to the flowsheet.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.copy_without_stream_data" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.copy_without_stream_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy_without_stream_data</span></code></a>()</p></td>
+<td><p>Copy without stream data</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.filter_by_index" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.filter_by_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_index</span></code></a>(index[, inplace])</p></td>
+<td><p>Filter the Flowsheet Stream records by a given index.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dataframe" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dataframe</span></code></a>(df[, name, mc_name_col, n_jobs])</p></td>
+<td><p>Instantiate from a DataFrame</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dict" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a>(config)</p></td>
+<td><p>Create a flowsheet from a dictionary</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_json" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a>(file_path)</p></td>
+<td><p>Create a flowsheet from json</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_objects" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_objects</span></code></a>(objects[, name])</p></td>
+<td><p>Instantiate from a list of objects</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_yaml" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_yaml"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_yaml</span></code></a>(file_path)</p></td>
+<td><p>Create a flowsheet from yaml</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.get_input_streams" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.get_input_streams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_input_streams</span></code></a>()</p></td>
+<td><p>Get the input (feed) streams (edge objects)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.get_output_streams" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.get_output_streams"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_output_streams</span></code></a>()</p></td>
+<td><p>Get the output (product) streams (edge objects)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.get_stream_by_name" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.get_stream_by_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_stream_by_name</span></code></a>(name)</p></td>
+<td><p>Get the Stream object from the network by its name</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.nodes_to_dict" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.nodes_to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nodes_to_dict</span></code></a>()</p></td>
+<td><p>Export the MCNode objects to a Dict</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot</span></code></a>([orientation])</p></td>
+<td><p>Plot the network with matplotlib</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_balance" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_balance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_balance</span></code></a>([facet_col_wrap, color])</p></td>
+<td><p>Plot input versus output across all nodes in the network</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_network" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_network"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_network</span></code></a>([orientation])</p></td>
+<td><p>Plot the network with plotly</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_parallel" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_parallel</span></code></a>([names, color, vars_include, ...])</p></td>
+<td><p>Create an interactive parallel plot</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_sankey" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_sankey"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_sankey</span></code></a>([width_var, color_var, ...])</p></td>
+<td><p>Plot the Network as a sankey</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.query" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(expr[, stream_name, inplace])</p></td>
+<td><p>Reduce the Flowsheet Stream records with a query</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.report" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.report"><code class="xref py py-obj docutils literal notranslate"><span class="pre">report</span></code></a>([apply_formats])</p></td>
+<td><p>Summary Report</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_nodes" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_nodes</span></code></a>([stream])</p></td>
+<td><p>Reset stream nodes to break relationships</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_stream_nodes" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_stream_nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_stream_nodes</span></code></a>([stream])</p></td>
+<td><p>Reset stream nodes to break relationships</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.set_node_names" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.set_node_names"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_node_names</span></code></a>(node_names)</p></td>
+<td><p>Set the names of network nodes with a Dict</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_nodes</span></code>(stream, nodes)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.set_operation_data" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.set_operation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_operation_data</span></code></a>(node)</p></td>
+<td><p>Set the input and output data for a node.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stream_child</span></code>(stream, child)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.set_stream_data" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.set_stream_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stream_data</span></code></a>(stream_data)</p></td>
+<td><p>Set the data (MassComposition) of network edges (streams) with a Dict</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_stream_parent</span></code>(stream, parent)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.solve" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.solve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">solve</span></code></a>()</p></td>
+<td><p>Solve missing streams</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.streams_to_dict" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.streams_to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">streams_to_dict</span></code></a>()</p></td>
+<td><p>Export the Stream objects to a Dict</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.table_plot" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.table_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">table_plot</span></code></a>([plot_type, cols_exclude, ...])</p></td>
+<td><p>Plot with table of edge averages</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.to_dataframe" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.to_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dataframe</span></code></a>([stream_names, tidy, as_mass])</p></td>
+<td><p>Return a tidy dataframe</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_node_records" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_node_records"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unhealthy_node_records</span></code></a>()</p></td>
+<td><p>Return unhealthy nodes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_stream_records" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_stream_records"><code class="xref py py-obj docutils literal notranslate"><span class="pre">unhealthy_stream_records</span></code></a>()</p></td>
+<td><p>Return on unhealthy streams</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_nodes_healthy</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.all_streams_healthy" title="elphick.geomet.flowsheet.flowsheet.Flowsheet.all_streams_healthy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_streams_healthy</span></code></a></p></td>
+<td><p>Check if all streams are healthy</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">healthy</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.add_operation">
+<span class="sig-name descname"><span class="pre">add_operation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operation</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.add_operation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.add_operation" title="Link to this definition"></a></dt>
+<dd><p>Add an operation to the flowsheet.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.add_stream">
+<span class="sig-name descname"><span class="pre">add_stream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.add_stream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.add_stream" title="Link to this definition"></a></dt>
+<dd><p>Add a stream to the flowsheet.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.all_streams_healthy">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_streams_healthy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.all_streams_healthy" title="Link to this definition"></a></dt>
+<dd><p>Check if all streams are healthy</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.copy_without_stream_data">
+<span class="sig-name descname"><span class="pre">copy_without_stream_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.copy_without_stream_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.copy_without_stream_data" title="Link to this definition"></a></dt>
+<dd><p>Copy without stream data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.filter_by_index">
+<span class="sig-name descname"><span class="pre">filter_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.filter_by_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.filter_by_index" title="Link to this definition"></a></dt>
+<dd><p>Filter the Flowsheet Stream records by a given index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Index</span></code></span>) – The index to filter the data.</p></li>
+<li><p><strong>inplace</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, apply the filter in place on the same object, otherwise return a new instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet" title="elphick.geomet.flowsheet.flowsheet.Flowsheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flowsheet</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Flowsheet object where the stream records are filtered by the given index.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dataframe">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Flowsheet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mc_name_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.from_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Instantiate from a DataFrame</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – The DataFrame</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – name of the network</p></li>
+<li><p><strong>mc_name_col</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The column specified contains the names of objects to create.
+If None the DataFrame is assumed to be wide and the mc objects will be extracted from column prefixes.</p></li>
+<li><p><strong>n_jobs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of parallel jobs to run.  If -1, will use all available cores.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of the Flowsheet class initialized from the provided DataFrame.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet" title="elphick.geomet.flowsheet.flowsheet.Flowsheet">Flowsheet</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dict">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_dict" title="Link to this definition"></a></dt>
+<dd><p>Create a flowsheet from a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – dictionary containing the flowsheet configuration</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FS</span></code>, bound= Flowsheet)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Flowsheet object with no data on the edges</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_json">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_json" title="Link to this definition"></a></dt>
+<dd><p>Create a flowsheet from json</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – path to the json file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FS</span></code>, bound= Flowsheet)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Flowsheet object with no data on the edges</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_objects">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_objects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">objects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Flowsheet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.from_objects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_objects" title="Link to this definition"></a></dt>
+<dd><p>Instantiate from a list of objects</p>
+<p>This method is only suitable for objects that have the <cite>_nodes</cite> property set, such as objects that have
+been created from math operations, which preserve relationships between objects (via the nodes property)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>objects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)]</span>) – List of MassComposition objects, such as Sample, IntervalSample, Stream or BlockModel</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – name of the flowsheet/network</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FS</span></code>, bound= Flowsheet)</span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.from_yaml">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.from_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.from_yaml" title="Link to this definition"></a></dt>
+<dd><p>Create a flowsheet from yaml</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – path to the yaml file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FS</span></code>, bound= Flowsheet)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Flowsheet object with no data on the edges</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.get_input_streams">
+<span class="sig-name descname"><span class="pre">get_input_streams</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.get_input_streams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.get_input_streams" title="Link to this definition"></a></dt>
+<dd><p>Get the input (feed) streams (edge objects)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of MassComposition-like objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.get_output_streams">
+<span class="sig-name descname"><span class="pre">get_output_streams</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.get_output_streams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.get_output_streams" title="Link to this definition"></a></dt>
+<dd><p>Get the output (product) streams (edge objects)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of MassComposition-like objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.get_stream_by_name">
+<span class="sig-name descname"><span class="pre">get_stream_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.get_stream_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.get_stream_by_name" title="Link to this definition"></a></dt>
+<dd><p>Get the Stream object from the network by its name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The string name of the Stream object stored on an edge in the network.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.nodes_to_dict">
+<span class="sig-name descname"><span class="pre">nodes_to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.nodes_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.nodes_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Export the MCNode objects to a Dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">OP</span></code>, bound= Operation)]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary keyed by integer containing MCNode objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'horizontal'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot" title="Link to this definition"></a></dt>
+<dd><p>Plot the network with matplotlib</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>orientation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ‘horizontal’|’vertical’ network layout</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_balance">
+<span class="sig-name descname"><span class="pre">plot_balance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">facet_col_wrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'node'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.plot_balance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_balance" title="Link to this definition"></a></dt>
+<dd><p>Plot input versus output across all nodes in the network</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>facet_col_wrap</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – the number of subplots per row before wrapping</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The optional variable to color by. If None color will be by Node</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_network">
+<span class="sig-name descname"><span class="pre">plot_network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'horizontal'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.plot_network"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_network" title="Link to this definition"></a></dt>
+<dd><p>Plot the network with plotly</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>orientation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ‘horizontal’|’vertical’ network layout</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_parallel">
+<span class="sig-name descname"><span class="pre">plot_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_interval_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.plot_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_parallel" title="Link to this definition"></a></dt>
+<dd><p>Create an interactive parallel plot</p>
+<p>Useful to explore multidimensional data like mass-composition data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional List of Names to plot</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional color variable</p></li>
+<li><p><strong>vars_include</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional List of variables to include in the plot</p></li>
+<li><p><strong>vars_exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional List of variables to exclude in the plot</p></li>
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional plot title</p></li>
+<li><p><strong>include_dims</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – Optional boolean or list of dimension to include in the plot.  True will show all dims.</p></li>
+<li><p><strong>plot_interval_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, interval edges will be plotted instead of interval mid</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_sankey">
+<span class="sig-name descname"><span class="pre">plot_sankey</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mass_dry'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'copper_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.plot_sankey"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.plot_sankey" title="Link to this definition"></a></dt>
+<dd><p>Plot the Network as a sankey</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>width_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The variable that determines the sankey width</p></li>
+<li><p><strong>color_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The optional variable that determines the sankey edge color</p></li>
+<li><p><strong>edge_colormap</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The optional colormap.  Used with color_var.</p></li>
+<li><p><strong>vmin</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – The value that maps to the minimum color</p></li>
+<li><p><strong>vmax</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – The value that maps to the maximum color</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stream_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inplace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.query" title="Link to this definition"></a></dt>
+<dd><p>Reduce the Flowsheet Stream records with a query</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The query string to apply to all streams. The query is applied in place. The LHS of the
+expression requires a prefix that defines the stream name e.g. stream_name.var_name &gt; 0.5</p></li>
+<li><p><strong>stream_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the stream to apply the query to. If None, the query is applied to the
+first input stream.</p></li>
+<li><p><strong>inplace</strong> – If True, apply the query in place on the same object, otherwise return a new instance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet" title="elphick.geomet.flowsheet.flowsheet.Flowsheet"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flowsheet</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A Flowsheet object where the stream records conform to the query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.report">
+<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">apply_formats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.report"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.report" title="Link to this definition"></a></dt>
+<dd><p>Summary Report</p>
+<p>Total Mass and weight averaged composition
+Returns:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_nodes">
+<span class="sig-name descname"><span class="pre">reset_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.reset_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_nodes" title="Link to this definition"></a></dt>
+<dd><p>Reset stream nodes to break relationships</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stream</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The optional stream (edge) within the network.
+If None all streams nodes on the network will be reset.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_stream_nodes">
+<span class="sig-name descname"><span class="pre">reset_stream_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.reset_stream_nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.reset_stream_nodes" title="Link to this definition"></a></dt>
+<dd><p>Reset stream nodes to break relationships</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stream</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The optional stream (edge) within the network.
+If None all streams nodes on the network will be reset.</p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.set_node_names">
+<span class="sig-name descname"><span class="pre">set_node_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_names</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.set_node_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.set_node_names" title="Link to this definition"></a></dt>
+<dd><p>Set the names of network nodes with a Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.set_operation_data">
+<span class="sig-name descname"><span class="pre">set_operation_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.set_operation_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.set_operation_data" title="Link to this definition"></a></dt>
+<dd><p>Set the input and output data for a node.
+Uses the data on the edges (streams) connected to the node to refresh the data and check for node balance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.set_stream_data">
+<span class="sig-name descname"><span class="pre">set_stream_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.set_stream_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.set_stream_data" title="Link to this definition"></a></dt>
+<dd><p>Set the data (MassComposition) of network edges (streams) with a Dict</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.solve">
+<span class="sig-name descname"><span class="pre">solve</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.solve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.solve" title="Link to this definition"></a></dt>
+<dd><p>Solve missing streams</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.streams_to_dict">
+<span class="sig-name descname"><span class="pre">streams_to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.streams_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.streams_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Export the Stream objects to a Dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary keyed by name containing MassComposition objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.table_plot">
+<span class="sig-name descname"><span class="pre">table_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plot_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sankey'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cols_exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_pos</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'left'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_area</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_header_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cornflowerblue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_odd_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'whitesmoke'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">table_even_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lightgray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sankey_width_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mass_dry'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sankey_color_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sankey_edge_colormap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'copper_r'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sankey_vmin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sankey_vmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">network_orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'horizontal'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.table_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.table_plot" title="Link to this definition"></a></dt>
+<dd><p>Plot with table of edge averages</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>plot_type</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The type of plot [‘sankey’, ‘network’]</p></li>
+<li><p><strong>cols_exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>]</span>) – List of columns to exclude from the table</p></li>
+<li><p><strong>table_pos</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Position of the table [‘left’, ‘right’, ‘top’, ‘bottom’]</p></li>
+<li><p><strong>table_area</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – The proportion of width or height to allocate to the table [0, 1]</p></li>
+<li><p><strong>table_header_color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Color of the table header</p></li>
+<li><p><strong>table_odd_color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Color of the odd table rows</p></li>
+<li><p><strong>table_even_color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Color of the even table rows</p></li>
+<li><p><strong>sankey_width_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – If plot_type is sankey, the variable that determines the sankey width</p></li>
+<li><p><strong>sankey_color_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – If plot_type is sankey, the optional variable that determines the sankey edge color</p></li>
+<li><p><strong>sankey_edge_colormap</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – If plot_type is sankey, the optional colormap.  Used with sankey_color_var.</p></li>
+<li><p><strong>sankey_vmin</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – The value that maps to the minimum color</p></li>
+<li><p><strong>sankey_vmax</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – The value that maps to the maximum color</p></li>
+<li><p><strong>network_orientation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The orientation of the network layout ‘vertical’|’horizontal’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.to_dataframe">
+<span class="sig-name descname"><span class="pre">to_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tidy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">as_mass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.to_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.to_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Return a tidy dataframe</p>
+<p>Adds the mc name to the index so indexes are unique.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stream_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional List of names of Stream/MassComposition objects (network edges) for export</p></li>
+<li><p><strong>tidy</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, the data will be returned in a tidy format, otherwise wide</p></li>
+<li><p><strong>as_mass</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, the mass data will be returned instead of the mass-composition data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_node_records">
+<span class="sig-name descname"><span class="pre">unhealthy_node_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.unhealthy_node_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_node_records" title="Link to this definition"></a></dt>
+<dd><p>Return unhealthy nodes</p>
+<p>Return the records for all nodes that are not healthy.
+:returns: A DataFrame containing the unhealthy node records
+:rtype: DataFrame</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_stream_records">
+<span class="sig-name descname"><span class="pre">unhealthy_stream_records</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/flowsheet/flowsheet.html#Flowsheet.unhealthy_stream_records"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.flowsheet.flowsheet.Flowsheet.unhealthy_stream_records" title="Link to this definition"></a></dt>
+<dd><p>Return on unhealthy streams</p>
+<p>Return the records for all streams that are not healthy.
+:returns: A DataFrame containing the unhealthy stream records
+:rtype: DataFrame</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="elphick.geomet.flowsheet.flowsheet.html" class="btn btn-neutral float-left" title="elphick.geomet.flowsheet.flowsheet" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="elphick.geomet.flowsheet.stream.html" class="btn btn-neutral float-right" title="elphick.geomet.flowsheet.stream" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

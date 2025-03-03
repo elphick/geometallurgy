@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.block_model &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.block_model</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for elphick.geomet.block_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet</span><span class="w"> </span><span class="kn">import</span> <span class="n">extras</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MassComposition</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.extras</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockmodelExtras</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.timer</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_timer</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyvista</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pv</span>
+
+
+<span class="c1"># Modify the import_extras decorator</span>
+<div class="viewcode-block" id="import_extras">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.import_extras.html#elphick.geomet.block_model.import_extras">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">import_extras</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">omfpandas</span><span class="p">,</span> <span class="n">omfvista</span><span class="p">,</span> <span class="n">pv</span> <span class="o">=</span> <span class="n">extras</span><span class="o">.</span><span class="n">import_blockmodel_packages</span><span class="p">()</span>
+        <span class="n">extras_instance</span> <span class="o">=</span> <span class="n">BlockmodelExtras</span><span class="p">(</span><span class="n">omfpandas</span><span class="p">,</span> <span class="n">omfvista</span><span class="p">,</span> <span class="n">pv</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">imports</span><span class="o">=</span><span class="n">extras_instance</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span></div>
+
+
+
+<div class="viewcode-block" id="BlockModel">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.BlockModel.html#elphick.geomet.block_model.BlockModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BlockModel</span><span class="p">(</span><span class="n">MassComposition</span><span class="p">):</span>
+<div class="viewcode-block" id="BlockModel.__init__">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.BlockModel.html#elphick.geomet.block_model.BlockModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">moisture_in_scope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">mass_wet_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mass_dry_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">moisture_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">component_vars</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">composition_units</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">,</span> <span class="s1">&#39;ppb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span>
+                 <span class="n">components_as_symbols</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ranges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">config_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;dx&#39;</span><span class="p">,</span> <span class="s1">&#39;dy&#39;</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">]]):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">is_irregular</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">]]):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">is_irregular</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">([</span><span class="n">n</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The index must be a pd.MultiIndex with names [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;] &quot;</span>
+                                 <span class="s2">&quot;or [[&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;dx&#39;, &#39;dy&#39;, &#39;dz&#39;].&quot;</span><span class="p">)</span>
+
+            <span class="c1"># sort the data to ensure consistent with pyvista</span>
+            <span class="n">data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">moisture_in_scope</span><span class="o">=</span><span class="n">moisture_in_scope</span><span class="p">,</span>
+                         <span class="n">mass_wet_var</span><span class="o">=</span><span class="n">mass_wet_var</span><span class="p">,</span> <span class="n">mass_dry_var</span><span class="o">=</span><span class="n">mass_dry_var</span><span class="p">,</span>
+                         <span class="n">moisture_var</span><span class="o">=</span><span class="n">moisture_var</span><span class="p">,</span> <span class="n">component_vars</span><span class="o">=</span><span class="n">component_vars</span><span class="p">,</span>
+                         <span class="n">composition_units</span><span class="o">=</span><span class="n">composition_units</span><span class="p">,</span> <span class="n">components_as_symbols</span><span class="o">=</span><span class="n">components_as_symbols</span><span class="p">,</span>
+                         <span class="n">ranges</span><span class="o">=</span><span class="n">ranges</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockModel.from_omf">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.BlockModel.html#elphick.geomet.block_model.BlockModel.from_omf">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@import_extras</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_omf</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">omf_filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span>
+                 <span class="n">element_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">columns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">query</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">density</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;BlockModel&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a BlockModel from an OMF file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            omf_filepath: Path to the OMF file.</span>
+<span class="sd">            imports: internally used to import the necessary packages.</span>
+<span class="sd">            element_name: The name of the element in the OMF file.</span>
+<span class="sd">            columns: The columns to extract from the OMF file.</span>
+<span class="sd">            query: The query to filter the DataFrame.</span>
+<span class="sd">            density: The density of the material in g/cm3, used to calculate DMT (Dry Mass Tonnes).  A workaround.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            BlockModel: The BlockModel instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">omfpr</span><span class="p">:</span> <span class="n">imports</span><span class="o">.</span><span class="n">omfpandas</span><span class="o">.</span><span class="n">OMFPandasReader</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">omfpandas</span><span class="o">.</span><span class="n">OMFPandasReader</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">omf_filepath</span><span class="p">)</span>
+        <span class="n">blocks</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">omfpr</span><span class="o">.</span><span class="n">read_blockmodel</span><span class="p">(</span><span class="n">blockmodel_name</span><span class="o">=</span><span class="n">element_name</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span>
+                                                     <span class="n">query</span><span class="o">=</span><span class="n">query</span><span class="p">)</span>
+
+        <span class="c1"># get the block volume</span>
+
+        <span class="n">volume</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omfpandas.blockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">OMFBlockModel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omfpandas.blockmodels.convert_blockmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">df_to_blockmodel</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">omfpandas.blockmodels.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Geometry</span>
+        <span class="n">geom</span><span class="p">:</span> <span class="n">Geometry</span> <span class="o">=</span> <span class="n">OMFBlockModel</span><span class="p">(</span><span class="n">df_to_blockmodel</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">blockmodel_name</span><span class="o">=</span><span class="n">element_name</span><span class="p">))</span><span class="o">.</span><span class="n">geometry</span>
+
+        <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;RegularGeometry&#39;</span><span class="p">:</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">block_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">geom</span><span class="o">.</span><span class="n">block_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">geom</span><span class="o">.</span><span class="n">block_size</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">geom</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;TensorGeometry&#39;</span><span class="p">:</span>
+            <span class="c1"># TODO: Implement the volume calculation for TensorGeometry - this is a placeholder.</span>
+            <span class="n">volume</span> <span class="o">=</span> <span class="n">geom</span><span class="o">.</span><span class="n">block_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">geom</span><span class="o">.</span><span class="n">block_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">geom</span><span class="o">.</span><span class="n">block_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Geometry type &#39;</span><span class="si">{</span><span class="n">geom</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; not supported.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">density</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">volume</span> <span class="o">*</span> <span class="n">density</span>
+            <span class="n">moisture_in_scope</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">blocks</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">element_name</span><span class="p">,</span> <span class="n">mass_dry_var</span><span class="o">=</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">,</span> <span class="n">moisture_in_scope</span><span class="o">=</span><span class="n">moisture_in_scope</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BlockModel.to_omf">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.BlockModel.html#elphick.geomet.block_model.BlockModel.to_omf">[docs]</a>
+    <span class="nd">@import_extras</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_omf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">omf_filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">element_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;Block Model&#39;</span><span class="p">,</span>
+               <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;A block model&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the BlockModel to an OMF file.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            omf_filepath: Path to the OMF file.</span>
+<span class="sd">            imports: internally used to import the necessary packages.</span>
+<span class="sd">            element_name: The name of the element in the OMF file.</span>
+<span class="sd">            description: Description of the block model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create an OMFPandasWriter instance</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">omfpandas</span><span class="o">.</span><span class="n">OMFPandasWriter</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">omf_filepath</span><span class="p">)</span>
+
+        <span class="c1"># Write the block model to the OMF file</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">write_blockmodel</span><span class="p">(</span><span class="n">blockmodel_name</span><span class="o">=</span><span class="n">element_name</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span> <span class="n">dataframe</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+
+
+    <span class="nd">@log_timer</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="s1">&#39;pv.StructuredGrid&#39;</span><span class="p">,</span> <span class="s1">&#39;pv.UnstructuredGrid&#39;</span><span class="p">]:</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Attempt to create a regular grid</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_structured_grid</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Created a pv.StructuredGrid.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># If it fails, create an irregular grid</span>
+            <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_unstructured_grid</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Created a pv.UnstructuredGrid.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grid</span>
+
+    <span class="nd">@import_extras</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scalar</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">imports</span><span class="p">,</span> <span class="n">show_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pv.Plotter&#39;</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">scalar</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">scalar</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create a PyVista plotter</span>
+        <span class="n">plotter</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">Plotter</span><span class="p">()</span>
+
+        <span class="n">mesh</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_blocks</span><span class="p">()</span>
+
+        <span class="c1"># Add a thresholded mesh to the plotter</span>
+        <span class="n">plotter</span><span class="o">.</span><span class="n">add_mesh_threshold</span><span class="p">(</span><span class="n">mesh</span><span class="p">,</span> <span class="n">scalars</span><span class="o">=</span><span class="n">scalar</span><span class="p">,</span> <span class="n">show_edges</span><span class="o">=</span><span class="n">show_edges</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plotter</span>
+
+<div class="viewcode-block" id="BlockModel.is_regular">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.BlockModel.html#elphick.geomet.block_model.BlockModel.is_regular">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_regular</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine if the grid spacing is complete and regular</span>
+<span class="sd">        If it is, a pv.StructuredGrid is suitable.</span>
+<span class="sd">        If not, a pv.UnstructuredGrid is suitable.</span>
+
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">block_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_block_sizes</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">block_sizes</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_block_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">x_unique</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">y_unique</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">z_unique</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+        <span class="n">x_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x_unique</span><span class="p">)</span>
+        <span class="n">y_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">y_unique</span><span class="p">)</span>
+        <span class="n">z_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z_unique</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">x_spacing</span><span class="p">,</span> <span class="n">y_spacing</span><span class="p">,</span> <span class="n">z_spacing</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">common_block_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">x_unique</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">y_unique</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">z_unique</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+        <span class="n">x_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x_unique</span><span class="p">))</span>
+        <span class="n">y_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">y_unique</span><span class="p">))</span>
+        <span class="n">z_spacing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z_unique</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">x_spacing</span><span class="p">)</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">y_spacing</span><span class="p">)</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">z_spacing</span><span class="p">)</span><span class="o">.</span><span class="n">mode</span>
+
+    <span class="nd">@import_extras</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_structured_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imports</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pv.StructuredGrid&#39;</span><span class="p">:</span>
+
+        <span class="c1"># Get the unique x, y, z coordinates (centroids)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">])</span>  <span class="c1"># ensure the data is sorted F-style</span>
+        <span class="n">x_centroids</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">y_centroids</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">z_centroids</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+
+        <span class="c1"># Calculate the cell size (assuming all cells are of equal size)</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x_centroids</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">y_centroids</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">dz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">z_centroids</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Calculate the grid points</span>
+        <span class="n">x_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">x_centroids</span> <span class="o">-</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">x_centroids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">y_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">y_centroids</span> <span class="o">-</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y_centroids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+        <span class="n">z_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">z_centroids</span> <span class="o">-</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">z_centroids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">])</span>
+
+        <span class="c1"># Create the 3D grid of points</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">x_points</span><span class="p">,</span> <span class="n">y_points</span><span class="p">,</span> <span class="n">z_points</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s1">&#39;ij&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Create a StructuredGrid object</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">StructuredGrid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+        <span class="c1"># Add the data from the DataFrame to the grid</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">return</span> <span class="n">grid</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_voxels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pv.UnstructuredGrid&#39;</span><span class="p">:</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">voxelise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">grid</span>
+
+<div class="viewcode-block" id="BlockModel.create_unstructured_grid">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.block_model.BlockModel.html#elphick.geomet.block_model.BlockModel.create_unstructured_grid">[docs]</a>
+    <span class="nd">@import_extras</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_unstructured_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">imports</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pv.UnstructuredGrid&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Requires the index to be a pd.MultiIndex with names [&#39;x&#39;, &#39;y&#39;, &#39;z&#39;, &#39;dx&#39;, &#39;dy&#39;, &#39;dz&#39;].</span>
+<span class="sd">        :return:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get the x, y, z coordinates and cell dimensions</span>
+        <span class="n">blocks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">([</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">])</span>  <span class="c1"># ensure the data is sorted F-style</span>
+        <span class="c1"># if no dims are passed, estimate them</span>
+        <span class="k">if</span> <span class="s1">&#39;dx&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">common_block_size</span><span class="p">()</span>
+            <span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;dx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dx</span>
+            <span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;dy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dy</span>
+            <span class="n">blocks</span><span class="p">[</span><span class="s1">&#39;dz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dz</span>
+
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">dz</span> <span class="o">=</span> <span class="p">(</span><span class="n">blocks</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;dx&#39;</span><span class="p">,</span> <span class="s1">&#39;dy&#39;</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">])</span>
+        <span class="n">blocks</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;dx&#39;</span><span class="p">,</span> <span class="s1">&#39;dy&#39;</span><span class="p">,</span> <span class="s1">&#39;dz&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Create the cell points/vertices</span>
+        <span class="c1"># REF: https://github.com/OpenGeoVis/PVGeo/blob/main/PVGeo/filters/voxelize.py</span>
+
+        <span class="n">n_cells</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1"># Generate cell nodes for all points in data set</span>
+        <span class="c1"># - Bottom</span>
+        <span class="n">c_n1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">-</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">c_n2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">c_n3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">-</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">c_n4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">-</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># - Top</span>
+        <span class="n">c_n5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">-</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">c_n6</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">c_n7</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">-</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">c_n8</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(((</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">dy</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="n">z</span> <span class="o">+</span> <span class="n">dz</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># - Concatenate</span>
+        <span class="c1"># nodes = np.concatenate((c_n1, c_n2, c_n3, c_n4, c_n5, c_n6, c_n7, c_n8), axis=0)</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">c_n1</span><span class="p">,</span> <span class="n">c_n2</span><span class="p">,</span> <span class="n">c_n3</span><span class="p">,</span> <span class="n">c_n4</span><span class="p">,</span> <span class="n">c_n5</span><span class="p">,</span> <span class="n">c_n6</span><span class="p">,</span> <span class="n">c_n7</span><span class="p">,</span> <span class="n">c_n8</span><span class="p">))</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_cells</span> <span class="o">*</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+        <span class="c1"># create the cells</span>
+        <span class="c1"># REF: https://docs/pyvista.org/examples/00-load/create-unstructured-surface.html</span>
+        <span class="n">cells_hex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_cells</span> <span class="o">*</span> <span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n_cells</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">UnstructuredGrid</span><span class="p">({</span><span class="n">imports</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">CellType</span><span class="o">.</span><span class="n">VOXEL</span><span class="p">:</span> <span class="n">cells_hex</span><span class="p">},</span> <span class="n">nodes</span><span class="p">)</span>
+
+        <span class="c1"># add the attributes (column) data</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">cell_data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">return</span> <span class="n">grid</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="nd">@log_timer</span>
+    <span class="nd">@import_extras</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">voxelise</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">imports</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;pv.UnstructuredGrid&#39;</span><span class="p">:</span>
+
+        <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Voxelising blocks requires PVGeo package.&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="c1"># vtkpoints = PVGeo.points_to_poly_data(centroid_data)</span>
+
+        <span class="n">x_values</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">y_values</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">z_values</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="s1">&#39;z&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Stack x, y, z values into a numpy array</span>
+        <span class="n">centroids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x_values</span><span class="p">,</span> <span class="n">y_values</span><span class="p">,</span> <span class="n">z_values</span><span class="p">))</span>
+
+        <span class="c1"># Create a PolyData object</span>
+        <span class="n">polydata</span> <span class="o">=</span> <span class="n">imports</span><span class="o">.</span><span class="n">pv</span><span class="o">.</span><span class="n">PolyData</span><span class="p">(</span><span class="n">centroids</span><span class="p">)</span>
+
+        <span class="c1"># Add cell values as point data</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">blocks</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">polydata</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">blocks</span><span class="p">[[</span><span class="n">column</span><span class="p">]]</span>
+
+        <span class="c1"># Create a Voxelizer filter</span>
+        <span class="n">voxelizer</span> <span class="o">=</span> <span class="n">PVGeo</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">VoxelizePoints</span><span class="p">()</span>
+        <span class="c1"># Apply the filter to the points</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">voxelizer</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">polydata</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Voxelised </span><span class="si">{</span><span class="n">blocks</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> points.&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Recovered Angle (deg.): </span><span class="si">%.3f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">voxelizer</span><span class="o">.</span><span class="n">get_angle</span><span class="p">())</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Recovered Cell Sizes: (</span><span class="si">%.2f</span><span class="s2">, </span><span class="si">%.2f</span><span class="s2">, </span><span class="si">%.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">voxelizer</span><span class="o">.</span><span class="n">get_spacing</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">grid</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;BlockModel: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">aggregate</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

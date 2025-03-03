@@ -1,0 +1,45 @@
+﻿elphick.geomet.utils
+====================
+
+.. automodule:: elphick.geomet.utils
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. rubric:: Modules
+
+.. autosummary::
+   :toctree:
+   :recursive:
+
+   amenability
+   block_model_converter
+   components
+   data
+   estimates
+   interp
+   interp2
+   layout
+   moisture
+   pandas
+   parallel
+   partition
+   size
+   timer
+   viz
+

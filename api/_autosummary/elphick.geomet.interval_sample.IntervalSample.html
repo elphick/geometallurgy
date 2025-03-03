@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.interval_sample.IntervalSample &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="elphick.geomet.block_model" href="elphick.geomet.block_model.html" />
+    <link rel="prev" title="elphick.geomet.interval_sample" href="elphick.geomet.interval_sample.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.base.html">elphick.geomet.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.sample.html">elphick.geomet.sample</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="elphick.geomet.interval_sample.html">elphick.geomet.interval_sample</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">elphick.geomet.interval_sample.IntervalSample</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample"><code class="docutils literal notranslate"><span class="pre">IntervalSample</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.block_model.html">elphick.geomet.block_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.utils.html">elphick.geomet.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.flowsheet.html">elphick.geomet.flowsheet.flowsheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.stream.html">elphick.geomet.flowsheet.stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.operation.html">elphick.geomet.flowsheet.operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.loader.html">elphick.geomet.flowsheet.loader</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="elphick.geomet.interval_sample.html">elphick.geomet.interval_sample</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.interval_sample.IntervalSample</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/elphick.geomet.interval_sample.IntervalSample.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="elphick-geomet-interval-sample-intervalsample">
+<h1>elphick.geomet.interval_sample.IntervalSample<a class="headerlink" href="#elphick-geomet-interval-sample-intervalsample" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">elphick.geomet.interval_sample.</span></span><span class="sig-name descname"><span class="pre">IntervalSample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_in_scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_wet_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_dry_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components_as_symbols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample" title="Link to this definition"></a></dt>
+<dd><p>A class to represent a sample of data with an interval index.
+This exposes methods to split the sample by a partition definition.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_in_scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_wet_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_dry_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components_as_symbols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</span>) – The input data</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the sample</p></li>
+<li><p><strong>moisture_in_scope</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether the moisture is in scope.  If False, only dry mass is processed.</p></li>
+<li><p><strong>mass_wet_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the wet mass column</p></li>
+<li><p><strong>mass_dry_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the dry mass column</p></li>
+<li><p><strong>moisture_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the moisture column</p></li>
+<li><p><strong>component_vars</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – The names of the chemical columns</p></li>
+<li><p><strong>components_as_symbols</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, convert the composition variables to symbols, e.g. Fe</p></li>
+<li><p><strong>ranges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>]]</span>) – The range of valid data for each column in the data</p></li>
+<li><p><strong>config_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – The configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.__init__" title="elphick.geomet.interval_sample.IntervalSample.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([data, name, moisture_in_scope, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code>(other[, name, include_supplementary_data])</p></td>
+<td><p>Add two objects together</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">balance_composition</span></code>([epsilon])</p></td>
+<td><p>Balance the composition data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.calculate_partition" title="elphick.geomet.interval_sample.IntervalSample.calculate_partition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_partition</span></code></a>(preferred)</p></td>
+<td><p>Calculate the partition number (K) [0, 1] of the preferred stream relative to self :rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_composition</span></code>([ranges, epsilon])</p></td>
+<td><p>Clip the components</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_recovery</span></code>(other[, recovery_bounds, ...])</p></td>
+<td><p>Clip the recovery to the specified bounds and recalculate the estimate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare</span></code>(other[, comparisons, explicit_names])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_congruent_object</span></code>(name[, ...])</p></td>
+<td><p>Create an object with the same attributes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">div</span></code>(other[, name, include_supplementary_data])</p></td>
+<td><p>Divide two objects</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_index</span></code>(index)</p></td>
+<td><p>Update the data by index</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mass_dataframe</span></code>(mass_df[, mass_wet, ...])</p></td>
+<td><p>Class method to create a MassComposition object from a mass dataframe.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mass_data</span></code>([include_moisture])</p></td>
+<td><p>Get the mass data</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_composition" title="elphick.geomet.interval_sample.IntervalSample.ideal_incremental_composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ideal_incremental_composition</span></code></a>([discard_from])</p></td>
+<td><p>Incrementally separate a fractionated sample.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_recovery" title="elphick.geomet.interval_sample.IntervalSample.ideal_incremental_recovery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ideal_incremental_recovery</span></code></a>([discard_from, ...])</p></td>
+<td><p>Incrementally separate a fractionated sample.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_separation" title="elphick.geomet.interval_sample.IntervalSample.ideal_incremental_separation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ideal_incremental_separation</span></code></a>([discard_from])</p></td>
+<td><p>Incrementally separate a fractionated sample.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.is_2d_grid" title="elphick.geomet.interval_sample.IntervalSample.is_2d_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_2d_grid</span></code></a>()</p></td>
+<td><p>Check if the sample is a 2d grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.plot_amenability" title="elphick.geomet.interval_sample.IntervalSample.plot_amenability"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_amenability</span></code></a>(target_analyte[, ...])</p></td>
+<td><p>The yield-recovery plot.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_comparison</span></code>(other[, color, ...])</p></td>
+<td><p>Create an interactive parallel plot</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.plot_grade_recovery" title="elphick.geomet.interval_sample.IntervalSample.plot_grade_recovery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_grade_recovery</span></code></a>(target_analyte[, ...])</p></td>
+<td><p>The grade-recovery plot.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.plot_heatmap" title="elphick.geomet.interval_sample.IntervalSample.plot_heatmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_heatmap</span></code></a>(components, **kwargs)</p></td>
+<td><p>Plot the sample as a heatmap.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.plot_intervals" title="elphick.geomet.interval_sample.IntervalSample.plot_intervals"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_intervals</span></code></a>(variables[, cumulative, ...])</p></td>
+<td><p>Plot &quot;The Grade-Tonnage&quot; curve.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_parallel</span></code>([color, vars_include, ...])</p></td>
+<td><p>Create an interactive parallel plot</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_ternary</span></code>(variables[, color, title])</p></td>
+<td><p>Plot a ternary diagram</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code>(expr[, name])</p></td>
+<td><p>Reduce the data by a query expression</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.resample_1d" title="elphick.geomet.interval_sample.IntervalSample.resample_1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_1d</span></code></a>(interval_edges[, precision, ...])</p></td>
+<td><p>Resample a 1D fractional dim/index</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.resample_2d" title="elphick.geomet.interval_sample.IntervalSample.resample_2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_2d</span></code></a>(interval_edges[, precision])</p></td>
+<td><p>Resample a 2D fractional dim/index</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_index</span></code>(index_name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_moisture</span></code>(moisture[, mass_to_adjust])</p></td>
+<td><p>Set the moisture to the specified value</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code>(fraction[, name_1, name_2, ...])</p></td>
+<td><p>Split the object by mass</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.split_by_partition" title="elphick.geomet.interval_sample.IntervalSample.split_by_partition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_by_partition</span></code></a>(partition_definition[, ...])</p></td>
+<td><p>Split the sample into two samples based on the partition definition.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub</span></code>(other[, name, include_supplementary_data])</p></td>
+<td><p>Subtract other from self</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_stream</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_mass_data</span></code>(value)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">weight_average</span></code>([group_by])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">composition_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample.is_rectilinear_grid" title="elphick.geomet.interval_sample.IntervalSample.is_rectilinear_grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_rectilinear_grid</span></code></a></p></td>
+<td><p>If rectilinear we can plot with a simple heatmap</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass_data</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moisture_column</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">supplementary_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variable_map</span></code></p></td>
+<td><p>A map from lower case standard names to the actual column names</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.calculate_partition">
+<span class="sig-name descname"><span class="pre">calculate_partition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">preferred</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.calculate_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.calculate_partition" title="Link to this definition"></a></dt>
+<dd><p>Calculate the partition number (K) [0, 1] of the preferred stream relative to self
+:rtype: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+<div class="math notranslate nohighlight">
+\[K = \frac{{m_{preferred}}}{{m_{feed}}}\]</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.ideal_incremental_composition">
+<span class="sig-name descname"><span class="pre">ideal_incremental_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lowest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.ideal_incremental_composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_composition" title="Link to this definition"></a></dt>
+<dd><p>Incrementally separate a fractionated sample.</p>
+<dl class="simple">
+<dt>This method sorts by the provided direction prior to incrementally removing and discarding the first fraction</dt><dd><p>(of the remaining fractions) and recalculating the mass-composition of the portion remaining.
+This is equivalent to incrementally applying a perfect separation (partition) at every interval edge.</p>
+</dd>
+</dl>
+<p>This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</p>
+<p>See also: ideal_incremental_separation, ideal_incremental_recovery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>discard_from</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'lowest'</span></code>, <code class="docutils literal notranslate"><span class="pre">'highest'</span></code>]</span>) – Defines the discarded direction.  discard_from = “lowest” will discard the lowest value
+first, then the next lowest, etc.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.ideal_incremental_recovery">
+<span class="sig-name descname"><span class="pre">ideal_incremental_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lowest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apply_closure</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.ideal_incremental_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_recovery" title="Link to this definition"></a></dt>
+<dd><p>Incrementally separate a fractionated sample.</p>
+<dl class="simple">
+<dt>This method sorts by the provided direction prior to incrementally removing and discarding the first fraction</dt><dd><p>(of the remaining fractions) and recalculating the recovery of the portion remaining.
+This is equivalent to incrementally applying a perfect separation (partition) at every interval edge.</p>
+</dd>
+</dl>
+<p>This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</p>
+<p>See also: ideal_incremental_separation, ideal_incremental_composition.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>discard_from</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'lowest'</span></code>, <code class="docutils literal notranslate"><span class="pre">'highest'</span></code>]</span>) – Defines the discarded direction.  discard_from = “lowest” will discard the lowest value
+first, then the next lowest, etc.</p></li>
+<li><p><strong>apply_closure</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, Add the missing record (zero recovery) that closes the recovery envelope.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.ideal_incremental_separation">
+<span class="sig-name descname"><span class="pre">ideal_incremental_separation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discard_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lowest'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.ideal_incremental_separation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_separation" title="Link to this definition"></a></dt>
+<dd><p>Incrementally separate a fractionated sample.</p>
+<dl class="simple">
+<dt>This method sorts by the provided direction prior to incrementally removing and discarding the first fraction</dt><dd><p>(of the remaining fractions) and recalculating the mass-composition and recovery of the portion remaining.
+This is equivalent to incrementally applying a perfect separation (partition) at every interval edge.</p>
+</dd>
+</dl>
+<p>This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</p>
+<p>See also: ideal_incremental_composition, ideal_incremental_recovery.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>discard_from</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'lowest'</span></code>, <code class="docutils literal notranslate"><span class="pre">'highest'</span></code>]</span>) – Defines the discarded direction.  discard_from = “lowest” will discard the lowest value
+first, then the next lowest, etc.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A pandas DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.is_2d_grid">
+<span class="sig-name descname"><span class="pre">is_2d_grid</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.is_2d_grid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.is_2d_grid" title="Link to this definition"></a></dt>
+<dd><p>Check if the sample is a 2d grid.
+:return: True if the sample has 2 levels of intervals, False otherwise.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.is_rectilinear_grid">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_rectilinear_grid</span></span><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.is_rectilinear_grid" title="Link to this definition"></a></dt>
+<dd><p>If rectilinear we can plot with a simple heatmap</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.plot_amenability">
+<span class="sig-name descname"><span class="pre">plot_amenability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_analyte</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lowest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gangue_analytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.plot_amenability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.plot_amenability" title="Link to this definition"></a></dt>
+<dd><p>The yield-recovery plot.</p>
+<p>The yield recovery curve provides an understanding of the amenability of a sample.</p>
+<p>This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_analyte</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The analyte of value.</p></li>
+<li><p><strong>discard_from</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'lowest'</span></code>, <code class="docutils literal notranslate"><span class="pre">'highest'</span></code>]</span>) – Defines the discarded direction.  discard_from = “lowest” will discard the lowest value
+first, then the next lowest, etc.</p></li>
+<li><p><strong>gangue_analytes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The analytes to be rejected</p></li>
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional plot title</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A plotly.GraphObjects figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.plot_grade_recovery">
+<span class="sig-name descname"><span class="pre">plot_grade_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_analyte</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discard_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lowest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.plot_grade_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.plot_grade_recovery" title="Link to this definition"></a></dt>
+<dd><p>The grade-recovery plot.</p>
+<p>The grade recovery curve is generated by assuming an ideal separation (for the chosen property, or dimension)
+at each fractional interval.  It defines the theoretical maximum performance, which can only be improved if
+liberation is improved by comminution.</p>
+<p>This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_analyte</strong> – The analyte of value.</p></li>
+<li><p><strong>discard_from</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'lowest'</span></code>, <code class="docutils literal notranslate"><span class="pre">'highest'</span></code>]</span>) – Defines the discarded direction.  discard_from = “lowest” will discard the lowest value
+first, then the next lowest, etc.</p></li>
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional plot title</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A plotly.GraphObjects figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.plot_heatmap">
+<span class="sig-name descname"><span class="pre">plot_heatmap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">components</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.plot_heatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.plot_heatmap" title="Link to this definition"></a></dt>
+<dd><p>Plot the sample as a heatmap.
+:type components: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
+:param components: The list of components to plot.
+:type kwargs: 
+:param kwargs: Additional keyword arguments to pass to the plot method.
+:return: The axis with the plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.plot_intervals">
+<span class="sig-name descname"><span class="pre">plot_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cumulative</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'descending'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.plot_intervals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.plot_intervals" title="Link to this definition"></a></dt>
+<dd><p>Plot “The Grade-Tonnage” curve.</p>
+<p>Mass and grade by bins for a cut-off variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>variables</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – List of variables to include in the plot</p></li>
+<li><p><strong>cumulative</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, the results are cumulative weight averaged.</p></li>
+<li><p><strong>direction</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ‘ascending’|’descending’, if cumulative is True, the direction of accumulation</p></li>
+<li><p><strong>show_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, show the edges on the plot.  Applicable to cumulative plots only.</p></li>
+<li><p><strong>min_x</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Optional minimum value for the x-axis, useful to set reasonable visual range with a log</p></li>
+<li><p><strong>data</strong> (<em>scaled x-axis when plotting size</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.resample_1d">
+<span class="sig-name descname"><span class="pre">resample_1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_original_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.resample_1d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.resample_1d" title="Link to this definition"></a></dt>
+<dd><p>Resample a 1D fractional dim/index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interval_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – The values of the new grid (interval edges).  If an int, will up-sample by that factor, for
+example the value of 10 will automatically define edges that create 10 x the resolution (up-sampled).</p></li>
+<li><p><strong>precision</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – Optional integer for the number of decimal places to round the grid values to.</p></li>
+<li><p><strong>include_original_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True include the original edges in the grid.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample" title="elphick.geomet.interval_sample.IntervalSample"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSample</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new IntervalSample object interpolated onto the new grid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.resample_2d">
+<span class="sig-name descname"><span class="pre">resample_2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">interval_edges</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.resample_2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.resample_2d" title="Link to this definition"></a></dt>
+<dd><p>Resample a 2D fractional dim/index</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>interval_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>]</span>) – A dict keyed by index name containing the grid the data is resampled to.</p></li>
+<li><p><strong>precision</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – Optional integer for the number of decimal places to round the grid values to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#elphick.geomet.interval_sample.IntervalSample" title="elphick.geomet.interval_sample.IntervalSample"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntervalSample</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new IntervalSample object interpolated onto the new grid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.interval_sample.IntervalSample.split_by_partition">
+<span class="sig-name descname"><span class="pre">split_by_partition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partition_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'preferred'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'complement'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/interval_sample.html#IntervalSample.split_by_partition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.interval_sample.IntervalSample.split_by_partition" title="Link to this definition"></a></dt>
+<dd><p>Split the sample into two samples based on the partition definition.</p>
+<div class="math notranslate nohighlight">
+\[K = \frac{{m_{preferred}}}{{m_{feed}}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>partition_definition</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span>) – A function that takes a data frame and returns a boolean series with a
+range [0, 1]. A 1D function must have an argument that matches the dimension of the interval index.
+A 2D function must have two arguments that match the dimensions of the interval index.</p></li>
+<li><p><strong>name_1</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name of the first sample.</p></li>
+<li><p><strong>name_2</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The name of the second sample.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A tuple of two IntervalSamples.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="elphick.geomet.interval_sample.html" class="btn btn-neutral float-left" title="elphick.geomet.interval_sample" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="elphick.geomet.block_model.html" class="btn btn-neutral float-right" title="elphick.geomet.block_model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

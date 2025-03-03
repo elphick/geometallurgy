@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resampling 2D Interval Data &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Flowsheet Basics" href="../03_flowsheet/01_flowsheet_basics.html" />
+    <link rel="prev" title="Resampling Interval Data" href="05_resampling_interval_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#interval-samples">Interval Samples</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01_interval_sample.html">Interval Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="02_interval_data_sink_float.html">Interval Data - Sink Float</a></li>
+<li class="toctree-l3"><a class="reference internal" href="03_incremental_separation.html">Incremental Separation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_partition_models.html">Partition Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="05_resampling_interval_data.html">Resampling Interval Data</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Resampling 2D Interval Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load-data">Load Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-meanintervalindexes">Create MeanIntervalIndexes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-a-2d-intervalsample">Create a 2D IntervalSample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#upsample">Upsample</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#flowsheets">Flowsheets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#block-models">Block Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mass-balancing">Mass Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#spatial">Spatial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Example Gallery</a></li>
+      <li class="breadcrumb-item active">Resampling 2D Interval Data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/auto_examples/examples/02_interval_sample/06_resampling_interval_data_2d.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-examples-02-interval-sample-06-resampling-interval-data-2d-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="resampling-2d-interval-data">
+<span id="sphx-glr-auto-examples-examples-02-interval-sample-06-resampling-interval-data-2d-py"></span><h1>Resampling 2D Interval Data<a class="headerlink" href="#resampling-2d-interval-data" title="Link to this heading"></a></h1>
+<p>The Sink Float metallurgical test splits/fractionates samples by density.  The density fraction is often conducted by
+size fraction, resulting in 2D fractionation (interval) data.</p>
+<p>This example demonstrates how to resample 2D interval data using the IntervalSample object.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.io</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntervalSample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.datasets</span><span class="w"> </span><span class="kn">import</span> <span class="n">datasets</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanIntervalIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.size</span><span class="w"> </span><span class="kn">import</span> <span class="n">sizes_all</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">,</span>
+                    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(module)s</span><span class="s1"> - </span><span class="si">%(funcName)s</span><span class="s1">: </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+                    <span class="n">datefmt</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S%z&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="load-data">
+<h2>Load Data<a class="headerlink" href="#load-data" title="Link to this heading"></a></h2>
+<p>We load some real data.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">df_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_nordic_iron_ore_sink_float</span><span class="p">()</span>
+<span class="n">df_data</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>size_retained</th>
+      <th>size_passing</th>
+      <th>density_lo</th>
+      <th>density_hi</th>
+      <th>mass_pct</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>P</th>
+      <th>TiO2</th>
+      <th>V</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.4</td>
+      <td>22.7</td>
+      <td>50.9</td>
+      <td>0.042</td>
+      <td>0.170</td>
+      <td>0.0049</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.100</td>
+      <td>1.000</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>67.1</td>
+      <td>27.3</td>
+      <td>47.7</td>
+      <td>0.107</td>
+      <td>0.178</td>
+      <td>0.0062</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>12.7</td>
+      <td>18.0</td>
+      <td>57.8</td>
+      <td>0.440</td>
+      <td>0.200</td>
+      <td>0.0056</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>8.2</td>
+      <td>16.9</td>
+      <td>57.1</td>
+      <td>0.610</td>
+      <td>0.235</td>
+      <td>0.0057</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>0.000</td>
+      <td>0.040</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>11.6</td>
+      <td>19.4</td>
+      <td>51.6</td>
+      <td>0.650</td>
+      <td>0.310</td>
+      <td>0.0072</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>54.2</td>
+      <td>1.2</td>
+      <td>1.6</td>
+      <td>0.180</td>
+      <td>0.084</td>
+      <td>0.0030</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>9.7</td>
+      <td>16.6</td>
+      <td>42.6</td>
+      <td>0.980</td>
+      <td>0.380</td>
+      <td>0.0100</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>3.3</td>
+      <td>NaN</td>
+      <td>36.1</td>
+      <td>68.0</td>
+      <td>78.8</td>
+      <td>0.033</td>
+      <td>0.285</td>
+      <td>0.0120</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>24.0</td>
+      <td>1.2</td>
+      <td>79.5</td>
+      <td>0.015</td>
+      <td>0.060</td>
+      <td>0.0070</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>11.9</td>
+      <td>10.2</td>
+      <td>54.0</td>
+      <td>2.320</td>
+      <td>0.280</td>
+      <td>0.0080</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>3.3</td>
+      <td>NaN</td>
+      <td>64.1</td>
+      <td>67.1</td>
+      <td>1.4</td>
+      <td>0.174</td>
+      <td>0.530</td>
+      <td>0.0020</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>76.6</td>
+      <td>3.1</td>
+      <td>71.3</td>
+      <td>0.850</td>
+      <td>0.145</td>
+      <td>0.0130</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>4.3</td>
+      <td>28.5</td>
+      <td>24.5</td>
+      <td>2.780</td>
+      <td>0.460</td>
+      <td>0.1100</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>3.3</td>
+      <td>NaN</td>
+      <td>19.1</td>
+      <td>68.6</td>
+      <td>0.6</td>
+      <td>0.069</td>
+      <td>0.480</td>
+      <td>0.0130</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>The dataset contains size x assay, plus size x density x assay data.  We’ll drop the size x assay data to leave the
+sink / float data.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">df_sink_float</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;density_lo&#39;</span><span class="p">,</span> <span class="s1">&#39;density_hi&#39;</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_sink_float</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>size_retained</th>
+      <th>size_passing</th>
+      <th>density_lo</th>
+      <th>density_hi</th>
+      <th>mass_pct</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>P</th>
+      <th>TiO2</th>
+      <th>V</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5</th>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>54.2</td>
+      <td>1.2</td>
+      <td>1.6</td>
+      <td>0.180</td>
+      <td>0.084</td>
+      <td>0.003</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>9.7</td>
+      <td>16.6</td>
+      <td>42.6</td>
+      <td>0.980</td>
+      <td>0.380</td>
+      <td>0.010</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>3.3</td>
+      <td>NaN</td>
+      <td>36.1</td>
+      <td>68.0</td>
+      <td>78.8</td>
+      <td>0.033</td>
+      <td>0.285</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>24.0</td>
+      <td>1.2</td>
+      <td>79.5</td>
+      <td>0.015</td>
+      <td>0.060</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>11.9</td>
+      <td>10.2</td>
+      <td>54.0</td>
+      <td>2.320</td>
+      <td>0.280</td>
+      <td>0.008</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>3.3</td>
+      <td>NaN</td>
+      <td>64.1</td>
+      <td>67.1</td>
+      <td>1.4</td>
+      <td>0.174</td>
+      <td>0.530</td>
+      <td>0.002</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>NaN</td>
+      <td>2.7</td>
+      <td>76.6</td>
+      <td>3.1</td>
+      <td>71.3</td>
+      <td>0.850</td>
+      <td>0.145</td>
+      <td>0.013</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>4.3</td>
+      <td>28.5</td>
+      <td>24.5</td>
+      <td>2.780</td>
+      <td>0.460</td>
+      <td>0.110</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>3.3</td>
+      <td>NaN</td>
+      <td>19.1</td>
+      <td>68.6</td>
+      <td>0.6</td>
+      <td>0.069</td>
+      <td>0.480</td>
+      <td>0.013</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>We will fill some nan values with assumptions</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;density_lo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;density_hi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check the mass_pct by size</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mass_check</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df_sink_float</span><span class="p">[[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">,</span> <span class="s1">&#39;size_retained&#39;</span><span class="p">,</span> <span class="s1">&#39;mass_pct&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span>
+    <span class="p">[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">,</span> <span class="s1">&#39;size_retained&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="c1"># check that all are 100</span>
+<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">mass_check</span><span class="p">[</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">mass_check</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>mass_pct</th>
+    </tr>
+    <tr>
+      <th>size_passing</th>
+      <th>size_retained</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0.063</th>
+      <th>0.040</th>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <th>0.100</th>
+      <th>0.063</th>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <th>1.000</th>
+      <th>0.100</th>
+      <td>100.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /><p>This indicates that the mass_pct column is actually a density_mass_pct column.
+We’ll rename that but also need to get the size_mass_pct values for those sizes from the size dataset</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">df_sink_float</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">:</span> <span class="s1">&#39;density_mass_pct&#39;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">df_size</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df_data</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">df_data</span><span class="p">[[</span><span class="s1">&#39;density_lo&#39;</span><span class="p">,</span> <span class="s1">&#39;density_hi&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">isna</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_size</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">how</span><span class="o">=</span><span class="s1">&#39;all&#39;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">df_size</span><span class="p">[</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">100</span>
+
+<span class="n">size_pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">((</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span>
+                      <span class="nb">zip</span><span class="p">(</span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_retained&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">size_pairs</span><span class="p">:</span>
+    <span class="n">df_sink_float</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_retained&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">p</span><span class="p">),</span> <span class="s1">&#39;size_mass_pct&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">df_size</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">df_size</span><span class="p">[</span><span class="s1">&#39;size_retained&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">r</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">df_size</span><span class="p">[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">p</span><span class="p">),</span> <span class="s1">&#39;mass_pct&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># relocate the size_mass_pct column to the correct position, after size_passing</span>
+<span class="n">df_sink_float</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">df_sink_float</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">df_sink_float</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">df_sink_float</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="c1"># add the mass_pct column</span>
+<span class="n">df_sink_float</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">,</span>
+                     <span class="n">value</span><span class="o">=</span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;density_mass_pct&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_mass_pct&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">df_sink_float</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>size_retained</th>
+      <th>size_passing</th>
+      <th>size_mass_pct</th>
+      <th>density_lo</th>
+      <th>density_hi</th>
+      <th>density_mass_pct</th>
+      <th>mass_pct</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>P</th>
+      <th>TiO2</th>
+      <th>V</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5</th>
+      <td>0.100</td>
+      <td>1.000</td>
+      <td>67.1</td>
+      <td>1.5</td>
+      <td>2.7</td>
+      <td>54.2</td>
+      <td>36.3682</td>
+      <td>1.2</td>
+      <td>1.6</td>
+      <td>0.180</td>
+      <td>0.084</td>
+      <td>0.003</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>0.100</td>
+      <td>1.000</td>
+      <td>67.1</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>9.7</td>
+      <td>6.5087</td>
+      <td>16.6</td>
+      <td>42.6</td>
+      <td>0.980</td>
+      <td>0.380</td>
+      <td>0.010</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>0.100</td>
+      <td>1.000</td>
+      <td>67.1</td>
+      <td>3.3</td>
+      <td>5.0</td>
+      <td>36.1</td>
+      <td>24.2231</td>
+      <td>68.0</td>
+      <td>78.8</td>
+      <td>0.033</td>
+      <td>0.285</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>12.7</td>
+      <td>1.5</td>
+      <td>2.7</td>
+      <td>24.0</td>
+      <td>3.0480</td>
+      <td>1.2</td>
+      <td>79.5</td>
+      <td>0.015</td>
+      <td>0.060</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>12.7</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>11.9</td>
+      <td>1.5113</td>
+      <td>10.2</td>
+      <td>54.0</td>
+      <td>2.320</td>
+      <td>0.280</td>
+      <td>0.008</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>0.063</td>
+      <td>0.100</td>
+      <td>12.7</td>
+      <td>3.3</td>
+      <td>5.0</td>
+      <td>64.1</td>
+      <td>8.1407</td>
+      <td>67.1</td>
+      <td>1.4</td>
+      <td>0.174</td>
+      <td>0.530</td>
+      <td>0.002</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>8.2</td>
+      <td>1.5</td>
+      <td>2.7</td>
+      <td>76.6</td>
+      <td>6.2812</td>
+      <td>3.1</td>
+      <td>71.3</td>
+      <td>0.850</td>
+      <td>0.145</td>
+      <td>0.013</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>8.2</td>
+      <td>2.7</td>
+      <td>3.3</td>
+      <td>4.3</td>
+      <td>0.3526</td>
+      <td>28.5</td>
+      <td>24.5</td>
+      <td>2.780</td>
+      <td>0.460</td>
+      <td>0.110</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>0.040</td>
+      <td>0.063</td>
+      <td>8.2</td>
+      <td>3.3</td>
+      <td>5.0</td>
+      <td>19.1</td>
+      <td>1.5662</td>
+      <td>68.6</td>
+      <td>0.6</td>
+      <td>0.069</td>
+      <td>0.480</td>
+      <td>0.013</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /></section>
+<section id="create-meanintervalindexes">
+<h2>Create MeanIntervalIndexes<a class="headerlink" href="#create-meanintervalindexes" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">size_intervals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">arrays</span><span class="o">.</span><span class="n">IntervalArray</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_retained&#39;</span><span class="p">],</span> <span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;size_passing&#39;</span><span class="p">],</span>
+                                                     <span class="n">closed</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">size_index</span> <span class="o">=</span> <span class="n">MeanIntervalIndex</span><span class="p">(</span><span class="n">size_intervals</span><span class="p">)</span>
+<span class="n">size_index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;size&#39;</span>
+
+<span class="n">density_intervals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">arrays</span><span class="o">.</span><span class="n">IntervalArray</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;density_lo&#39;</span><span class="p">],</span> <span class="n">df_sink_float</span><span class="p">[</span><span class="s1">&#39;density_hi&#39;</span><span class="p">],</span>
+                                                        <span class="n">closed</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">density_index</span> <span class="o">=</span> <span class="n">MeanIntervalIndex</span><span class="p">(</span><span class="n">density_intervals</span><span class="p">)</span>
+<span class="n">density_index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;density&#39;</span>
+
+<span class="n">df_sink_float</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">([</span><span class="n">size_index</span><span class="p">,</span> <span class="n">density_index</span><span class="p">])</span>
+<span class="n">df_sink_float</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;size_retained&#39;</span><span class="p">,</span> <span class="s1">&#39;size_passing&#39;</span><span class="p">,</span> <span class="s1">&#39;density_lo&#39;</span><span class="p">,</span> <span class="s1">&#39;density_hi&#39;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">df_sink_float</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th></th>
+      <th>size_mass_pct</th>
+      <th>density_mass_pct</th>
+      <th>mass_pct</th>
+      <th>Fe</th>
+      <th>SiO2</th>
+      <th>P</th>
+      <th>TiO2</th>
+      <th>V</th>
+    </tr>
+    <tr>
+      <th>size</th>
+      <th>density</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th rowspan="3" valign="top">[0.1, 1.0)</th>
+      <th>[1.5, 2.7)</th>
+      <td>67.1</td>
+      <td>54.2</td>
+      <td>36.3682</td>
+      <td>1.2</td>
+      <td>1.6</td>
+      <td>0.180</td>
+      <td>0.084</td>
+      <td>0.003</td>
+    </tr>
+    <tr>
+      <th>[2.7, 3.3)</th>
+      <td>67.1</td>
+      <td>9.7</td>
+      <td>6.5087</td>
+      <td>16.6</td>
+      <td>42.6</td>
+      <td>0.980</td>
+      <td>0.380</td>
+      <td>0.010</td>
+    </tr>
+    <tr>
+      <th>[3.3, 5.0)</th>
+      <td>67.1</td>
+      <td>36.1</td>
+      <td>24.2231</td>
+      <td>68.0</td>
+      <td>78.8</td>
+      <td>0.033</td>
+      <td>0.285</td>
+      <td>0.012</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">[0.063, 0.1)</th>
+      <th>[1.5, 2.7)</th>
+      <td>12.7</td>
+      <td>24.0</td>
+      <td>3.0480</td>
+      <td>1.2</td>
+      <td>79.5</td>
+      <td>0.015</td>
+      <td>0.060</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <th>[2.7, 3.3)</th>
+      <td>12.7</td>
+      <td>11.9</td>
+      <td>1.5113</td>
+      <td>10.2</td>
+      <td>54.0</td>
+      <td>2.320</td>
+      <td>0.280</td>
+      <td>0.008</td>
+    </tr>
+    <tr>
+      <th>[3.3, 5.0)</th>
+      <td>12.7</td>
+      <td>64.1</td>
+      <td>8.1407</td>
+      <td>67.1</td>
+      <td>1.4</td>
+      <td>0.174</td>
+      <td>0.530</td>
+      <td>0.002</td>
+    </tr>
+    <tr>
+      <th rowspan="3" valign="top">[0.04, 0.063)</th>
+      <th>[1.5, 2.7)</th>
+      <td>8.2</td>
+      <td>76.6</td>
+      <td>6.2812</td>
+      <td>3.1</td>
+      <td>71.3</td>
+      <td>0.850</td>
+      <td>0.145</td>
+      <td>0.013</td>
+    </tr>
+    <tr>
+      <th>[2.7, 3.3)</th>
+      <td>8.2</td>
+      <td>4.3</td>
+      <td>0.3526</td>
+      <td>28.5</td>
+      <td>24.5</td>
+      <td>2.780</td>
+      <td>0.460</td>
+      <td>0.110</td>
+    </tr>
+    <tr>
+      <th>[3.3, 5.0)</th>
+      <td>8.2</td>
+      <td>19.1</td>
+      <td>1.5662</td>
+      <td>68.6</td>
+      <td>0.6</td>
+      <td>0.069</td>
+      <td>0.480</td>
+      <td>0.013</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<br />
+<br /></section>
+<section id="create-a-2d-intervalsample">
+<h2>Create a 2D IntervalSample<a class="headerlink" href="#create-a-2d-intervalsample" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">interval_sample</span> <span class="o">=</span> <span class="n">IntervalSample</span><span class="p">(</span><span class="n">df_sink_float</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;SINK_FLOAT&#39;</span><span class="p">,</span> <span class="n">moisture_in_scope</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mass_dry_var</span><span class="o">=</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">interval_sample</span><span class="o">.</span><span class="n">is_2d_grid</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">interval_sample</span><span class="o">.</span><span class="n">is_rectilinear_grid</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">interval_sample</span><span class="o">.</span><span class="n">plot_heatmap</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">])</span>
+<span class="n">plotly</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+<html>
+<head><meta charset="utf-8" /></head>
+<body>
+    <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>                <div id="11bd6377-bc43-479b-8c8c-c11925ba82af" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("11bd6377-bc43-479b-8c8c-c11925ba82af")) {                    Plotly.newPlot(                        "11bd6377-bc43-479b-8c8c-c11925ba82af",                        [{"hoverinfo":"text","text":[["size: 0.55, density: 2.1, mass_pct: 6.281199999999999","size: 0.55, density: 2.1, mass_pct: 0.35259999999999997","size: 0.55, density: 2.1, mass_pct: 1.5662"],["size: 0.55, density: 3.0, mass_pct: 3.0479999999999996","size: 0.55, density: 3.0, mass_pct: 1.5112999999999999","size: 0.55, density: 3.0, mass_pct: 8.140699999999999"],["size: 0.55, density: 4.15, mass_pct: 36.368199999999995","size: 0.55, density: 4.15, mass_pct: 6.508699999999999","size: 0.55, density: 4.15, mass_pct: 24.2231"]],"x":[0.04,0.063,0.1,1.0],"y":[1.5,2.7,3.3,5.0],"z":[[6.281199999999999,0.35259999999999997,1.5662],[3.0479999999999996,1.5112999999999999,8.140699999999999],[36.368199999999995,6.508699999999999,24.2231]],"type":"heatmap"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"#E5ECF6","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2}}},"title":{"text":"SINK_FLOAT Heatmap"},"xaxis":{"title":{"text":"size"},"type":"log"},"yaxis":{"title":{"text":"density"}}},                        {"responsive": true}                    )                };                            </script>        </div>
+</body>
+</html>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>False
+False
+</pre></div>
+</div>
+</section>
+<section id="upsample">
+<h2>Upsample<a class="headerlink" href="#upsample" title="Link to this heading"></a></h2>
+<p>We will upsample the data to a new grid</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">size_grid</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sizes_all</span> <span class="k">if</span> <span class="n">s</span> <span class="o">&gt;=</span> <span class="n">size_index</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="ow">and</span> <span class="n">s</span> <span class="o">&lt;=</span> <span class="n">size_index</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+<span class="n">density_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mf">5.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>
+<span class="n">new_grids</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">size_grid</span><span class="p">,</span> <span class="s1">&#39;density&#39;</span><span class="p">:</span> <span class="n">density_grid</span><span class="p">}</span>
+
+<span class="n">upsampled</span><span class="p">:</span> <span class="n">IntervalSample</span> <span class="o">=</span> <span class="n">interval_sample</span><span class="o">.</span><span class="n">resample_2d</span><span class="p">(</span><span class="n">interval_edges</span><span class="o">=</span><span class="n">new_grids</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_frame_equal</span><span class="p">(</span><span class="n">interval_sample</span><span class="o">.</span><span class="n">aggregate</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">upsampled</span><span class="o">.</span><span class="n">aggregate</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">upsampled</span><span class="o">.</span><span class="n">plot_heatmap</span><span class="p">(</span><span class="n">components</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mass_pct&#39;</span><span class="p">])</span>
+<span class="n">plotly</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</pre></div>
+</div>
+<html>
+<head><meta charset="utf-8" /></head>
+<body>
+    <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>                <div id="b4473430-352e-4a71-a013-2bef73afeba1" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("b4473430-352e-4a71-a013-2bef73afeba1")) {                    Plotly.newPlot(                        "b4473430-352e-4a71-a013-2bef73afeba1",                        [{"hoverinfo":"text","text":[["size: 0.04, density: 1.5, mass_pct: 4.817036128169625","size: 0.04, density: 1.5, mass_pct: 0.01728446463544014","size: 0.04, density: 1.5, mass_pct: 0.014154207482447776","size: 0.04, density: 1.5, mass_pct: 0.01066858875753973","size: 0.04, density: 1.5, mass_pct: 0.006953086700500654","size: 0.04, density: 1.5, mass_pct: 0.0031208712283702917","size: 0.04, density: 1.5, mass_pct: -0.0007274216244967934","size: 0.04, density: 1.5, mass_pct: -0.004504233073928775","size: 0.04, density: 1.5, mass_pct: -0.0081356636384291","size: 0.04, density: 1.5, mass_pct: -0.011561878579177952","size: 0.04, density: 1.5, mass_pct: -0.014737188352343443","size: 0.04, density: 1.5, mass_pct: -0.017629722875119488","size: 0.04, density: 1.5, mass_pct: -0.02022068108832936","size: 0.04, density: 1.5, mass_pct: -0.022503190502679068","size: 0.04, density: 1.5, mass_pct: -0.024480851254568666","size: 0.04, density: 1.5, mass_pct: -0.0261660636829481","size: 0.04, density: 1.5, mass_pct: -0.027578247711552314","size: 0.04, density: 1.5, mass_pct: -0.028742058377030807","size: 0.04, density: 1.5, mass_pct: -0.029685687932643475","size: 0.04, density: 1.5, mass_pct: -0.030473005658587456","size: 0.04, density: 1.5, mass_pct: -0.031132784481818828","size: 0.04, density: 1.5, mass_pct: -0.031653683038588","size: 0.04, density: 1.5, mass_pct: -0.0320552795977334","size: 0.04, density: 1.5, mass_pct: -0.032355425889407256","size: 0.04, density: 1.5, mass_pct: -0.03257021133230558","size: 0.04, density: 1.5, mass_pct: -0.032713999082933036","size: 0.04, density: 1.5, mass_pct: -0.03279950938696429","size: 0.04, density: 1.5, mass_pct: -0.03283793170746362","size: 0.04, density: 1.5, mass_pct: -0.03283905203745951","size: 0.04, density: 1.5, mass_pct: -0.032811385729123725","size: 0.04, density: 1.5, mass_pct: -0.032762309210361155","size: 0.04, density: 1.5, mass_pct: -0.03269818625273723","size: 0.04, density: 1.5, mass_pct: -0.0326244861456722","size: 0.04, density: 1.5, mass_pct: -0.03254589234775023","size: 0.04, density: 1.5, mass_pct: -0.032466401037717245","size: 0.04, density: 1.5, mass_pct: -0.032389409564401055"],["size: 0.04, density: 1.55, mass_pct: 0.14818705803216956","size: 0.04, density: 1.55, mass_pct: 0.008742228759797297","size: 0.04, density: 1.55, mass_pct: 0.007990068847639973","size: 0.04, density: 1.55, mass_pct: 0.007437503594653504","size: 0.04, density: 1.55, mass_pct: 0.007029502846530588","size: 0.04, density: 1.55, mass_pct: 0.006716434427932016","size: 0.04, density: 1.55, mass_pct: 0.006454163064814499","size: 0.04, density: 1.55, mass_pct: 0.0062042886854775095","size: 0.04, density: 1.55, mass_pct: 0.005934401687452461","size: 0.04, density: 1.55, mass_pct: 0.005618260748609437","size: 0.04, density: 1.55, mass_pct: 0.005235828110594975","size: 0.04, density: 1.55, mass_pct: 0.004773126723862652","size: 0.04, density: 1.55, mass_pct: 0.0042219111333429695","size: 0.04, density: 1.55, mass_pct: 0.0035791673172730905","size: 0.04, density: 1.55, mass_pct: 0.0028464741634459663","size: 0.04, density: 1.55, mass_pct: 0.0020292700057683573","size: 0.04, density: 1.55, mass_pct: 0.0011360717106066451","size: 0.04, density: 1.55, mass_pct: 0.00017769207285583952","size: 0.04, density: 1.55, mass_pct: -0.0008335048190888926","size: 0.04, density: 1.55, mass_pct: -0.001994262851161221","size: 0.04, density: 1.55, mass_pct: -0.003317494448773439","size: 0.04, density: 1.55, mass_pct: -0.004696184496192634","size: 0.04, density: 1.55, mass_pct: -0.006121746682699768","size: 0.04, density: 1.55, mass_pct: -0.007586351894128539","size: 0.04, density: 1.55, mass_pct: -0.009082943901483563","size: 0.04, density: 1.55, mass_pct: -0.010605223551061691","size: 0.04, density: 1.55, mass_pct: -0.012147612209600143","size: 0.04, density: 1.55, mass_pct: -0.013705202588947194","size: 0.04, density: 1.55, mass_pct: -0.01527370291144514","size: 0.04, density: 1.55, mass_pct: -0.01684937865591207","size: 0.04, density: 1.55, mass_pct: -0.01842899479158688","size: 0.04, density: 1.55, mass_pct: -0.020009760401639206","size: 0.04, density: 1.55, mass_pct: -0.02158927685630035","size: 0.04, density: 1.55, mass_pct: -0.023165490162394328","size: 0.04, density: 1.55, mass_pct: -0.024736647742478354","size: 0.04, density: 1.55, mass_pct: -0.026301259643943916"],["size: 0.04, density: 1.65, mass_pct: 0.18471007400618758","size: 0.04, density: 1.65, mass_pct: 0.006853727491226091","size: 0.04, density: 1.65, mass_pct: 0.006878443130627631","size: 0.04, density: 1.65, mass_pct: 0.007066912795482438","size: 0.04, density: 1.65, mass_pct: 0.007382093917835341","size: 0.04, density: 1.65, mass_pct: 0.007790577483108018","size: 0.04, density: 1.65, mass_pct: 0.008262654617898378","size: 0.04, density: 1.65, mass_pct: 0.008772476998080035","size: 0.04, density: 1.65, mass_pct: 0.009298228677163732","size: 0.04, density: 1.65, mass_pct: 0.009822245776673786","size: 0.04, density: 1.65, mass_pct: 0.01033104023657244","size: 0.04, density: 1.65, mass_pct: 0.01081520365496824","size: 0.04, density: 1.65, mass_pct: 0.011269185750691633","size: 0.04, density: 1.65, mass_pct: 0.011690957688683222","size: 0.04, density: 1.65, mass_pct: 0.012081582269133194","size: 0.04, density: 1.65, mass_pct: 0.012444720209622782","size: 0.04, density: 1.65, mass_pct: 0.012786104487007175","size: 0.04, density: 1.65, mass_pct: 0.013113013541533767","size: 0.04, density: 1.65, mass_pct: 0.013433770039017133","size: 0.04, density: 1.65, mass_pct: 0.01359940875052945","size: 0.04, density: 1.65, mass_pct: 0.013584079174622064","size: 0.04, density: 1.65, mass_pct: 0.013535081069402986","size: 0.04, density: 1.65, mass_pct: 0.013458194156964141","size: 0.04, density: 1.65, mass_pct: 0.013358688466018452","size: 0.04, density: 1.65, mass_pct: 0.013241313771400086","size: 0.04, density: 1.65, mass_pct: 0.013110310236202015","size: 0.04, density: 1.65, mass_pct: 0.0129694330180094","size: 0.04, density: 1.65, mass_pct: 0.01282198537041712","size: 0.04, density: 1.65, mass_pct: 0.01267085622709224","size: 0.04, density: 1.65, mass_pct: 0.01251855941443125","size: 0.04, density: 1.65, mass_pct: 0.012367272535759087","size: 0.04, density: 1.65, mass_pct: 0.012218874247016174","size: 0.04, density: 1.65, mass_pct: 0.012074979143093021","size: 0.04, density: 1.65, mass_pct: 0.011936969832906928","size: 0.04, density: 1.65, mass_pct: 0.011806026032736781","size: 0.04, density: 1.65, mass_pct: 0.011683150677638253"],["size: 0.04, density: 1.75, mass_pct: 0.125763287445692","size: 0.04, density: 1.75, mass_pct: 0.0033380047049056945","size: 0.04, density: 1.75, mass_pct: 0.0036711135461973683","size: 0.04, density: 1.75, mass_pct: 0.0040876918381606","size: 0.04, density: 1.75, mass_pct: 0.004572914646992387","size: 0.04, density: 1.75, mass_pct: 0.005113411235803666","size: 0.04, density: 1.75, mass_pct: 0.005697291713949725","size: 0.04, density: 1.75, mass_pct: 0.0063142112345343495","size: 0.04, density: 1.75, mass_pct: 0.006955438762406895","size: 0.04, density: 1.75, mass_pct: 0.007613904975876828","size: 0.04, density: 1.75, mass_pct: 0.008284211771933557","size: 0.04, density: 1.75, mass_pct: 0.008962593781630944","size: 0.04, density: 1.75, mass_pct: 0.009646829707804781","size: 0.04, density: 1.75, mass_pct: 0.010336107583384433","size: 0.04, density: 1.75, mass_pct: 0.01103085275529486","size: 0.04, density: 1.75, mass_pct: 0.011732530291943542","size: 0.04, density: 1.75, mass_pct: 0.012443434607755486","size: 0.04, density: 1.75, mass_pct: 0.013166478632391952","size: 0.04, density: 1.75, mass_pct: 0.013904993208631531","size: 0.04, density: 1.75, mass_pct: 0.014548219658901905","size: 0.04, density: 1.75, mass_pct: 0.015075346242806818","size: 0.04, density: 1.75, mass_pct: 0.015591232083056681","size: 0.04, density: 1.75, mass_pct: 0.016098190302146206","size: 0.04, density: 1.75, mass_pct: 0.01659833003644084","size: 0.04, density: 1.75, mass_pct: 0.017093552209695825","size: 0.04, density: 1.75, mass_pct: 0.017585553792200555","size: 0.04, density: 1.75, mass_pct: 0.01807583764851622","size: 0.04, density: 1.75, mass_pct: 0.01856572578515125","size: 0.04, density: 1.75, mass_pct: 0.019056374392206473","size: 0.04, density: 1.75, mass_pct: 0.019548789536811714","size: 0.04, density: 1.75, mass_pct: 0.02004384272509779","size: 0.04, density: 1.75, mass_pct: 0.020542285820436042","size: 0.04, density: 1.75, mass_pct: 0.021044765005413465","size: 0.04, density: 1.75, mass_pct: 0.021551833618708712","size: 0.04, density: 1.75, mass_pct: 0.022063963798645943","size: 0.04, density: 1.75, mass_pct: 0.022581556933314147"],["size: 0.04, density: 1.85, mass_pct: 0.1353201514071142","size: 0.04, density: 1.85, mass_pct: 0.0028412579977282744","size: 0.04, density: 1.85, mass_pct: 0.0033784132277395735","size: 0.04, density: 1.85, mass_pct: 0.003989486796655283","size: 0.04, density: 1.85, mass_pct: 0.0046644214693719035","size: 0.04, density: 1.85, mass_pct: 0.0053941465379844225","size: 0.04, density: 1.85, mass_pct: 0.006170595900685082","size: 0.04, density: 1.85, mass_pct: 0.006986751613337948","size: 0.04, density: 1.85, mass_pct: 0.00783669054169278","size: 0.04, density: 1.85, mass_pct: 0.008715616857918383","size: 0.04, density: 1.85, mass_pct: 0.009619868488933645","size: 0.04, density: 1.85, mass_pct: 0.010546891008439306","size: 0.04, density: 1.85, mass_pct: 0.011495177488445972","size: 0.04, density: 1.85, mass_pct: 0.012464177090488414","size: 0.04, density: 1.85, mass_pct: 0.013454178369925239","size: 0.04, density: 1.85, mass_pct: 0.014466175229156828","size: 0.04, density: 1.85, mass_pct: 0.015501724198934695","size: 0.04, density: 1.85, mass_pct: 0.016562801410742175","size: 0.04, density: 1.85, mass_pct: 0.01765166650831673","size: 0.04, density: 1.85, mass_pct: 0.01864386579826865","size: 0.04, density: 1.85, mass_pct: 0.019515188222499254","size: 0.04, density: 1.85, mass_pct: 0.02038103902964655","size: 0.04, density: 1.85, mass_pct: 0.021242987442022684","size: 0.04, density: 1.85, mass_pct: 0.022102464297728493","size: 0.04, density: 1.85, mass_pct: 0.02296075918345036","size: 0.04, density: 1.85, mass_pct: 0.023819023323818574","size: 0.04, density: 1.85, mass_pct: 0.024678276262167006","size: 0.04, density: 1.85, mass_pct: 0.025539414847699445","size: 0.04, density: 1.85, mass_pct: 0.02640322343978507","size: 0.04, density: 1.85, mass_pct: 0.027270384554364865","size: 0.04, density: 1.85, mass_pct: 0.02814148942119493","size: 0.04, density: 1.85, mass_pct: 0.029017048104392592","size: 0.04, density: 1.85, mass_pct: 0.029897498974214894","size: 0.04, density: 1.85, mass_pct: 0.030783217415632","size: 0.04, density: 1.85, mass_pct: 0.03167452372727663","size: 0.04, density: 1.85, mass_pct: 0.03257169021082878"],["size: 0.04, density: 1.95, mass_pct: 0.3453473385309483","size: 0.04, density: 1.95, mass_pct: 0.005083534966888958","size: 0.04, density: 1.95, mass_pct: 0.006971100216799474","size: 0.04, density: 1.95, mass_pct: 0.009001058285495465","size: 0.04, density: 1.95, mass_pct: 0.011164885824364921","size: 0.04, density: 1.95, mass_pct: 0.01345489555107726","size: 0.04, density: 1.95, mass_pct: 0.015864251571176987","size: 0.04, density: 1.95, mass_pct: 0.01838700628734768","size: 0.04, density: 1.95, mass_pct: 0.0210181399364564","size: 0.04, density: 1.95, mass_pct: 0.02375358812980943","size: 0.04, density: 1.95, mass_pct: 0.026590247318055368","size: 0.04, density: 1.95, mass_pct: 0.029525952665073848","size: 0.04, density: 1.95, mass_pct: 0.032559427073078344","size: 0.04, density: 1.95, mass_pct: 0.03569020371513786","size: 0.04, density: 1.95, mass_pct: 0.03891852713737964","size: 0.04, density: 1.95, mass_pct: 0.042245239656461424","size: 0.04, density: 1.95, mass_pct: 0.045671660407720076","size: 0.04, density: 1.95, mass_pct: 0.04919946413151443","size: 0.04, density: 1.95, mass_pct: 0.05283056584038592","size: 0.04, density: 1.95, mass_pct: 0.05623206807618485","size: 0.04, density: 1.95, mass_pct: 0.05933690957558312","size: 0.04, density: 1.95, mass_pct: 0.062447047995984765","size: 0.04, density: 1.95, mass_pct: 0.06556381322861037","size: 0.04, density: 1.95, mass_pct: 0.06868841788626422","size: 0.04, density: 1.95, mass_pct: 0.07182195487337116","size: 0.04, density: 1.95, mass_pct: 0.07496539983472493","size: 0.04, density: 1.95, mass_pct: 0.07811961681725109","size: 0.04, density: 1.95, mass_pct: 0.08128536588655998","size: 0.04, density: 1.95, mass_pct: 0.08446331177488041","size: 0.04, density: 1.95, mass_pct: 0.08765403290373862","size: 0.04, density: 1.95, mass_pct: 0.09085803033106653","size: 0.04, density: 1.95, mass_pct: 0.09407573632816767","size: 0.04, density: 1.95, mass_pct: 0.09730752240696026","size: 0.04, density: 1.95, mass_pct: 0.10055370670028883","size: 0.04, density: 1.95, mass_pct: 0.10381456065621829","size: 0.04, density: 1.95, mass_pct: 0.10709031504614085"],["size: 0.04, density: 2.05, mass_pct: 0.42746896694241804","size: 0.04, density: 2.05, mass_pct: 0.004074922376305356","size: 0.04, density: 2.05, mass_pct: 0.006941200978238581","size: 0.04, density: 2.05, mass_pct: 0.00993540043148766","size: 0.04, density: 2.05, mass_pct: 0.013064858089953722","size: 0.04, density: 2.05, mass_pct: 0.016336191577020372","size: 0.04, density: 2.05, mass_pct: 0.019755285595888013","size: 0.04, density: 2.05, mass_pct: 0.02332726015612274","size: 0.04, density: 2.05, mass_pct: 0.027056436538048564","size: 0.04, density: 2.05, mass_pct: 0.030946313584621517","size: 0.04, density: 2.05, mass_pct: 0.03499956299694717","size: 0.04, density: 2.05, mass_pct: 0.03921804838164344","size: 0.04, density: 2.05, mass_pct: 0.04360286913270583","size: 0.04, density: 2.05, mass_pct: 0.048154427119713954","size: 0.04, density: 2.05, mass_pct: 0.05287251182429086","size: 0.04, density: 2.05, mass_pct: 0.0577563981352489","size: 0.04, density: 2.05, mass_pct: 0.06280495047040678","size: 0.04, density: 2.05, mass_pct: 0.06801672712377647","size: 0.04, density: 2.05, mass_pct: 0.07339007955024245","size: 0.04, density: 2.05, mass_pct: 0.07849721026695598","size: 0.04, density: 2.05, mass_pct: 0.08324965184516363","size: 0.04, density: 2.05, mass_pct: 0.08802873772767926","size: 0.04, density: 2.05, mass_pct: 0.09283332307306545","size: 0.04, density: 2.05, mass_pct: 0.09766236399944216","size: 0.04, density: 2.05, mass_pct: 0.10251491967626868","size: 0.04, density: 2.05, mass_pct: 0.10739015021638874","size: 0.04, density: 2.05, mass_pct: 0.11228731180203554","size: 0.04, density: 2.05, mass_pct: 0.11720575012811572","size: 0.04, density: 2.05, mass_pct: 0.1221448929576152","size: 0.04, density: 2.05, mass_pct: 0.1271042423543701","size: 0.04, density: 2.05, mass_pct: 0.13208336698095344","size: 0.04, density: 2.05, mass_pct: 0.13708189471511376","size: 0.04, density: 2.05, mass_pct: 0.14209950573955385","size: 0.04, density: 2.05, mass_pct: 0.14713592618850943","size: 0.04, density: 2.05, mass_pct: 0.15219092238499896","size: 0.04, density: 2.05, mass_pct: 0.15726429566867015"],["size: 0.04, density: 2.1500000000000004, mass_pct: 0.2192671107615438","size: 0.04, density: 2.1500000000000004, mass_pct: 0.0017301019107011093","size: 0.04, density: 2.1500000000000004, mass_pct: 0.0032872048602938793","size: 0.04, density: 2.1500000000000004, mass_pct: 0.004901418139475088","size: 0.04, density: 2.1500000000000004, mass_pct: 0.006579636330805826","size: 0.04, density: 2.1500000000000004, mass_pct: 0.008328077718323555","size: 0.04, density: 2.1500000000000004, mass_pct: 0.010152271893830387","size: 0.04, density: 2.1500000000000004, mass_pct: 0.012057029900791048","size: 0.04, density: 2.1500000000000004, mass_pct: 0.014046412252622818","size: 0.04, density: 2.1500000000000004, mass_pct: 0.01612370665519502","size: 0.04, density: 2.1500000000000004, mass_pct: 0.018291423586287322","size: 0.04, density: 2.1500000000000004, mass_pct: 0.020551314193476108","size: 0.04, density: 2.1500000000000004, mass_pct: 0.022904411528040677","size: 0.04, density: 2.1500000000000004, mass_pct: 0.02535109320878903","size: 0.04, density: 2.1500000000000004, mass_pct: 0.02789116142104708","size: 0.04, density: 2.1500000000000004, mass_pct: 0.030523934810340433","size: 0.04, density: 2.1500000000000004, mass_pct: 0.033248346320993376","size: 0.04, density: 2.1500000000000004, mass_pct: 0.03606304124652237","size: 0.04, density: 2.1500000000000004, mass_pct: 0.03896647052297363","size: 0.04, density: 2.1500000000000004, mass_pct: 0.041736574631576866","size: 0.04, density: 2.1500000000000004, mass_pct: 0.04432704606436188","size: 0.04, density: 2.1500000000000004, mass_pct: 0.046934694849060425","size: 0.04, density: 2.1500000000000004, mass_pct: 0.04955844522951169","size: 0.04, density: 2.1500000000000004, mass_pct: 0.05219731631669055","size: 0.04, density: 2.1500000000000004, mass_pct: 0.05485042405432882","size: 0.04, density: 2.1500000000000004, mass_pct: 0.057516979238104164","size: 0.04, density: 2.1500000000000004, mass_pct: 0.060196282935811356","size: 0.04, density: 2.1500000000000004, mass_pct: 0.06288772032628341","size: 0.04, density: 2.1500000000000004, mass_pct: 0.06559075370404831","size: 0.04, density: 2.1500000000000004, mass_pct: 0.06830491518081759","size: 0.04, density: 2.1500000000000004, mass_pct: 0.07102979944814479","size: 0.04, density: 2.1500000000000004, mass_pct: 0.07376505683942934","size: 0.04, density: 2.1500000000000004, mass_pct: 0.07651038683669563","size: 0.04, density: 2.1500000000000004, mass_pct: 0.07926553210057062","size: 0.04, density: 2.1500000000000004, mass_pct: 0.08203027305525522","size: 0.04, density: 2.1500000000000004, mass_pct: 0.08480442302851986"],["size: 0.04, density: 2.25, mass_pct: 0.2729109171182002","size: 0.04, density: 2.25, mass_pct: 0.0021987419971862816","size: 0.04, density: 2.25, mass_pct: 0.004127410587334789","size: 0.04, density: 2.25, mass_pct: 0.006126980101313516","size: 0.04, density: 2.25, mass_pct: 0.008206068767314665","size: 0.04, density: 2.25, mass_pct: 0.010372449440377738","size: 0.04, density: 2.25, mass_pct: 0.012633034110267281","size: 0.04, density: 2.25, mass_pct: 0.014993836581312368","size: 0.04, density: 2.25, mass_pct: 0.01745993249527666","size: 0.04, density: 2.25, mass_pct: 0.020035431484511475","size: 0.04, density: 2.25, mass_pct: 0.022723471646222456","size: 0.04, density: 2.25, mass_pct: 0.025526241914897493","size: 0.04, density: 2.25, mass_pct: 0.02844503360462258","size: 0.04, density: 2.25, mass_pct: 0.03148031873891443","size: 0.04, density: 2.25, mass_pct: 0.034631850049435024","size: 0.04, density: 2.25, mass_pct: 0.03789877584307976","size: 0.04, density: 2.25, mass_pct: 0.04127976230026286","size: 0.04, density: 2.25, mass_pct: 0.044773116037872256","size: 0.04, density: 2.25, mass_pct: 0.04837690072597855","size: 0.04, density: 2.25, mass_pct: 0.05181493075299936","size: 0.04, density: 2.25, mass_pct: 0.05502960595082173","size: 0.04, density: 2.25, mass_pct: 0.05826569217566024","size: 0.04, density: 2.25, mass_pct: 0.06152184473229615","size: 0.04, density: 2.25, mass_pct: 0.06479683750946395","size: 0.04, density: 2.25, mass_pct: 0.06808956543681254","size: 0.04, density: 2.25, mass_pct: 0.07139904200895363","size: 0.04, density: 2.25, mass_pct: 0.07472439356061787","size: 0.04, density: 2.25, mass_pct: 0.07806485156535968","size: 0.04, density: 2.25, mass_pct: 0.0814197438913271","size: 0.04, density: 2.25, mass_pct: 0.0847884856781672","size: 0.04, density: 2.25, mass_pct: 0.08817057029031426","size: 0.04, density: 2.25, mass_pct: 0.0915655606445298","size: 0.04, density: 2.25, mass_pct: 0.09497308109333512","size: 0.04, density: 2.25, mass_pct: 0.09839280996250753","size: 0.04, density: 2.25, mass_pct: 0.10182447278231342","size: 0.04, density: 2.25, mass_pct: 0.10526783621246615"],["size: 0.04, density: 2.3499999999999996, mass_pct: 0.5182185221533997","size: 0.04, density: 2.3499999999999996, mass_pct: 0.00572590812116902","size: 0.04, density: 2.3499999999999996, mass_pct: 0.009025271580444192","size: 0.04, density: 2.3499999999999996, mass_pct: 0.01248692429172704","size: 0.04, density: 2.3499999999999996, mass_pct: 0.01611683576169742","size: 0.04, density: 2.3499999999999996, mass_pct: 0.019920389940414892","size: 0.04, density: 2.3499999999999996, mass_pct: 0.023902374490499808","size: 0.04, density: 2.3499999999999996, mass_pct: 0.028066954936979745","size: 0.04, density: 2.3499999999999996, mass_pct: 0.032417646976675256","size: 0.04, density: 2.3499999999999996, mass_pct: 0.03695729718977791","size: 0.04, density: 2.3499999999999996, mass_pct: 0.04168807921244299","size: 0.04, density: 2.3499999999999996, mass_pct: 0.04661150923322887","size: 0.04, density: 2.3499999999999996, mass_pct: 0.051728481694457755","size: 0.04, density: 2.3499999999999996, mass_pct: 0.05703932354820828","size: 0.04, density: 2.3499999999999996, mass_pct: 0.06254386352145101","size: 0.04, density: 2.3499999999999996, mass_pct: 0.06824151167997271","size: 0.04, density: 2.3499999999999996, mass_pct: 0.07413134413956012","size: 0.04, density: 2.3499999999999996, mass_pct: 0.08021218796054529","size: 0.04, density: 2.3499999999999996, mass_pct: 0.08648270192356665","size: 0.04, density: 2.3499999999999996, mass_pct: 0.0924288207220738","size: 0.04, density: 2.3499999999999996, mass_pct: 0.09794459328556103","size: 0.04, density: 2.3499999999999996, mass_pct: 0.10348929484234524","size: 0.04, density: 2.3499999999999996, mass_pct: 0.10906199397509207","size: 0.04, density: 2.3499999999999996, mass_pct: 0.1146618414049133","size: 0.04, density: 2.3499999999999996, mass_pct: 0.12028807169315268","size: 0.04, density: 2.3499999999999996, mass_pct: 0.12594000152645343","size: 0.04, density: 2.3499999999999996, mass_pct: 0.131617025751349","size: 0.04, density: 2.3499999999999996, mass_pct: 0.13731861203988302","size: 0.04, density: 2.3499999999999996, mass_pct: 0.14304429483284917","size: 0.04, density: 2.3499999999999996, mass_pct: 0.14879366902054156","size: 0.04, density: 2.3499999999999996, mass_pct: 0.1545663836765034","size: 0.04, density: 2.3499999999999996, mass_pct: 0.16036213605040325","size: 0.04, density: 2.3499999999999996, mass_pct: 0.16618066594605405","size: 0.04, density: 2.3499999999999996, mass_pct: 0.1720217505524166","size: 0.04, density: 2.3499999999999996, mass_pct: 0.17788519975513625","size: 0.04, density: 2.3499999999999996, mass_pct: 0.18377085192860518"],["size: 0.04, density: 2.45, mass_pct: 0.43984672422301824","size: 0.04, density: 2.45, mass_pct: 0.009616512390991592","size: 0.04, density: 2.45, mass_pct: 0.011296577441722187","size: 0.04, density: 2.45, mass_pct: 0.013205038982229465","size: 0.04, density: 2.45, mass_pct: 0.015313077341177926","size: 0.04, density: 2.45, mass_pct: 0.017594699806053545","size: 0.04, density: 2.45, mass_pct: 0.020026792429460368","size: 0.04, density: 2.45, mass_pct: 0.02258924482901947","size: 0.04, density: 2.45, mass_pct: 0.025265083872400448","size: 0.04, density: 2.45, mass_pct: 0.028040566798235075","size: 0.04, density: 2.45, mass_pct: 0.030905199694277182","size: 0.04, density: 2.45, mass_pct: 0.03385166268328987","size: 0.04, density: 2.45, mass_pct: 0.036875637563586465","size: 0.04, density: 2.45, mass_pct: 0.039975545871181566","size: 0.04, density: 2.45, mass_pct: 0.04315221448050221","size: 0.04, density: 2.45, mass_pct: 0.04640849148452219","size: 0.04, density: 2.45, mass_pct: 0.049748837224895086","size: 0.04, density: 2.45, mass_pct: 0.053178914436879825","size: 0.04, density: 2.45, mass_pct: 0.056705198278829354","size: 0.04, density: 2.45, mass_pct: 0.059923779801388515","size: 0.04, density: 2.45, mass_pct: 0.06275560498342724","size: 0.04, density: 2.45, mass_pct: 0.06557381604075017","size: 0.04, density: 2.45, mass_pct: 0.0683829096834989","size: 0.04, density: 2.45, mass_pct: 0.07118698607274697","size: 0.04, density: 2.45, mass_pct: 0.07398974060429596","size: 0.04, density: 2.45, mass_pct: 0.0767944721883793","size: 0.04, density: 2.45, mass_pct: 0.07960410239370373","size: 0.04, density: 2.45, mass_pct: 0.08242120120092421","size: 0.04, density: 2.45, mass_pct: 0.08524801624359245","size: 0.04, density: 2.45, mass_pct: 0.08808650331621591","size: 0.04, density: 2.45, mass_pct: 0.09093835662670034","size: 0.04, density: 2.45, mass_pct: 0.09380503779745307","size: 0.04, density: 2.45, mass_pct: 0.09668780300741629","size: 0.04, density: 2.45, mass_pct: 0.09958772794698921","size: 0.04, density: 2.45, mass_pct: 0.10250573045306031","size: 0.04, density: 2.45, mass_pct: 0.10544259082407902"],["size: 0.04, density: 2.55, mass_pct: 0.2303894034092576","size: 0.04, density: 2.55, mass_pct: 0.007428361722695564","size: 0.04, density: 2.55, mass_pct: 0.007745472518594253","size: 0.04, density: 2.55, mass_pct: 0.008227526717601295","size: 0.04, density: 2.55, mass_pct: 0.008842483308608816","size: 0.04, density: 2.55, mass_pct: 0.009561444224704172","size: 0.04, density: 2.55, mass_pct: 0.010358711940158803","size: 0.04, density: 2.55, mass_pct: 0.011211928219939658","size: 0.04, density: 2.55, mass_pct: 0.012102222747474743","size: 0.04, density: 2.55, mass_pct: 0.013014316654213818","size: 0.04, density: 2.55, mass_pct: 0.013936543063224336","size: 0.04, density: 2.55, mass_pct: 0.014860763912644013","size: 0.04, density: 2.55, mass_pct: 0.015782178330649318","size: 0.04, density: 2.55, mass_pct: 0.016581548293270628","size: 0.04, density: 2.55, mass_pct: 0.017473197283154992","size: 0.04, density: 2.55, mass_pct: 0.01836813386784863","size: 0.04, density: 2.55, mass_pct: 0.019267458252102517","size: 0.04, density: 2.55, mass_pct: 0.02017746612753279","size: 0.04, density: 2.55, mass_pct: 0.021105356418056994","size: 0.04, density: 2.55, mass_pct: 0.021856103884014374","size: 0.04, density: 2.55, mass_pct: 0.02239380590803108","size: 0.04, density: 2.55, mass_pct: 0.022905275884426143","size: 0.04, density: 2.55, mass_pct: 0.02339551314639787","size: 0.04, density: 2.55, mass_pct: 0.023869076153517185","size: 0.04, density: 2.55, mass_pct: 0.024330073357137435","size: 0.04, density: 2.55, mass_pct: 0.024782172405594546","size: 0.04, density: 2.55, mass_pct: 0.02522862142806814","size: 0.04, density: 2.55, mass_pct: 0.025672277666670903","size: 0.04, density: 2.55, mass_pct: 0.026115639985847757","size: 0.04, density: 2.55, mass_pct: 0.026560882790439996","size: 0.04, density: 2.55, mass_pct: 0.027009889659704852","size: 0.04, density: 2.55, mass_pct: 0.02746428558994096","size: 0.04, density: 2.55, mass_pct: 0.02792546717041255","size: 0.04, density: 2.55, mass_pct: 0.028394630327598366","size: 0.04, density: 2.55, mass_pct: 0.02887279549027055","size: 0.04, density: 2.55, mass_pct: 0.029360830175327864"],["size: 0.04, density: 2.6500000000000004, mass_pct: 0.23031542329941954","size: 0.04, density: 2.6500000000000004, mass_pct: 0.00739422809833079","size: 0.04, density: 2.6500000000000004, mass_pct: 0.007720965880863572","size: 0.04, density: 2.6500000000000004, mass_pct: 0.008210185535951984","size: 0.04, density: 2.6500000000000004, mass_pct: 0.00883070332740321","size: 0.04, density: 2.6500000000000004, mass_pct: 0.009554394372024209","size: 0.04, density: 2.6500000000000004, mass_pct: 0.010356248695566282","size: 0.04, density: 2.6500000000000004, mass_pct: 0.011214506269901057","size: 0.04, density: 2.6500000000000004, mass_pct: 0.012110801664190205","size: 0.04, density: 2.6500000000000004, mass_pct: 0.013030264804434586","size: 0.04, density: 2.6500000000000004, mass_pct: 0.013961540967425521","size: 0.04, density: 2.6500000000000004, mass_pct: 0.014896709829640973","size: 0.04, density: 2.6500000000000004, mass_pct: 0.01583109896923029","size: 0.04, density: 2.6500000000000004, mass_pct: 0.016413704972860207","size: 0.04, density: 2.6500000000000004, mass_pct: 0.017279906122919072","size: 0.04, density: 2.6500000000000004, mass_pct: 0.0181587845577541","size: 0.04, density: 2.6500000000000004, mass_pct: 0.019043694003455177","size: 0.04, density: 2.6500000000000004, mass_pct: 0.019940761706942364","size: 0.04, density: 2.6500000000000004, mass_pct: 0.020856993980942425","size: 0.04, density: 2.6500000000000004, mass_pct: 0.02159756270956747","size: 0.04, density: 2.6500000000000004, mass_pct: 0.022126498340010677","size: 0.04, density: 2.6500000000000004, mass_pct: 0.022630123090388917","size: 0.04, density: 2.6500000000000004, mass_pct: 0.023113302533979804","size: 0.04, density: 2.6500000000000004, mass_pct: 0.023580473166258994","size: 0.04, density: 2.6500000000000004, mass_pct: 0.02403563351469828","size: 0.04, density: 2.6500000000000004, mass_pct: 0.024482353097664996","size: 0.04, density: 2.6500000000000004, mass_pct: 0.02492379313887993","size: 0.04, density: 2.6500000000000004, mass_pct: 0.0253627344333438","size: 0.04, density: 2.6500000000000004, mass_pct: 0.025801608987007004","size: 0.04, density: 2.6500000000000004, mass_pct: 0.02624253302732393","size: 0.04, density: 2.6500000000000004, mass_pct: 0.026687339737339274","size: 0.04, density: 2.6500000000000004, mass_pct: 0.027137610635672212","size: 0.04, density: 2.6500000000000004, mass_pct: 0.02759470494508753","size: 0.04, density: 2.6500000000000004, mass_pct: 0.028059786594378796","size: 0.04, density: 2.6500000000000004, mass_pct: 0.02853384871020159","size: 0.04, density: 2.6500000000000004, mass_pct: 0.029017735598524604"],["size: 0.04, density: 2.75, mass_pct: 0.4986761939065743","size: 0.04, density: 2.75, mass_pct: 0.01590815402229406","size: 0.04, density: 2.75, mass_pct: 0.016647284711281737","size: 0.04, density: 2.75, mass_pct: 0.017730096008047865","size: 0.04, density: 2.75, mass_pct: 0.019091922821287795","size: 0.04, density: 2.75, mass_pct: 0.02067444314208355","size: 0.04, density: 2.75, mass_pct: 0.022425794286020203","size: 0.04, density: 2.75, mass_pct: 0.024300852917106593","size: 0.04, density: 2.75, mass_pct: 0.02626153500796424","size: 0.04, density: 2.75, mass_pct: 0.028277004782962686","size: 0.04, density: 2.75, mass_pct: 0.03032371617921747","size: 0.04, density: 2.75, mass_pct: 0.032385244979924115","size: 0.04, density: 2.75, mass_pct: 0.03445190207714876","size: 0.04, density: 2.75, mass_pct: 0.03499063473298069","size: 0.04, density: 2.75, mass_pct: 0.03678160405341612","size: 0.04, density: 2.75, mass_pct: 0.038631398611763006","size: 0.04, density: 2.75, mass_pct: 0.04049979015848048","size: 0.04, density: 2.75, mass_pct: 0.04239948464321718","size: 0.04, density: 2.75, mass_pct: 0.04434501091682618","size: 0.04, density: 2.75, mass_pct: 0.045914988701161834","size: 0.04, density: 2.75, mass_pct: 0.047031274045391085","size: 0.04, density: 2.75, mass_pct: 0.04809583141367101","size: 0.04, density: 2.75, mass_pct: 0.04911875044818958","size: 0.04, density: 2.75, mass_pct: 0.0501092310210871","size: 0.04, density: 2.75, mass_pct: 0.051075564798930044","size: 0.04, density: 2.75, mass_pct: 0.05202515382077854","size: 0.04, density: 2.75, mass_pct: 0.05296455345307515","size: 0.04, density: 2.75, mass_pct: 0.053899530174980274","size: 0.04, density: 2.75, mass_pct: 0.05483512718866112","size: 0.04, density: 2.75, mass_pct: 0.05577573287275705","size: 0.04, density: 2.75, mass_pct: 0.05672514866234079","size: 0.04, density: 2.75, mass_pct: 0.05768665412104856","size: 0.04, density: 2.75, mass_pct: 0.05866306784195884","size: 0.04, density: 2.75, mass_pct: 0.05965680344099699","size: 0.04, density: 2.75, mass_pct: 0.060669920345057575","size: 0.04, density: 2.75, mass_pct: 0.0617041693746394"],["size: 0.04, density: 2.8499999999999996, mass_pct: 0.574615878854085","size: 0.04, density: 2.8499999999999996, mass_pct: 0.01817420191909169","size: 0.04, density: 2.8499999999999996, mass_pct: 0.019075870430416694","size: 0.04, density: 2.8499999999999996, mass_pct: 0.020360059481574707","size: 0.04, density: 2.8499999999999996, mass_pct: 0.0219569907062328","size: 0.04, density: 2.8499999999999996, mass_pct: 0.023803730388197716","size: 0.04, density: 2.8499999999999996, mass_pct: 0.02584431489517169","size: 0.04, density: 2.8499999999999996, mass_pct: 0.02803005284505999","size: 0.04, density: 2.8499999999999996, mass_pct: 0.03031984878495941","size: 0.04, density: 2.8499999999999996, mass_pct: 0.03268042865610276","size: 0.04, density: 2.8499999999999996, mass_pct: 0.03508638453330703","size: 0.04, density: 2.8499999999999996, mass_pct: 0.03751999348456014","size: 0.04, density: 2.8499999999999996, mass_pct: 0.03997080025325705","size: 0.04, density: 2.8499999999999996, mass_pct: 0.03940837986898848","size: 0.04, density: 2.8499999999999996, mass_pct: 0.04133245819802877","size: 0.04, density: 2.8499999999999996, mass_pct: 0.04337575766612888","size: 0.04, density: 2.8499999999999996, mass_pct: 0.045449669888497406","size: 0.04, density: 2.8499999999999996, mass_pct: 0.04756790551473843","size: 0.04, density: 2.8499999999999996, mass_pct: 0.049746142238288986","size: 0.04, density: 2.8499999999999996, mass_pct: 0.05149960710413159","size: 0.04, density: 2.8499999999999996, mass_pct: 0.05273782263767179","size: 0.04, density: 2.8499999999999996, mass_pct: 0.05392153349345374","size: 0.04, density: 2.8499999999999996, mass_pct: 0.05506162713386619","size: 0.04, density: 2.8499999999999996, mass_pct: 0.05616803089426158","size: 0.04, density: 2.8499999999999996, mass_pct: 0.057249692089761155","size: 0.04, density: 2.8499999999999996, mass_pct: 0.058314598062219274","size: 0.04, density: 2.8499999999999996, mass_pct: 0.05936982253186195","size: 0.04, density: 2.8499999999999996, mass_pct: 0.06042158795171625","size: 0.04, density: 2.8499999999999996, mass_pct: 0.061475336306047394","size: 0.04, density: 2.8499999999999996, mass_pct: 0.06253580297657389","size: 0.04, density: 2.8499999999999996, mass_pct: 0.0636070899900023","size: 0.04, density: 2.8499999999999996, mass_pct: 0.06469273623547388","size: 0.04, density: 2.8499999999999996, mass_pct: 0.065795783181251","size: 0.04, density: 2.8499999999999996, mass_pct: 0.06691883529555119","size: 0.04, density: 2.8499999999999996, mass_pct: 0.06806411485074947","size: 0.04, density: 2.8499999999999996, mass_pct: 0.0692335111102551"],["size: 0.04, density: 2.95, mass_pct: 0.38247964525381734","size: 0.04, density: 2.95, mass_pct: 0.01201498778610832","size: 0.04, density: 2.95, mass_pct: 0.01264235196920238","size: 0.04, density: 2.95, mass_pct: 0.013516500835610288","size: 0.04, density: 2.95, mass_pct: 0.014593730094870304","size: 0.04, density: 2.95, mass_pct: 0.01583462246688971","size: 0.04, density: 2.95, mass_pct: 0.01720412624483014","size: 0.04, density: 2.95, mass_pct: 0.01867174455097442","size: 0.04, density: 2.95, mass_pct: 0.020211738066633452","size: 0.04, density: 2.95, mass_pct: 0.021803266247582772","size: 0.04, density: 2.95, mass_pct: 0.023430415345779606","size: 0.04, density: 2.95, mass_pct: 0.025082084955609703","size: 0.04, density: 2.95, mass_pct: 0.026751726635288128","size: 0.04, density: 2.95, mass_pct: 0.02570282844617555","size: 0.04, density: 2.95, mass_pct: 0.026903078998133708","size: 0.04, density: 2.95, mass_pct: 0.028212059377115125","size: 0.04, density: 2.95, mass_pct: 0.02954673235731575","size: 0.04, density: 2.95, mass_pct: 0.03091568533111588","size: 0.04, density: 2.95, mass_pct: 0.03232873770966326","size: 0.04, density: 2.95, mass_pct: 0.033463671050788506","size: 0.04, density: 2.95, mass_pct: 0.03426001201126438","size: 0.04, density: 2.95, mass_pct: 0.035023027096444885","size: 0.04, density: 2.95, mass_pct: 0.03575953545162446","size: 0.04, density: 2.95, mass_pct: 0.036475754865647574","size: 0.04, density: 2.95, mass_pct: 0.0371772893111899","size: 0.04, density: 2.95, mass_pct: 0.03786914150080411","size: 0.04, density: 2.95, mass_pct: 0.038555741918295354","size: 0.04, density: 2.95, mass_pct: 0.039240987873235815","size: 0.04, density: 2.95, mass_pct: 0.03992828784411628","size: 0.04, density: 2.95, mass_pct: 0.04062060774300024","size: 0.04, density: 2.95, mass_pct: 0.04132051679262804","size: 0.04, density: 2.95, mass_pct: 0.04203023150577411","size: 0.04, density: 2.95, mass_pct: 0.04275165684550596","size: 0.04, density: 2.95, mass_pct: 0.043486424068648326","size: 0.04, density: 2.95, mass_pct: 0.044235925051235185","size: 0.04, density: 2.95, mass_pct: 0.0450013430958398"],["size: 0.04, density: 3.05, mass_pct: 0.38190320379148995","size: 0.04, density: 3.05, mass_pct: 0.011939085125511449","size: 0.04, density: 3.05, mass_pct: 0.01258537959215411","size: 0.04, density: 3.05, mass_pct: 0.013471967319664267","size: 0.04, density: 3.05, mass_pct: 0.014557348942813795","size: 0.04, density: 3.05, mass_pct: 0.01580409582274533","size: 0.04, density: 3.05, mass_pct: 0.01717892464634496","size: 0.04, density: 3.05, mass_pct: 0.018652877133909947","size: 0.04, density: 3.05, mass_pct: 0.02020151254115043","size: 0.04, density: 3.05, mass_pct: 0.02180504175017139","size: 0.04, density: 3.05, mass_pct: 0.02344835387744437","size: 0.04, density: 3.05, mass_pct: 0.02512090854395543","size: 0.04, density: 3.05, mass_pct: 0.026816487683339437","size: 0.04, density: 3.05, mass_pct: 0.025251146402213372","size: 0.04, density: 3.05, mass_pct: 0.026387123134173015","size: 0.04, density: 3.05, mass_pct: 0.02765426077584032","size: 0.04, density: 3.05, mass_pct: 0.028951196628325345","size: 0.04, density: 3.05, mass_pct: 0.03028608484150341","size: 0.04, density: 3.05, mass_pct: 0.03166824942738077","size: 0.04, density: 3.05, mass_pct: 0.0327763233224183","size: 0.04, density: 3.05, mass_pct: 0.03354973150071738","size: 0.04, density: 3.05, mass_pct: 0.034292168019465656","size: 0.04, density: 3.05, mass_pct: 0.03501010799123038","size: 0.04, density: 3.05, mass_pct: 0.03570945551119186","size: 0.04, density: 3.05, mass_pct: 0.03639553182598986","size: 0.04, density: 3.05, mass_pct: 0.03707308725632407","size: 0.04, density: 3.05, mass_pct: 0.03774632876365102","size: 0.04, density: 3.05, mass_pct: 0.038418957034378025","size: 0.04, density: 3.05, mass_pct: 0.039094208585837446","size: 0.04, density: 3.05, mass_pct: 0.03977489969685765","size: 0.04, density: 3.05, mass_pct: 0.0404634699703239","size: 0.04, density: 3.05, mass_pct: 0.04116202409371849","size: 0.04, density: 3.05, mass_pct: 0.04187237092280593","size: 0.04, density: 3.05, mass_pct: 0.04259605941588517","size: 0.04, density: 3.05, mass_pct: 0.043334411227466944","size: 0.04, density: 3.05, mass_pct: 0.04408854996126132"],["size: 0.04, density: 3.1500000000000004, mass_pct: 0.7617398639621503","size: 0.04, density: 3.1500000000000004, mass_pct: 0.023667655871639433","size: 0.04, density: 3.1500000000000004, mass_pct: 0.025009934431924005","size: 0.04, density: 3.1500000000000004, mass_pct: 0.026813639939760266","size: 0.04, density: 3.1500000000000004, mass_pct: 0.029002228082137257","size: 0.04, density: 3.1500000000000004, mass_pct: 0.0315066628766748","size: 0.04, density: 3.1500000000000004, mass_pct: 0.034265554267787206","size: 0.04, density: 3.1500000000000004, mass_pct: 0.037225489592106024","size: 0.04, density: 3.1500000000000004, mass_pct: 0.040341388642480595","size: 0.04, density: 3.1500000000000004, mass_pct: 0.043576750994738005","size: 0.04, density: 3.1500000000000004, mass_pct: 0.04690370508524743","size: 0.04, density: 3.1500000000000004, mass_pct: 0.050302809506496786","size: 0.04, density: 3.1500000000000004, mass_pct: 0.053762595224793756","size: 0.04, density: 3.1500000000000004, mass_pct: 0.04916047340125317","size: 0.04, density: 3.1500000000000004, mass_pct: 0.051245436881558686","size: 0.04, density: 3.1500000000000004, mass_pct: 0.053656695984286566","size: 0.04, density: 3.1500000000000004, mass_pct: 0.056139451186413274","size: 0.04, density: 3.1500000000000004, mass_pct: 0.05870874256855795","size: 0.04, density: 3.1500000000000004, mass_pct: 0.061381767986390605","size: 0.04, density: 3.1500000000000004, mass_pct: 0.06351862364213277","size: 0.04, density: 3.1500000000000004, mass_pct: 0.06499793102592676","size: 0.04, density: 3.1500000000000004, mass_pct: 0.06642217175323693","size: 0.04, density: 3.1500000000000004, mass_pct: 0.06780328897166087","size: 0.04, density: 3.1500000000000004, mass_pct: 0.06915217260460425","size: 0.04, density: 3.1500000000000004, mass_pct: 0.0704786375291535","size: 0.04, density: 3.1500000000000004, mass_pct: 0.07179144556686444","size: 0.04, density: 3.1500000000000004, mass_pct: 0.07309835632984261","size: 0.04, density: 3.1500000000000004, mass_pct: 0.07440619562123339","size: 0.04, density: 3.1500000000000004, mass_pct: 0.07572093309849402","size: 0.04, density: 3.1500000000000004, mass_pct: 0.07704776330201966","size: 0.04, density: 3.1500000000000004, mass_pct: 0.0783911860048767","size: 0.04, density: 3.1500000000000004, mass_pct: 0.07975508323893886","size: 0.04, density: 3.1500000000000004, mass_pct: 0.08114279138347234","size: 0.04, density: 3.1500000000000004, mass_pct: 0.08255716744479179","size: 0.04, density: 3.1500000000000004, mass_pct: 0.08400064917426951","size: 0.04, density: 3.1500000000000004, mass_pct: 0.08547530902478105"],["size: 0.04, density: 3.25, mass_pct: 0.758422440411307","size: 0.04, density: 3.25, mass_pct: 0.0234156260364734","size: 0.04, density: 3.25, mass_pct: 0.024812322060016375","size: 0.04, density: 3.25, mass_pct: 0.02664542342076603","size: 0.04, density: 3.25, mass_pct: 0.028846724431985434","size: 0.04, density: 3.25, mass_pct: 0.031354709790921025","size: 0.04, density: 3.25, mass_pct: 0.034114677185495206","size: 0.04, density: 3.25, mass_pct: 0.037079032650298986","size: 0.04, density: 3.25, mass_pct: 0.04020760695046665","size: 0.04, density: 3.25, mass_pct: 0.043467875965015994","size: 0.04, density: 3.25, mass_pct: 0.04683500441797039","size: 0.04, density: 3.25, mass_pct: 0.05029166882052349","size: 0.04, density: 3.25, mass_pct: 0.053827649558852546","size: 0.04, density: 3.25, mass_pct: 0.047393425411609284","size: 0.04, density: 3.25, mass_pct: 0.049238788040958596","size: 0.04, density: 3.25, mass_pct: 0.051490212288512575","size: 0.04, density: 3.25, mass_pct: 0.0538283036205871","size: 0.04, density: 3.25, mass_pct: 0.056266463673241944","size: 0.04, density: 3.25, mass_pct: 0.05882001679276105","size: 0.04, density: 3.25, mass_pct: 0.06085329327585764","size: 0.04, density: 3.25, mass_pct: 0.06224473765211335","size: 0.04, density: 3.25, mass_pct: 0.06358997428110123","size: 0.04, density: 3.25, mass_pct: 0.06489964524125356","size: 0.04, density: 3.25, mass_pct: 0.06618345412355174","size: 0.04, density: 3.25, mass_pct: 0.06745014658662617","size: 0.04, density: 3.25, mass_pct: 0.0687075299519233","size: 0.04, density: 3.25, mass_pct: 0.0699625185106738","size: 0.04, density: 3.25, mass_pct: 0.07122119447290796","size: 0.04, density: 3.25, mass_pct: 0.07248887717035045","size: 0.04, density: 3.25, mass_pct: 0.07377019525763594","size: 0.04, density: 3.25, mass_pct: 0.07506915830913784","size: 0.04, density: 3.25, mass_pct: 0.07638922545377146","size: 0.04, density: 3.25, mass_pct: 0.07773336961052955","size: 0.04, density: 3.25, mass_pct: 0.07910413654758396","size: 0.04, density: 3.25, mass_pct: 0.0805036984512446","size: 0.04, density: 3.25, mass_pct: 0.08193390200433147"],["size: 0.04, density: 3.3499999999999996, mass_pct: 0.4531805345398158","size: 0.04, density: 3.3499999999999996, mass_pct: 0.013942706378206047","size: 0.04, density: 3.3499999999999996, mass_pct: 0.01480093615663569","size: 0.04, density: 3.3499999999999996, mass_pct: 0.01590926058909203","size: 0.04, density: 3.3499999999999996, mass_pct: 0.01723062538615427","size: 0.04, density: 3.3499999999999996, mass_pct: 0.018731610961512542","size: 0.04, density: 3.3499999999999996, mass_pct: 0.0203824990408985","size: 0.04, density: 3.3499999999999996, mass_pct: 0.022157433120917776","size: 0.04, density: 3.3499999999999996, mass_pct: 0.024034590351799553","size: 0.04, density: 3.3499999999999996, mass_pct: 0.02599630126562857","size: 0.04, density: 3.3499999999999996, mass_pct: 0.028029073534302725","size: 0.04, density: 3.3499999999999996, mass_pct: 0.030123495778799466","size: 0.04, density: 3.3499999999999996, mass_pct: 0.03227401596165435","size: 0.04, density: 3.3499999999999996, mass_pct: 0.027598876850245087","size: 0.04, density: 3.3499999999999996, mass_pct: 0.028595937807721402","size: 0.04, density: 3.3499999999999996, mass_pct: 0.029872161635865032","size: 0.04, density: 3.3499999999999996, mass_pct: 0.031207320717834715","size: 0.04, density: 3.3499999999999996, mass_pct: 0.0326086957970415","size: 0.04, density: 3.3499999999999996, mass_pct: 0.03408461217283553","size: 0.04, density: 3.3499999999999996, mass_pct: 0.03525593018145989","size: 0.04, density: 3.3499999999999996, mass_pct: 0.03604969532253132","size: 0.04, density: 3.3499999999999996, mass_pct: 0.0368198333524925","size: 0.04, density: 3.3499999999999996, mass_pct: 0.037572125822327156","size: 0.04, density: 3.3499999999999996, mass_pct: 0.038311844428358104","size: 0.04, density: 3.3499999999999996, mass_pct: 0.039043740448409185","size: 0.04, density: 3.3499999999999996, mass_pct: 0.03977205538731531","size: 0.04, density: 3.3499999999999996, mass_pct: 0.04050054559088511","size: 0.04, density: 3.3499999999999996, mass_pct: 0.041232515358009085","size: 0.04, density: 3.3499999999999996, mass_pct: 0.04197085453647719","size: 0.04, density: 3.3499999999999996, mass_pct: 0.042718077748167264","size: 0.04, density: 3.3499999999999996, mass_pct: 0.043476363285440016","size: 0.04, density: 3.3499999999999996, mass_pct: 0.044247590398738705","size: 0.04, density: 3.3499999999999996, mass_pct: 0.04503337419385511","size: 0.04, density: 3.3499999999999996, mass_pct: 0.045835097717185296","size: 0.04, density: 3.3499999999999996, mass_pct: 0.04665394105835751","size: 0.04, density: 3.3499999999999996, mass_pct: 0.04749090746972894"],["size: 0.04, density: 3.45, mass_pct: 0.4515977855041244","size: 0.04, density: 3.45, mass_pct: 0.013871782667515873","size: 0.04, density: 3.45, mass_pct: 0.014741422123084822","size: 0.04, density: 3.45, mass_pct: 0.015852510979455166","size: 0.04, density: 3.45, mass_pct: 0.017170812119998265","size: 0.04, density: 3.45, mass_pct: 0.01866544679111581","size: 0.04, density: 3.45, mass_pct: 0.02030895614694694","size: 0.04, density: 3.45, mass_pct: 0.02207744950882695","size: 0.04, density: 3.45, mass_pct: 0.023950763180084152","size: 0.04, density: 3.45, mass_pct: 0.025912571071541542","size: 0.04, density: 3.45, mass_pct: 0.02795040665321102","size: 0.04, density: 3.45, mass_pct: 0.030055574076738308","size: 0.04, density: 3.45, mass_pct: 0.032222943416382314","size: 0.04, density: 3.45, mass_pct: 0.026977976765484964","size: 0.04, density: 3.45, mass_pct: 0.02789549927735346","size: 0.04, density: 3.45, mass_pct: 0.029117076417771056","size: 0.04, density: 3.45, mass_pct: 0.030402569808583243","size: 0.04, density: 3.45, mass_pct: 0.0317587066509628","size: 0.04, density: 3.45, mass_pct: 0.03319317928636999","size: 0.04, density: 3.45, mass_pct: 0.03432869049973463","size: 0.04, density: 3.45, mass_pct: 0.03509231031660386","size: 0.04, density: 3.45, mass_pct: 0.035835277975471584","size: 0.04, density: 3.45, mass_pct: 0.03656293546606148","size: 0.04, density: 3.45, mass_pct: 0.037280153686908506","size: 0.04, density: 3.45, mass_pct: 0.037991322684440824","size: 0.04, density: 3.45, mass_pct: 0.03870036148931221","size: 0.04, density: 3.45, mass_pct: 0.03941074085895035","size: 0.04, density: 3.45, mass_pct: 0.040125513872155676","size: 0.04, density: 3.45, mass_pct: 0.0408473506666529","size: 0.04, density: 3.45, mass_pct: 0.04157857468200809","size: 0.04, density: 3.45, mass_pct: 0.04232119859888072","size: 0.04, density: 3.45, mass_pct: 0.0430769587915023","size: 0.04, density: 3.45, mass_pct: 0.04384734757203112","size: 0.04, density: 3.45, mass_pct: 0.04463364283631676","size: 0.04, density: 3.45, mass_pct: 0.045436934953734014","size: 0.04, density: 3.45, mass_pct: 0.04625815090123763"],["size: 0.04, density: 3.55, mass_pct: 0.9723380505051661","size: 0.04, density: 3.55, mass_pct: 0.029847611548182048","size: 0.04, density: 3.55, mass_pct: 0.031756355214555214","size: 0.04, density: 3.55, mass_pct: 0.03415922897118583","size: 0.04, density: 3.55, mass_pct: 0.036991386795951035","size: 0.04, density: 3.55, mass_pct: 0.0401943434968428","size: 0.04, density: 3.55, mass_pct: 0.04371609127935327","size: 0.04, density: 3.55, mass_pct: 0.04751138055386583","size: 0.04, density: 3.55, mass_pct: 0.05154202073513269","size: 0.04, density: 3.55, mass_pct: 0.055777089770038694","size: 0.04, density: 3.55, mass_pct: 0.06019297571455894","size: 0.04, density: 3.55, mass_pct: 0.064773208397491","size: 0.04, density: 3.55, mass_pct: 0.06950807160107318","size: 0.04, density: 3.55, mass_pct: 0.05634947577332782","size: 0.04, density: 3.55, mass_pct: 0.05807658328139275","size: 0.04, density: 3.55, mass_pct: 0.060541035852027296","size: 0.04, density: 3.55, mass_pct: 0.06316020258116771","size: 0.04, density: 3.55, mass_pct: 0.06594682496929759","size: 0.04, density: 3.55, mass_pct: 0.06891547251850903","size: 0.04, density: 3.55, mass_pct: 0.07125555705003526","size: 0.04, density: 3.55, mass_pct: 0.07280930540481","size: 0.04, density: 3.55, mass_pct: 0.0743281303407528","size: 0.04, density: 3.55, mass_pct: 0.07582214973061994","size: 0.04, density: 3.55, mass_pct: 0.07730058918741366","size: 0.04, density: 3.55, mass_pct: 0.07877176357758796","size: 0.04, density: 3.55, mass_pct: 0.080243095650792","size: 0.04, density: 3.55, mass_pct: 0.08172115911523468","size: 0.04, density: 3.55, mass_pct: 0.08321173658444668","size: 0.04, density: 3.55, mass_pct: 0.08471988537135465","size: 0.04, density: 3.55, mass_pct: 0.08625000613310839","size: 0.04, density: 3.55, mass_pct: 0.08780591094107758","size: 0.04, density: 3.55, mass_pct: 0.08939088853502318","size: 0.04, density: 3.55, mass_pct: 0.09100776539433751","size: 0.04, density: 3.55, mass_pct: 0.09265896188817367","size: 0.04, density: 3.55, mass_pct: 0.09434654320565493","size: 0.04, density: 3.55, mass_pct: 0.09607226506595888"],["size: 0.04, density: 3.6500000000000004, mass_pct: 1.1099103862338888","size: 0.04, density: 3.6500000000000004, mass_pct: 0.03416784929654692","size: 0.04, density: 3.6500000000000004, mass_pct: 0.03637814617740109","size: 0.04, density: 3.6500000000000004, mass_pct: 0.039110761883824","size: 0.04, density: 3.6500000000000004, mass_pct: 0.04230598303193455","size: 0.04, density: 3.6500000000000004, mass_pct: 0.04590995360094862","size: 0.04, density: 3.6500000000000004, mass_pct: 0.049874782273899625","size: 0.04, density: 3.6500000000000004, mass_pct: 0.05415880101899972","size: 0.04, density: 3.6500000000000004, mass_pct: 0.058726842080353496","size: 0.04, density: 3.6500000000000004, mass_pct: 0.06355043092140565","size: 0.04, density: 3.6500000000000004, mass_pct: 0.06860782451106749","size: 0.04, density: 3.6500000000000004, mass_pct: 0.07388385631137238","size: 0.04, density: 3.6500000000000004, mass_pct: 0.07936957915454233","size: 0.04, density: 3.6500000000000004, mass_pct: 0.061505961510589506","size: 0.04, density: 3.6500000000000004, mass_pct: 0.06308297159459596","size: 0.04, density: 3.6500000000000004, mass_pct: 0.0656285477485936","size: 0.04, density: 3.6500000000000004, mass_pct: 0.0683782503843091","size: 0.04, density: 3.6500000000000004, mass_pct: 0.07134381249756137","size: 0.04, density: 3.6500000000000004, mass_pct: 0.07453865039744077","size: 0.04, density: 3.6500000000000004, mass_pct: 0.07704049900557618","size: 0.04, density: 3.6500000000000004, mass_pct: 0.0786680880712156","size: 0.04, density: 3.6500000000000004, mass_pct: 0.08027119854483276","size: 0.04, density: 3.6500000000000004, mass_pct: 0.08185914745764176","size: 0.04, density: 3.6500000000000004, mass_pct: 0.08344043020471846","size: 0.04, density: 3.6500000000000004, mass_pct: 0.08502270352105555","size: 0.04, density: 3.6500000000000004, mass_pct: 0.0866128026370747","size: 0.04, density: 3.6500000000000004, mass_pct: 0.08821678094427908","size: 0.04, density: 3.6500000000000004, mass_pct: 0.08983996335560417","size: 0.04, density: 3.6500000000000004, mass_pct: 0.09148700689174526","size: 0.04, density: 3.6500000000000004, mass_pct: 0.09316196389273255","size: 0.04, density: 3.6500000000000004, mass_pct: 0.09486834470001825","size: 0.04, density: 3.6500000000000004, mass_pct: 0.09660917774578646","size: 0.04, density: 3.6500000000000004, mass_pct: 0.09838706579028454","size: 0.04, density: 3.6500000000000004, mass_pct: 0.10020423762761597","size: 0.04, density: 3.6500000000000004, mass_pct: 0.10206259498478508","size: 0.04, density: 3.6500000000000004, mass_pct: 0.10396375461377348"],["size: 0.04, density: 3.75, mass_pct: 0.7317187456417552","size: 0.04, density: 3.75, mass_pct: 0.02267128493280279","size: 0.04, density: 3.75, mass_pct: 0.024127031563485387","size: 0.04, density: 3.75, mass_pct: 0.025903516273610313","size: 0.04, density: 3.75, mass_pct: 0.027969415761964763","size: 0.04, density: 3.75, mass_pct: 0.030296479270339512","size: 0.04, density: 3.75, mass_pct: 0.032859584890554176","size: 0.04, density: 3.75, mass_pct: 0.03563687520587488","size: 0.04, density: 3.75, mass_pct: 0.03860990258963936","size: 0.04, density: 3.75, mass_pct: 0.04176373041573877","size: 0.04, density: 3.75, mass_pct: 0.045086953142099644","size: 0.04, density: 3.75, mass_pct: 0.0485716149971902","size: 0.04, density: 3.75, mass_pct: 0.05221302264740601","size: 0.04, density: 3.75, mass_pct: 0.038954987325628514","size: 0.04, density: 3.75, mass_pct: 0.03977728999036544","size: 0.04, density: 3.75, mass_pct: 0.041304900903095236","size: 0.04, density: 3.75, mass_pct: 0.04298251929233431","size: 0.04, density: 3.75, mass_pct: 0.04481629982794199","size: 0.04, density: 3.75, mass_pct: 0.04681328017991281","size: 0.04, density: 3.75, mass_pct: 0.0483672469165679","size: 0.04, density: 3.75, mass_pct: 0.04935805746667742","size: 0.04, density: 3.75, mass_pct: 0.05034137527832038","size: 0.04, density: 3.75, mass_pct: 0.051322087701004986","size: 0.04, density: 3.75, mass_pct: 0.05230465108607562","size: 0.04, density: 3.75, mass_pct: 0.053293081856688566","size: 0.04, density: 3.75, mass_pct: 0.05429096550687084","size: 0.04, density: 3.75, mass_pct: 0.055301477408614456","size: 0.04, density: 3.75, mass_pct: 0.05632741080258973","size: 0.04, density: 3.75, mass_pct: 0.05737120857935495","size: 0.04, density: 3.75, mass_pct: 0.05843499643767646","size: 0.04, density: 3.75, mass_pct: 0.05952061576517175","size: 0.04, density: 3.75, mass_pct: 0.06062965515865625","size: 0.04, density: 3.75, mass_pct: 0.06176347992418884","size: 0.04, density: 3.75, mass_pct: 0.06292325919981188","size: 0.04, density: 3.75, mass_pct: 0.0641099905569864","size: 0.04, density: 3.75, mass_pct: 0.06532452208046811"],["size: 0.04, density: 3.8499999999999996, mass_pct: 0.5439932819132517","size: 0.04, density: 3.8499999999999996, mass_pct: 0.016971588188958938","size: 0.04, density: 3.8499999999999996, mass_pct: 0.01804396418240017","size: 0.04, density: 3.8499999999999996, mass_pct: 0.019342917092524555","size: 0.04, density: 3.8499999999999996, mass_pct: 0.02084918138524516","size: 0.04, density: 3.8499999999999996, mass_pct: 0.0225453813076093","size: 0.04, density: 3.8499999999999996, mass_pct: 0.02441606551959263","size: 0.04, density: 3.8499999999999996, mass_pct: 0.026447790520982336","size: 0.04, density: 3.8499999999999996, mass_pct: 0.028629210017945713","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03095113717296982","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03340655695725236","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03599057613858058","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03870030806148516","size: 0.04, density: 3.8499999999999996, mass_pct: 0.028159329066408386","size: 0.04, density: 3.8499999999999996, mass_pct: 0.028664103064948595","size: 0.04, density: 3.8499999999999996, mass_pct: 0.029724427119388604","size: 0.04, density: 3.8499999999999996, mass_pct: 0.030903973301023676","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03220652706660942","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03363641696597907","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03474390636354085","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03543936697019134","size: 0.04, density: 3.8499999999999996, mass_pct: 0.036133577395708986","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03682954362588164","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03753000655916149","size: 0.04, density: 3.8499999999999996, mass_pct: 0.03823743651429989","size: 0.04, density: 3.8499999999999996, mass_pct: 0.038954038765114156","size: 0.04, density: 3.8499999999999996, mass_pct: 0.0396817663381177","size: 0.04, density: 3.8499999999999996, mass_pct: 0.04042233722825416","size: 0.04, density: 3.8499999999999996, mass_pct: 0.041177253946096386","size: 0.04, density: 3.8499999999999996, mass_pct: 0.04194782391203277","size: 0.04, density: 3.8499999999999996, mass_pct: 0.042735179679586725","size: 0.04, density: 3.8499999999999996, mass_pct: 0.04354029832220751","size: 0.04, density: 3.8499999999999996, mass_pct: 0.04436401957737556","size: 0.04, density: 3.8499999999999996, mass_pct: 0.04520706252862804","size: 0.04, density: 3.8499999999999996, mass_pct: 0.046070040736632116","size: 0.04, density: 3.8499999999999996, mass_pct: 0.04695347581963815"],["size: 0.04, density: 3.95, mass_pct: 1.4282337788698252","size: 0.04, density: 3.95, mass_pct: 0.04524220095200348","size: 0.04, density: 3.95, mass_pct: 0.04797161172668218","size: 0.04, density: 3.95, mass_pct: 0.051248822338446624","size: 0.04, density: 3.95, mass_pct: 0.05503906846633421","size: 0.04, density: 3.95, mass_pct: 0.05931099586661514","size: 0.04, density: 3.95, mass_pct: 0.06403672286512972","size: 0.04, density: 3.95, mass_pct: 0.06919199089976756","size: 0.04, density: 3.95, mass_pct: 0.07475632578077394","size: 0.04, density: 3.95, mass_pct: 0.08071315001975686","size: 0.04, density: 3.95, mass_pct: 0.08704980511938042","size: 0.04, density: 3.95, mass_pct: 0.09375746132726025","size: 0.04, density: 3.95, mass_pct: 0.10083090972385843","size: 0.04, density: 3.95, mass_pct: 0.0707535157634611","size: 0.04, density: 3.95, mass_pct: 0.07167053477843764","size: 0.04, density: 3.95, mass_pct: 0.07415753564164883","size: 0.04, density: 3.95, mass_pct: 0.07698773967983417","size: 0.04, density: 3.95, mass_pct: 0.08016797768380755","size: 0.04, density: 3.95, mass_pct: 0.08370606044641259","size: 0.04, density: 3.95, mass_pct: 0.0864252206518845","size: 0.04, density: 3.95, mass_pct: 0.0880889818129633","size: 0.04, density: 3.95, mass_pct: 0.08976644026600676","size: 0.04, density: 3.95, mass_pct: 0.09146302026003549","size: 0.04, density: 3.95, mass_pct: 0.0931836676986597","size: 0.04, density: 3.95, mass_pct: 0.09493284022897973","size: 0.04, density: 3.95, mass_pct: 0.09671451722930645","size: 0.04, density: 3.95, mass_pct: 0.0985322229019334","size: 0.04, density: 3.95, mass_pct: 0.1003890573388335","size: 0.04, density: 3.95, mass_pct: 0.10228773179421367","size: 0.04, density: 3.95, mass_pct: 0.10423060548537987","size: 0.04, density: 3.95, mass_pct: 0.10621972208542328","size: 0.04, density: 3.95, mass_pct: 0.10825684470648154","size: 0.04, density: 3.95, mass_pct: 0.11034348864013886","size: 0.04, density: 3.95, mass_pct: 0.11248095146011215","size: 0.04, density: 3.95, mass_pct: 0.11467034032599431","size: 0.04, density: 3.95, mass_pct: 0.11691259648882645"],["size: 0.04, density: 4.05, mass_pct: 1.5624170827173063","size: 0.04, density: 4.05, mass_pct: 0.05114478052480686","size: 0.04, density: 4.05, mass_pct: 0.05387571965824577","size: 0.04, density: 4.05, mass_pct: 0.057129880769577916","size: 0.04, density: 4.05, mass_pct: 0.0608944777981577","size: 0.04, density: 4.05, mass_pct: 0.06515797888453843","size: 0.04, density: 4.05, mass_pct: 0.06991012935472705","size: 0.04, density: 4.05, mass_pct: 0.0751420070886286","size: 0.04, density: 4.05, mass_pct: 0.080846081830358","size: 0.04, density: 4.05, mass_pct: 0.08701625650202914","size: 0.04, density: 4.05, mass_pct: 0.09364787540175","size: 0.04, density: 4.05, mass_pct: 0.10073769101175499","size: 0.04, density: 4.05, mass_pct: 0.10828378752987476","size: 0.04, density: 4.05, mass_pct: 0.0722662522768278","size: 0.04, density: 4.05, mass_pct: 0.07264488461693029","size: 0.04, density: 4.05, mass_pct: 0.07489073833641545","size: 0.04, density: 4.05, mass_pct: 0.07755999566669568","size: 0.04, density: 4.05, mass_pct: 0.08065516892220835","size: 0.04, density: 4.05, mass_pct: 0.08417913085494043","size: 0.04, density: 4.05, mass_pct: 0.0868515922019517","size: 0.04, density: 4.05, mass_pct: 0.08841214028964249","size: 0.04, density: 4.05, mass_pct: 0.09001474460584812","size: 0.04, density: 4.05, mass_pct: 0.0916614001494178","size: 0.04, density: 4.05, mass_pct: 0.09335392598710211","size: 0.04, density: 4.05, mass_pct: 0.09509396160866322","size: 0.04, density: 4.05, mass_pct: 0.09688297060005845","size: 0.04, density: 4.05, mass_pct: 0.09872224913686932","size: 0.04, density: 4.05, mass_pct: 0.10061293741009701","size: 0.04, density: 4.05, mass_pct: 0.1025560325989434","size: 0.04, density: 4.05, mass_pct: 0.10455240240618567","size: 0.04, density: 4.05, mass_pct: 0.10660279847971131","size: 0.04, density: 4.05, mass_pct: 0.10870786927905572","size: 0.04, density: 4.05, mass_pct: 0.11086817211743315","size: 0.04, density: 4.05, mass_pct: 0.11308418423274079","size: 0.04, density: 4.05, mass_pct: 0.115356312830162","size: 0.04, density: 4.05, mass_pct: 0.11768490409492748"],["size: 0.04, density: 4.15, mass_pct: 0.8450157288016388","size: 0.04, density: 4.15, mass_pct: 0.028664819806056615","size: 0.04, density: 4.15, mass_pct: 0.029969655977893025","size: 0.04, density: 4.15, mass_pct: 0.03152512193329814","size: 0.04, density: 4.15, mass_pct: 0.03333487166767623","size: 0.04, density: 4.15, mass_pct: 0.035402200751269534","size: 0.04, density: 4.15, mass_pct: 0.03773003976078559","size: 0.04, density: 4.15, mass_pct: 0.04032093845620754","size: 0.04, density: 4.15, mass_pct: 0.043177048831071645","size: 0.04, density: 4.15, mass_pct: 0.04630011330593397","size: 0.04, density: 4.15, mass_pct: 0.04969146238542343","size: 0.04, density: 4.15, mass_pct: 0.05335202414389605","size: 0.04, density: 4.15, mass_pct: 0.05728234607856252","size: 0.04, density: 4.15, mass_pct: 0.0368997477955073","size: 0.04, density: 4.15, mass_pct: 0.03685810779651932","size: 0.04, density: 4.15, mass_pct: 0.037873393692195105","size: 0.04, density: 4.15, mass_pct: 0.039137623293767014","size: 0.04, density: 4.15, mass_pct: 0.04065007863302705","size: 0.04, density: 4.15, mass_pct: 0.04240993873604015","size: 0.04, density: 4.15, mass_pct: 0.04372808289256013","size: 0.04, density: 4.15, mass_pct: 0.044463024496878216","size: 0.04, density: 4.15, mass_pct: 0.04523203025638844","size: 0.04, density: 4.15, mass_pct: 0.046034530041063164","size: 0.04, density: 4.15, mass_pct: 0.046870003998738856","size: 0.04, density: 4.15, mass_pct: 0.047737983596672244","size: 0.04, density: 4.15, mass_pct: 0.048638050571816464","size: 0.04, density: 4.15, mass_pct: 0.04956983450369367","size: 0.04, density: 4.15, mass_pct: 0.05053300954888273","size: 0.04, density: 4.15, mass_pct: 0.05152729073395345","size: 0.04, density: 4.15, mass_pct: 0.05255243008715737","size: 0.04, density: 4.15, mass_pct: 0.05360821280281857","size: 0.04, density: 4.15, mass_pct: 0.05469445356444246","size: 0.04, density: 4.15, mass_pct: 0.05581099310330017","size: 0.04, density: 4.15, mass_pct: 0.05695769503449454","size: 0.04, density: 4.15, mass_pct: 0.05813444298710201","size: 0.04, density: 4.15, mass_pct: 0.059341138028468514"],["size: 0.04, density: 4.25, mass_pct: 0.8269230807078484","size: 0.04, density: 4.25, mass_pct: 0.02892921578070484","size: 0.04, density: 4.25, mass_pct: 0.030047235521422296","size: 0.04, density: 4.25, mass_pct: 0.0313888356261025","size: 0.04, density: 4.25, mass_pct: 0.03296456048143103","size: 0.04, density: 4.25, mass_pct: 0.034783920161579156","size: 0.04, density: 4.25, mass_pct: 0.03685537147357509","size: 0.04, density: 4.25, mass_pct: 0.03918627229623572","size: 0.04, density: 4.25, mass_pct: 0.04178283266810911","size: 0.04, density: 4.25, mass_pct: 0.04465008071699161","size: 0.04, density: 4.25, mass_pct: 0.04779185589916989","size: 0.04, density: 4.25, mass_pct: 0.05121083637207668","size: 0.04, density: 4.25, mass_pct: 0.05490860205613623","size: 0.04, density: 4.25, mass_pct: 0.03464507102134284","size: 0.04, density: 4.25, mass_pct: 0.03445229089627854","size: 0.04, density: 4.25, mass_pct: 0.035313998531562245","size: 0.04, density: 4.25, mass_pct: 0.03643238547072646","size: 0.04, density: 4.25, mass_pct: 0.03780537986253973","size: 0.04, density: 4.25, mass_pct: 0.03943061261082769","size: 0.04, density: 4.25, mass_pct: 0.04063615180284951","size: 0.04, density: 4.25, mass_pct: 0.041283166295565714","size: 0.04, density: 4.25, mass_pct: 0.041970967267063834","size: 0.04, density: 4.25, mass_pct: 0.04269790948515916","size: 0.04, density: 4.25, mass_pct: 0.04346249280493363","size: 0.04, density: 4.25, mass_pct: 0.04426336517478723","size: 0.04, density: 4.25, mass_pct: 0.04509931960716828","size: 0.04, density: 4.25, mass_pct: 0.04596928717418435","size: 0.04, density: 4.25, mass_pct: 0.046872327585103506","size: 0.04, density: 4.25, mass_pct: 0.04780761848783487","size: 0.04, density: 4.25, mass_pct: 0.04877444430673172","size: 0.04, density: 4.25, mass_pct: 0.04977218517415682","size: 0.04, density: 4.25, mass_pct: 0.050800306319531245","size: 0.04, density: 4.25, mass_pct: 0.051858348138821946","size: 0.04, density: 4.25, mass_pct: 0.05294591706422835","size: 0.04, density: 4.25, mass_pct: 0.05406267728250746","size: 0.04, density: 4.25, mass_pct: 0.05520834330221102"],["size: 0.04, density: 4.35, mass_pct: 1.5942991666055137","size: 0.04, density: 4.35, mass_pct: 0.05892026952291295","size: 0.04, density: 4.35, mass_pct: 0.060484903091658763","size: 0.04, density: 4.35, mass_pct: 0.06242046620969321","size: 0.04, density: 4.35, mass_pct: 0.06476621322743957","size: 0.04, density: 4.35, mass_pct: 0.06755754798540624","size: 0.04, density: 4.35, mass_pct: 0.07082595325038986","size: 0.04, density: 4.35, mass_pct: 0.07459882072954692","size: 0.04, density: 4.35, mass_pct: 0.0788992689823491","size: 0.04, density: 4.35, mass_pct: 0.083746016583492","size: 0.04, density: 4.35, mass_pct: 0.08915335695445535","size: 0.04, density: 4.35, mass_pct: 0.09513126026538553","size: 0.04, density: 4.35, mass_pct: 0.10168560820036053","size: 0.04, density: 4.35, mass_pct: 0.06273277935676179","size: 0.04, density: 4.35, mass_pct: 0.06198491554620399","size: 0.04, density: 4.35, mass_pct: 0.06328684652578652","size: 0.04, density: 4.35, mass_pct: 0.06511882492067399","size: 0.04, density: 4.35, mass_pct: 0.06747313770070427","size: 0.04, density: 4.35, mass_pct: 0.07034096526026355","size: 0.04, density: 4.35, mass_pct: 0.07243432568665041","size: 0.04, density: 4.35, mass_pct: 0.0734847198015398","size: 0.04, density: 4.35, mass_pct: 0.07463394783588127","size: 0.04, density: 4.35, mass_pct: 0.07587588496496787","size: 0.04, density: 4.35, mass_pct: 0.07720494649083375","size: 0.04, density: 4.35, mass_pct: 0.07861609903329202","size: 0.04, density: 4.35, mass_pct: 0.0801048492525158","size: 0.04, density: 4.35, mass_pct: 0.08166721777334017","size: 0.04, density: 4.35, mass_pct: 0.08329970410761332","size: 0.04, density: 4.35, mass_pct: 0.08499924682561043","size: 0.04, density: 4.35, mass_pct: 0.08676318200241882","size: 0.04, density: 4.35, mass_pct: 0.08858920201171382","size: 0.04, density: 4.35, mass_pct: 0.09047531602451019","size: 0.04, density: 4.35, mass_pct: 0.09241981303964318","size: 0.04, density: 4.35, mass_pct: 0.09442122789382433","size: 0.04, density: 4.35, mass_pct: 0.09647831043076581","size: 0.04, density: 4.35, mass_pct: 0.09858999783098542"],["size: 0.04, density: 4.45, mass_pct: 1.7958370250042321","size: 0.04, density: 4.45, mass_pct: 0.07321147072905697","size: 0.04, density: 4.45, mass_pct: 0.07364372367759929","size: 0.04, density: 4.45, mass_pct: 0.07439860819347376","size: 0.04, density: 4.45, mass_pct: 0.07554924761478697","size: 0.04, density: 4.45, mass_pct: 0.0771615925169291","size: 0.04, density: 4.45, mass_pct: 0.07929428926580905","size: 0.04, density: 4.45, mass_pct: 0.08199836336667853","size: 0.04, density: 4.45, mass_pct: 0.08531688026881133","size: 0.04, density: 4.45, mass_pct: 0.08928470909252793","size: 0.04, density: 4.45, mass_pct: 0.09392847574497186","size: 0.04, density: 4.45, mass_pct: 0.0992667527439277","size: 0.04, density: 4.45, mass_pct: 0.10531049654058487","size: 0.04, density: 4.45, mass_pct: 0.06422941920545176","size: 0.04, density: 4.45, mass_pct: 0.06291082192540774","size: 0.04, density: 4.45, mass_pct: 0.06382458591332528","size: 0.04, density: 4.45, mass_pct: 0.06538829236565256","size: 0.04, density: 4.45, mass_pct: 0.06758757338417219","size: 0.04, density: 4.45, mass_pct: 0.07040599973241334","size: 0.04, density: 4.45, mass_pct: 0.07240659895816746","size: 0.04, density: 4.45, mass_pct: 0.07328614252314479","size: 0.04, density: 4.45, mass_pct: 0.0743077614071188","size: 0.04, density: 4.45, mass_pct: 0.07546004623439505","size: 0.04, density: 4.45, mass_pct: 0.07673259378209883","size: 0.04, density: 4.45, mass_pct: 0.07811602782685244","size: 0.04, density: 4.45, mass_pct: 0.07960197813686419","size: 0.04, density: 4.45, mass_pct: 0.08118303189836594","size: 0.04, density: 4.45, mass_pct: 0.08285266837205628","size: 0.04, density: 4.45, mass_pct: 0.08460518470077626","size: 0.04, density: 4.45, mass_pct: 0.08643561850233981","size: 0.04, density: 4.45, mass_pct: 0.08833967111093342","size: 0.04, density: 4.45, mass_pct: 0.09031363399323576","size: 0.04, density: 4.45, mass_pct: 0.09235431988196384","size: 0.04, density: 4.45, mass_pct: 0.094458999458201","size: 0.04, density: 4.45, mass_pct: 0.09662534392036191","size: 0.04, density: 4.45, mass_pct: 0.09885137343917892"],["size: 0.04, density: 4.55, mass_pct: 1.1176899752643614","size: 0.04, density: 4.55, mass_pct: 0.050756970425919416","size: 0.04, density: 4.55, mass_pct: 0.04999166462851789","size: 0.04, density: 4.55, mass_pct: 0.04937508120934008","size: 0.04, density: 4.55, mass_pct: 0.04896772866162812","size: 0.04, density: 4.55, mass_pct: 0.04882418012229905","size: 0.04, density: 4.55, mass_pct: 0.04899296460178348","size: 0.04, density: 4.55, mass_pct: 0.04951630495962211","size: 0.04, density: 4.55, mass_pct: 0.05042983722555449","size: 0.04, density: 4.55, mass_pct: 0.05176241508680323","size: 0.04, density: 4.55, mass_pct: 0.053536071092290076","size: 0.04, density: 4.55, mass_pct: 0.05576617372895098","size: 0.04, density: 4.55, mass_pct: 0.05846178929994971","size: 0.04, density: 4.55, mass_pct: 0.036453362220577816","size: 0.04, density: 4.55, mass_pct: 0.035464835362089435","size: 0.04, density: 4.55, mass_pct: 0.03574374960031212","size: 0.04, density: 4.55, mass_pct: 0.03645394553141345","size: 0.04, density: 4.55, mass_pct: 0.03758353392960689","size: 0.04, density: 4.55, mass_pct: 0.03911891984200632","size: 0.04, density: 4.55, mass_pct: 0.04017484818924321","size: 0.04, density: 4.55, mass_pct: 0.04056257862230205","size: 0.04, density: 4.55, mass_pct: 0.04105460336000898","size: 0.04, density: 4.55, mass_pct: 0.041641481310914046","size: 0.04, density: 4.55, mass_pct: 0.04231460396005104","size: 0.04, density: 4.55, mass_pct: 0.043066212619770276","size: 0.04, density: 4.55, mass_pct: 0.04388938104557027","size: 0.04, density: 4.55, mass_pct: 0.044777975242491046","size: 0.04, density: 4.55, mass_pct: 0.045726599393988814","size: 0.04, density: 4.55, mass_pct: 0.046730534469229916","size: 0.04, density: 4.55, mass_pct: 0.04778567416953549","size: 0.04, density: 4.55, mass_pct: 0.04888846141162694","size: 0.04, density: 4.55, mass_pct: 0.0500358274385908","size: 0.04, density: 4.55, mass_pct: 0.05122513483323043","size: 0.04, density: 4.55, mass_pct: 0.052454125124071986","size: 0.04, density: 4.55, mass_pct: 0.05372087126187263","size: 0.04, density: 4.55, mass_pct: 0.055023734966826325"],["size: 0.04, density: 4.65, mass_pct: 0.7926758909256092","size: 0.04, density: 4.65, mass_pct: 0.039286699765229464","size: 0.04, density: 4.65, mass_pct: 0.03807886992266684","size: 0.04, density: 4.65, mass_pct: 0.036951319698160116","size: 0.04, density: 4.65, mass_pct: 0.035953780177779386","size: 0.04, density: 4.65, mass_pct: 0.03513110426103649","size: 0.04, density: 4.65, mass_pct: 0.034523177264222486","size: 0.04, density: 4.65, mass_pct: 0.0341647015663633","size: 0.04, density: 4.65, mass_pct: 0.034084965922787085","size: 0.04, density: 4.65, mass_pct: 0.034307684776380125","size: 0.04, density: 4.65, mass_pct: 0.03485096637153084","size: 0.04, density: 4.65, mass_pct: 0.035727441853184765","size: 0.04, density: 4.65, mass_pct: 0.03694456268934187","size: 0.04, density: 4.65, mass_pct: 0.024148194148760457","size: 0.04, density: 4.65, mass_pct: 0.023415664495536778","size: 0.04, density: 4.65, mass_pct: 0.02348003711033275","size: 0.04, density: 4.65, mass_pct: 0.023862068926992382","size: 0.04, density: 4.65, mass_pct: 0.02455198835682548","size: 0.04, density: 4.65, mass_pct: 0.025538621897765786","size: 0.04, density: 4.65, mass_pct: 0.026199351380787658","size: 0.04, density: 4.65, mass_pct: 0.026400534061169264","size: 0.04, density: 4.65, mass_pct: 0.02668285004390913","size: 0.04, density: 4.65, mass_pct: 0.02703853982755877","size: 0.04, density: 4.65, mass_pct: 0.02746052819397615","size: 0.04, density: 4.65, mass_pct: 0.02794243838590926","size: 0.04, density: 4.65, mass_pct: 0.028478577819783798","size: 0.04, density: 4.65, mass_pct: 0.029063905050733748","size: 0.04, density: 4.65, mass_pct: 0.029693985332470692","size: 0.04, density: 4.65, mass_pct: 0.030364940159364192","size: 0.04, density: 4.65, mass_pct: 0.031073394621867752","size: 0.04, density: 4.65, mass_pct: 0.0318164252029609","size: 0.04, density: 4.65, mass_pct: 0.03259150973403634","size: 0.04, density: 4.65, mass_pct: 0.03339648055882271","size: 0.04, density: 4.65, mass_pct: 0.034229481471101934","size: 0.04, density: 4.65, mass_pct: 0.03508892865592283","size: 0.04, density: 4.65, mass_pct: 0.03597347563409591"],["size: 0.04, density: 4.75, mass_pct: 1.904204843369017","size: 0.04, density: 4.75, mass_pct: 0.11081825375533148","size: 0.04, density: 4.75, mass_pct: 0.10455067146932916","size: 0.04, density: 4.75, mass_pct: 0.09838347292666237","size: 0.04, density: 4.75, mass_pct: 0.0924586820377029","size: 0.04, density: 4.75, mass_pct: 0.08690439140387428","size: 0.04, density: 4.75, mass_pct: 0.08183450701514382","size: 0.04, density: 4.75, mass_pct: 0.07734813323366029","size: 0.04, density: 4.75, mass_pct: 0.07352891399125248","size: 0.04, density: 4.75, mass_pct: 0.07044457388781743","size: 0.04, density: 4.75, mass_pct: 0.06814682713045704","size: 0.04, density: 4.75, mass_pct: 0.0666717462189914","size: 0.04, density: 4.75, mass_pct: 0.06604061133674353","size: 0.04, density: 4.75, mass_pct: 0.05174737726476985","size: 0.04, density: 4.75, mass_pct: 0.05015184668224836","size: 0.04, density: 4.75, mass_pct: 0.049854833017360704","size: 0.04, density: 4.75, mass_pct: 0.050357653818999364","size: 0.04, density: 4.75, mass_pct: 0.05163240301580085","size: 0.04, density: 4.75, mass_pct: 0.05364717089929804","size: 0.04, density: 4.75, mass_pct: 0.05492999661978714","size: 0.04, density: 4.75, mass_pct: 0.05516186919333332","size: 0.04, density: 4.75, mass_pct: 0.05561207315912763","size: 0.04, density: 4.75, mass_pct: 0.056258448640697616","size: 0.04, density: 4.75, mass_pct: 0.057080789963112714","size: 0.04, density: 4.75, mass_pct: 0.05806088614286508","size: 0.04, density: 4.75, mass_pct: 0.05918248008498849","size: 0.04, density: 4.75, mass_pct: 0.06043117424113386","size: 0.04, density: 4.75, mass_pct: 0.06179430369579108","size: 0.04, density: 4.75, mass_pct: 0.06326079206639433","size: 0.04, density: 4.75, mass_pct: 0.06482100115890697","size: 0.04, density: 4.75, mass_pct: 0.06646658188317466","size: 0.04, density: 4.75, mass_pct: 0.06819033133519613","size: 0.04, density: 4.75, mass_pct: 0.06998605904017995","size: 0.04, density: 4.75, mass_pct: 0.07184846397470322","size: 0.04, density: 4.75, mass_pct: 0.07377302302030307","size: 0.04, density: 4.75, mass_pct: 0.07575589085080646"],["size: 0.04, density: 4.85, mass_pct: 1.7348211048592737","size: 0.04, density: 4.85, mass_pct: 0.13738793933087787","size: 0.04, density: 4.85, mass_pct: 0.12413439513154632","size: 0.04, density: 4.85, mass_pct: 0.11083623134266361","size: 0.04, density: 4.85, mass_pct: 0.09764913572927945","size: 0.04, density: 4.85, mass_pct: 0.08471352444242396","size: 0.04, density: 4.85, mass_pct: 0.07215426215433228","size: 0.04, density: 4.85, mass_pct: 0.060079987872399425","size: 0.04, density: 4.85, mass_pct: 0.04858239275473019","size: 0.04, density: 4.85, mass_pct: 0.037735717058261724","size: 0.04, density: 4.85, mass_pct: 0.027596650317233348","size: 0.04, density: 4.85, mass_pct: 0.018204735499208532","size: 0.04, density: 4.85, mass_pct: 0.009583300114123004","size: 0.04, density: 4.85, mass_pct: 0.037912269937715674","size: 0.04, density: 4.85, mass_pct: 0.037483037621940156","size: 0.04, density: 4.85, mass_pct: 0.036654327639833","size: 0.04, density: 4.85, mass_pct: 0.03659008238089622","size: 0.04, density: 4.85, mass_pct: 0.03725971098284652","size: 0.04, density: 4.85, mass_pct: 0.038628233763771995","size: 0.04, density: 4.85, mass_pct: 0.03940238899310077","size: 0.04, density: 4.85, mass_pct: 0.03929802681169114","size: 0.04, density: 4.85, mass_pct: 0.03941900981874368","size: 0.04, density: 4.85, mass_pct: 0.03974104617745055","size: 0.04, density: 4.85, mass_pct: 0.04024198626268748","size: 0.04, density: 4.85, mass_pct: 0.0409018670462764","size: 0.04, density: 4.85, mass_pct: 0.04170286736860173","size: 0.04, density: 4.85, mass_pct: 0.042629204520087775","size: 0.04, density: 4.85, mass_pct: 0.04366699511740001","size: 0.04, density: 4.85, mass_pct: 0.04480409713984645","size: 0.04, density: 4.85, mass_pct: 0.046029945120913844","size: 0.04, density: 4.85, mass_pct: 0.04733538672002612","size: 0.04, density: 4.85, mass_pct: 0.0487125260552732","size: 0.04, density: 4.85, mass_pct: 0.05015457707793213","size: 0.04, density: 4.85, mass_pct: 0.05165572876278101","size: 0.04, density: 4.85, mass_pct: 0.05321102283089107","size: 0.04, density: 4.85, mass_pct: 0.054816244004261876"],["size: 0.04, density: 4.95, mass_pct: 0.7557548366641286","size: 0.04, density: 4.95, mass_pct: 0.08324830918085267","size: 0.04, density: 4.95, mass_pct: 0.07259181565828941","size: 0.04, density: 4.95, mass_pct: 0.06185864398977258","size: 0.04, density: 4.95, mass_pct: 0.05112312688153641","size: 0.04, density: 4.95, mass_pct: 0.040452305648519975","size: 0.04, density: 4.95, mass_pct: 0.02990579659380765","size: 0.04, density: 4.95, mass_pct: 0.01953546912035264","size: 0.04, density: 4.95, mass_pct: 0.009385100925807242","size: 0.04, density: 4.95, mass_pct: -0.0005098621781005618","size: 0.04, density: 4.95, mass_pct: -0.010122353925178905","size: 0.04, density: 4.95, mass_pct: -0.01943349463156707","size: 0.04, density: 4.95, mass_pct: -0.028432146640175567","size: 0.04, density: 4.95, mass_pct: 0.01262189078541853","size: 0.04, density: 4.95, mass_pct: 0.01338246296428913","size: 0.04, density: 4.95, mass_pct: 0.012856983531945863","size: 0.04, density: 4.95, mass_pct: 0.012667515123977678","size: 0.04, density: 4.95, mass_pct: 0.0127994522151873","size: 0.04, density: 4.95, mass_pct: 0.013236093850264473","size: 0.04, density: 4.95, mass_pct: 0.01344262222783854","size: 0.04, density: 4.95, mass_pct: 0.013300284470968647","size: 0.04, density: 4.95, mass_pct: 0.01326192712913876","size: 0.04, density: 4.95, mass_pct: 0.013315952129933526","size: 0.04, density: 4.95, mass_pct: 0.013451784194270287","size: 0.04, density: 4.95, mass_pct: 0.013659892027829022","size: 0.04, density: 4.95, mass_pct: 0.013931766965692203","size: 0.04, density: 4.95, mass_pct: 0.014259873595461768","size: 0.04, density: 4.95, mass_pct: 0.0146375833330028","size: 0.04, density: 4.95, mass_pct: 0.015059099003129182","size: 0.04, density: 4.95, mass_pct: 0.015519376152041351","size: 0.04, density: 4.95, mass_pct: 0.01601404501941239","size: 0.04, density: 4.95, mass_pct: 0.016539335737424384","size: 0.04, density: 4.95, mass_pct: 0.017092008325361615","size: 0.04, density: 4.95, mass_pct: 0.01766928832493075","size: 0.04, density: 4.95, mass_pct: 0.018268808418979706","size: 0.04, density: 4.95, mass_pct: 0.01888855603443584"],["size: 0.04, density: 1.5, mass_pct: 0.5938103852991351","size: 0.04, density: 1.5, mass_pct: 0.08887294371840103","size: 0.04, density: 1.5, mass_pct: 0.07558292194211534","size: 0.04, density: 1.5, mass_pct: 0.062191614705230595","size: 0.04, density: 1.5, mass_pct: 0.04875832113294675","size: 0.04, density: 1.5, mass_pct: 0.03533652362256844","size: 0.04, density: 1.5, mass_pct: 0.021973781247336174","size: 0.04, density: 1.5, mass_pct: 0.008711472969177068","size: 0.04, density: 1.5, mass_pct: -0.004415477430635749","size: 0.04, density: 1.5, mass_pct: -0.017378792956262764","size: 0.04, density: 1.5, mass_pct: -0.03015688141780126","size: 0.04, density: 1.5, mass_pct: -0.04273468149439629","size: 0.04, density: 1.5, mass_pct: -0.05510330808884278","size: 0.04, density: 1.5, mass_pct: 0.007116533510808764","size: 0.04, density: 1.5, mass_pct: 0.008821531087529698","size: 0.04, density: 1.5, mass_pct: 0.008348996945943375","size: 0.04, density: 1.5, mass_pct: 0.008132610454428145","size: 0.04, density: 1.5, mass_pct: 0.008160720014177334","size: 0.04, density: 1.5, mass_pct: 0.008420002391173574","size: 0.04, density: 1.5, mass_pct: 0.008517758819776232","size: 0.04, density: 1.5, mass_pct: 0.00836620251030684","size: 0.04, density: 1.5, mass_pct: 0.008296113757602084","size: 0.04, density: 1.5, mass_pct: 0.008298240166898728","size: 0.04, density: 1.5, mass_pct: 0.008364145279565525","size: 0.04, density: 1.5, mass_pct: 0.008486225478685048","size: 0.04, density: 1.5, mass_pct: 0.00865769295310148","size: 0.04, density: 1.5, mass_pct: 0.008872536306289367","size: 0.04, density: 1.5, mass_pct: 0.009125467566675203","size: 0.04, density: 1.5, mass_pct: 0.009411862021413418","size: 0.04, density: 1.5, mass_pct: 0.009727695443409344","size: 0.04, density: 1.5, mass_pct: 0.010069481843975934","size: 0.04, density: 1.5, mass_pct: 0.010434213800618151","size: 0.04, density: 1.5, mass_pct: 0.010819306609484157","size: 0.04, density: 1.5, mass_pct: 0.011222546938769893","size: 0.04, density: 1.5, mass_pct: 0.011642046254437764","size: 0.04, density: 1.5, mass_pct: 0.0120761990207896"],["size: 0.04, density: 1.55, mass_pct: 0.6596350122727811","size: 0.04, density: 1.55, mass_pct: 0.19676899135014556","size: 0.04, density: 1.55, mass_pct: 0.16140071008144605","size: 0.04, density: 1.55, mass_pct: 0.1257953725894216","size: 0.04, density: 1.55, mass_pct: 0.09000643160665377","size: 0.04, density: 1.55, mass_pct: 0.054082096617986235","size: 0.04, density: 1.55, mass_pct: 0.01806523777404667","size: 0.04, density: 1.55, mass_pct: -0.018006845579308536","size: 0.04, density: 1.55, mass_pct: -0.05410267285046721","size: 0.04, density: 1.55, mass_pct: -0.09019675491639355","size: 0.04, density: 1.55, mass_pct: -0.12626962839466047","size: 0.04, density: 1.55, mass_pct: -0.16230771688340614","size: 0.04, density: 1.55, mass_pct: -0.19830301128085412","size: 0.04, density: 1.55, mass_pct: -0.000629663709386996","size: 0.04, density: 1.55, mass_pct: 0.006342542179529786","size: 0.04, density: 1.55, mass_pct: 0.005870313689973371","size: 0.04, density: 1.55, mass_pct: 0.005618646487389078","size: 0.04, density: 1.55, mass_pct: 0.005577037722273025","size: 0.04, density: 1.55, mass_pct: 0.00573347771882382","size: 0.04, density: 1.55, mass_pct: 0.00576345021571889","size: 0.04, density: 1.55, mass_pct: 0.005593853653698132","size: 0.04, density: 1.55, mass_pct: 0.005496405558687022","size: 0.04, density: 1.55, mass_pct: 0.005462765743790675","size: 0.04, density: 1.55, mass_pct: 0.005485329513898129","size: 0.04, density: 1.55, mass_pct: 0.00555724290462578","size: 0.04, density: 1.55, mass_pct: 0.00567238732537234","size: 0.04, density: 1.55, mass_pct: 0.005825344052724723","size: 0.04, density: 1.55, mass_pct: 0.006011346464338984","size: 0.04, density: 1.55, mass_pct: 0.006226225805008311","size: 0.04, density: 1.55, mass_pct: 0.006466354602283174","size: 0.04, density: 1.55, mass_pct: 0.006728590556696722","size: 0.04, density: 1.55, mass_pct: 0.007010222752063199","size: 0.04, density: 1.55, mass_pct: 0.007308921314622018","size: 0.04, density: 1.55, mass_pct: 0.0076226911281622725","size: 0.04, density: 1.55, mass_pct: 0.007949829852444521","size: 0.04, density: 1.55, mass_pct: 0.008288890243737688"]],"x":[0.04,0.045,0.05,0.053,0.056,0.063,0.071,0.075,0.08,0.09,0.1,0.106,0.112,0.125,0.14,0.15,0.16,0.18,0.2,0.212,0.224,0.25,0.28,0.3,0.315,0.355,0.4,0.425,0.45,0.5,0.56,0.6,0.63,0.71,0.8,0.85,0.9,1.0],"y":[1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6,2.7,2.8,2.9,3.0,3.1,3.2,3.3,3.4,3.5,3.6,3.7,3.8,3.9,4.0,4.1,4.2,4.3,4.4,4.5,4.6,4.7,4.8,4.9,5.0],"z":[[4.817036128169625,0.01728446463544014,0.014154207482447776,0.01066858875753973,0.006953086700500654,0.0031208712283702917,-0.0007274216244967934,-0.004504233073928775,-0.0081356636384291,-0.011561878579177952,-0.014737188352343443,-0.017629722875119488,-0.02022068108832936,-0.022503190502679068,-0.024480851254568666,-0.0261660636829481,-0.027578247711552314,-0.028742058377030807,-0.029685687932643475,-0.030473005658587456,-0.031132784481818828,-0.031653683038588,-0.0320552795977334,-0.032355425889407256,-0.03257021133230558,-0.032713999082933036,-0.03279950938696429,-0.03283793170746362,-0.03283905203745951,-0.032811385729123725,-0.032762309210361155,-0.03269818625273723,-0.0326244861456722,-0.03254589234775023,-0.032466401037717245,-0.032389409564401055],[0.14818705803216956,0.008742228759797297,0.007990068847639973,0.007437503594653504,0.007029502846530588,0.006716434427932016,0.006454163064814499,0.0062042886854775095,0.005934401687452461,0.005618260748609437,0.005235828110594975,0.004773126723862652,0.0042219111333429695,0.0035791673172730905,0.0028464741634459663,0.0020292700057683573,0.0011360717106066451,0.00017769207285583952,-0.0008335048190888926,-0.001994262851161221,-0.003317494448773439,-0.004696184496192634,-0.006121746682699768,-0.007586351894128539,-0.009082943901483563,-0.010605223551061691,-0.012147612209600143,-0.013705202588947194,-0.01527370291144514,-0.01684937865591207,-0.01842899479158688,-0.020009760401639206,-0.02158927685630035,-0.023165490162394328,-0.024736647742478354,-0.026301259643943916],[0.18471007400618758,0.006853727491226091,0.006878443130627631,0.007066912795482438,0.007382093917835341,0.007790577483108018,0.008262654617898378,0.008772476998080035,0.009298228677163732,0.009822245776673786,0.01033104023657244,0.01081520365496824,0.011269185750691633,0.011690957688683222,0.012081582269133194,0.012444720209622782,0.012786104487007175,0.013113013541533767,0.013433770039017133,0.01359940875052945,0.013584079174622064,0.013535081069402986,0.013458194156964141,0.013358688466018452,0.013241313771400086,0.013110310236202015,0.0129694330180094,0.01282198537041712,0.01267085622709224,0.01251855941443125,0.012367272535759087,0.012218874247016174,0.012074979143093021,0.011936969832906928,0.011806026032736781,0.011683150677638253],[0.125763287445692,0.0033380047049056945,0.0036711135461973683,0.0040876918381606,0.004572914646992387,0.005113411235803666,0.005697291713949725,0.0063142112345343495,0.006955438762406895,0.007613904975876828,0.008284211771933557,0.008962593781630944,0.009646829707804781,0.010336107583384433,0.01103085275529486,0.011732530291943542,0.012443434607755486,0.013166478632391952,0.013904993208631531,0.014548219658901905,0.015075346242806818,0.015591232083056681,0.016098190302146206,0.01659833003644084,0.017093552209695825,0.017585553792200555,0.01807583764851622,0.01856572578515125,0.019056374392206473,0.019548789536811714,0.02004384272509779,0.020542285820436042,0.021044765005413465,0.021551833618708712,0.022063963798645943,0.022581556933314147],[0.1353201514071142,0.0028412579977282744,0.0033784132277395735,0.003989486796655283,0.0046644214693719035,0.0053941465379844225,0.006170595900685082,0.006986751613337948,0.00783669054169278,0.008715616857918383,0.009619868488933645,0.010546891008439306,0.011495177488445972,0.012464177090488414,0.013454178369925239,0.014466175229156828,0.015501724198934695,0.016562801410742175,0.01765166650831673,0.01864386579826865,0.019515188222499254,0.02038103902964655,0.021242987442022684,0.022102464297728493,0.02296075918345036,0.023819023323818574,0.024678276262167006,0.025539414847699445,0.02640322343978507,0.027270384554364865,0.02814148942119493,0.029017048104392592,0.029897498974214894,0.030783217415632,0.03167452372727663,0.03257169021082878],[0.3453473385309483,0.005083534966888958,0.006971100216799474,0.009001058285495465,0.011164885824364921,0.01345489555107726,0.015864251571176987,0.01838700628734768,0.0210181399364564,0.02375358812980943,0.026590247318055368,0.029525952665073848,0.032559427073078344,0.03569020371513786,0.03891852713737964,0.042245239656461424,0.045671660407720076,0.04919946413151443,0.05283056584038592,0.05623206807618485,0.05933690957558312,0.062447047995984765,0.06556381322861037,0.06868841788626422,0.07182195487337116,0.07496539983472493,0.07811961681725109,0.08128536588655998,0.08446331177488041,0.08765403290373862,0.09085803033106653,0.09407573632816767,0.09730752240696026,0.10055370670028883,0.10381456065621829,0.10709031504614085],[0.42746896694241804,0.004074922376305356,0.006941200978238581,0.00993540043148766,0.013064858089953722,0.016336191577020372,0.019755285595888013,0.02332726015612274,0.027056436538048564,0.030946313584621517,0.03499956299694717,0.03921804838164344,0.04360286913270583,0.048154427119713954,0.05287251182429086,0.0577563981352489,0.06280495047040678,0.06801672712377647,0.07339007955024245,0.07849721026695598,0.08324965184516363,0.08802873772767926,0.09283332307306545,0.09766236399944216,0.10251491967626868,0.10739015021638874,0.11228731180203554,0.11720575012811572,0.1221448929576152,0.1271042423543701,0.13208336698095344,0.13708189471511376,0.14209950573955385,0.14713592618850943,0.15219092238499896,0.15726429566867015],[0.2192671107615438,0.0017301019107011093,0.0032872048602938793,0.004901418139475088,0.006579636330805826,0.008328077718323555,0.010152271893830387,0.012057029900791048,0.014046412252622818,0.01612370665519502,0.018291423586287322,0.020551314193476108,0.022904411528040677,0.02535109320878903,0.02789116142104708,0.030523934810340433,0.033248346320993376,0.03606304124652237,0.03896647052297363,0.041736574631576866,0.04432704606436188,0.046934694849060425,0.04955844522951169,0.05219731631669055,0.05485042405432882,0.057516979238104164,0.060196282935811356,0.06288772032628341,0.06559075370404831,0.06830491518081759,0.07102979944814479,0.07376505683942934,0.07651038683669563,0.07926553210057062,0.08203027305525522,0.08480442302851986],[0.2729109171182002,0.0021987419971862816,0.004127410587334789,0.006126980101313516,0.008206068767314665,0.010372449440377738,0.012633034110267281,0.014993836581312368,0.01745993249527666,0.020035431484511475,0.022723471646222456,0.025526241914897493,0.02844503360462258,0.03148031873891443,0.034631850049435024,0.03789877584307976,0.04127976230026286,0.044773116037872256,0.04837690072597855,0.05181493075299936,0.05502960595082173,0.05826569217566024,0.06152184473229615,0.06479683750946395,0.06808956543681254,0.07139904200895363,0.07472439356061787,0.07806485156535968,0.0814197438913271,0.0847884856781672,0.08817057029031426,0.0915655606445298,0.09497308109333512,0.09839280996250753,0.10182447278231342,0.10526783621246615],[0.5182185221533997,0.00572590812116902,0.009025271580444192,0.01248692429172704,0.01611683576169742,0.019920389940414892,0.023902374490499808,0.028066954936979745,0.032417646976675256,0.03695729718977791,0.04168807921244299,0.04661150923322887,0.051728481694457755,0.05703932354820828,0.06254386352145101,0.06824151167997271,0.07413134413956012,0.08021218796054529,0.08648270192356665,0.0924288207220738,0.09794459328556103,0.10348929484234524,0.10906199397509207,0.1146618414049133,0.12028807169315268,0.12594000152645343,0.131617025751349,0.13731861203988302,0.14304429483284917,0.14879366902054156,0.1545663836765034,0.16036213605040325,0.16618066594605405,0.1720217505524166,0.17788519975513625,0.18377085192860518],[0.43984672422301824,0.009616512390991592,0.011296577441722187,0.013205038982229465,0.015313077341177926,0.017594699806053545,0.020026792429460368,0.02258924482901947,0.025265083872400448,0.028040566798235075,0.030905199694277182,0.03385166268328987,0.036875637563586465,0.039975545871181566,0.04315221448050221,0.04640849148452219,0.049748837224895086,0.053178914436879825,0.056705198278829354,0.059923779801388515,0.06275560498342724,0.06557381604075017,0.0683829096834989,0.07118698607274697,0.07398974060429596,0.0767944721883793,0.07960410239370373,0.08242120120092421,0.08524801624359245,0.08808650331621591,0.09093835662670034,0.09380503779745307,0.09668780300741629,0.09958772794698921,0.10250573045306031,0.10544259082407902],[0.2303894034092576,0.007428361722695564,0.007745472518594253,0.008227526717601295,0.008842483308608816,0.009561444224704172,0.010358711940158803,0.011211928219939658,0.012102222747474743,0.013014316654213818,0.013936543063224336,0.014860763912644013,0.015782178330649318,0.016581548293270628,0.017473197283154992,0.01836813386784863,0.019267458252102517,0.02017746612753279,0.021105356418056994,0.021856103884014374,0.02239380590803108,0.022905275884426143,0.02339551314639787,0.023869076153517185,0.024330073357137435,0.024782172405594546,0.02522862142806814,0.025672277666670903,0.026115639985847757,0.026560882790439996,0.027009889659704852,0.02746428558994096,0.02792546717041255,0.028394630327598366,0.02887279549027055,0.029360830175327864],[0.23031542329941954,0.00739422809833079,0.007720965880863572,0.008210185535951984,0.00883070332740321,0.009554394372024209,0.010356248695566282,0.011214506269901057,0.012110801664190205,0.013030264804434586,0.013961540967425521,0.014896709829640973,0.01583109896923029,0.016413704972860207,0.017279906122919072,0.0181587845577541,0.019043694003455177,0.019940761706942364,0.020856993980942425,0.02159756270956747,0.022126498340010677,0.022630123090388917,0.023113302533979804,0.023580473166258994,0.02403563351469828,0.024482353097664996,0.02492379313887993,0.0253627344333438,0.025801608987007004,0.02624253302732393,0.026687339737339274,0.027137610635672212,0.02759470494508753,0.028059786594378796,0.02853384871020159,0.029017735598524604],[0.4986761939065743,0.01590815402229406,0.016647284711281737,0.017730096008047865,0.019091922821287795,0.02067444314208355,0.022425794286020203,0.024300852917106593,0.02626153500796424,0.028277004782962686,0.03032371617921747,0.032385244979924115,0.03445190207714876,0.03499063473298069,0.03678160405341612,0.038631398611763006,0.04049979015848048,0.04239948464321718,0.04434501091682618,0.045914988701161834,0.047031274045391085,0.04809583141367101,0.04911875044818958,0.0501092310210871,0.051075564798930044,0.05202515382077854,0.05296455345307515,0.053899530174980274,0.05483512718866112,0.05577573287275705,0.05672514866234079,0.05768665412104856,0.05866306784195884,0.05965680344099699,0.060669920345057575,0.0617041693746394],[0.574615878854085,0.01817420191909169,0.019075870430416694,0.020360059481574707,0.0219569907062328,0.023803730388197716,0.02584431489517169,0.02803005284505999,0.03031984878495941,0.03268042865610276,0.03508638453330703,0.03751999348456014,0.03997080025325705,0.03940837986898848,0.04133245819802877,0.04337575766612888,0.045449669888497406,0.04756790551473843,0.049746142238288986,0.05149960710413159,0.05273782263767179,0.05392153349345374,0.05506162713386619,0.05616803089426158,0.057249692089761155,0.058314598062219274,0.05936982253186195,0.06042158795171625,0.061475336306047394,0.06253580297657389,0.0636070899900023,0.06469273623547388,0.065795783181251,0.06691883529555119,0.06806411485074947,0.0692335111102551],[0.38247964525381734,0.01201498778610832,0.01264235196920238,0.013516500835610288,0.014593730094870304,0.01583462246688971,0.01720412624483014,0.01867174455097442,0.020211738066633452,0.021803266247582772,0.023430415345779606,0.025082084955609703,0.026751726635288128,0.02570282844617555,0.026903078998133708,0.028212059377115125,0.02954673235731575,0.03091568533111588,0.03232873770966326,0.033463671050788506,0.03426001201126438,0.035023027096444885,0.03575953545162446,0.036475754865647574,0.0371772893111899,0.03786914150080411,0.038555741918295354,0.039240987873235815,0.03992828784411628,0.04062060774300024,0.04132051679262804,0.04203023150577411,0.04275165684550596,0.043486424068648326,0.044235925051235185,0.0450013430958398],[0.38190320379148995,0.011939085125511449,0.01258537959215411,0.013471967319664267,0.014557348942813795,0.01580409582274533,0.01717892464634496,0.018652877133909947,0.02020151254115043,0.02180504175017139,0.02344835387744437,0.02512090854395543,0.026816487683339437,0.025251146402213372,0.026387123134173015,0.02765426077584032,0.028951196628325345,0.03028608484150341,0.03166824942738077,0.0327763233224183,0.03354973150071738,0.034292168019465656,0.03501010799123038,0.03570945551119186,0.03639553182598986,0.03707308725632407,0.03774632876365102,0.038418957034378025,0.039094208585837446,0.03977489969685765,0.0404634699703239,0.04116202409371849,0.04187237092280593,0.04259605941588517,0.043334411227466944,0.04408854996126132],[0.7617398639621503,0.023667655871639433,0.025009934431924005,0.026813639939760266,0.029002228082137257,0.0315066628766748,0.034265554267787206,0.037225489592106024,0.040341388642480595,0.043576750994738005,0.04690370508524743,0.050302809506496786,0.053762595224793756,0.04916047340125317,0.051245436881558686,0.053656695984286566,0.056139451186413274,0.05870874256855795,0.061381767986390605,0.06351862364213277,0.06499793102592676,0.06642217175323693,0.06780328897166087,0.06915217260460425,0.0704786375291535,0.07179144556686444,0.07309835632984261,0.07440619562123339,0.07572093309849402,0.07704776330201966,0.0783911860048767,0.07975508323893886,0.08114279138347234,0.08255716744479179,0.08400064917426951,0.08547530902478105],[0.758422440411307,0.0234156260364734,0.024812322060016375,0.02664542342076603,0.028846724431985434,0.031354709790921025,0.034114677185495206,0.037079032650298986,0.04020760695046665,0.043467875965015994,0.04683500441797039,0.05029166882052349,0.053827649558852546,0.047393425411609284,0.049238788040958596,0.051490212288512575,0.0538283036205871,0.056266463673241944,0.05882001679276105,0.06085329327585764,0.06224473765211335,0.06358997428110123,0.06489964524125356,0.06618345412355174,0.06745014658662617,0.0687075299519233,0.0699625185106738,0.07122119447290796,0.07248887717035045,0.07377019525763594,0.07506915830913784,0.07638922545377146,0.07773336961052955,0.07910413654758396,0.0805036984512446,0.08193390200433147],[0.4531805345398158,0.013942706378206047,0.01480093615663569,0.01590926058909203,0.01723062538615427,0.018731610961512542,0.0203824990408985,0.022157433120917776,0.024034590351799553,0.02599630126562857,0.028029073534302725,0.030123495778799466,0.03227401596165435,0.027598876850245087,0.028595937807721402,0.029872161635865032,0.031207320717834715,0.0326086957970415,0.03408461217283553,0.03525593018145989,0.03604969532253132,0.0368198333524925,0.037572125822327156,0.038311844428358104,0.039043740448409185,0.03977205538731531,0.04050054559088511,0.041232515358009085,0.04197085453647719,0.042718077748167264,0.043476363285440016,0.044247590398738705,0.04503337419385511,0.045835097717185296,0.04665394105835751,0.04749090746972894],[0.4515977855041244,0.013871782667515873,0.014741422123084822,0.015852510979455166,0.017170812119998265,0.01866544679111581,0.02030895614694694,0.02207744950882695,0.023950763180084152,0.025912571071541542,0.02795040665321102,0.030055574076738308,0.032222943416382314,0.026977976765484964,0.02789549927735346,0.029117076417771056,0.030402569808583243,0.0317587066509628,0.03319317928636999,0.03432869049973463,0.03509231031660386,0.035835277975471584,0.03656293546606148,0.037280153686908506,0.037991322684440824,0.03870036148931221,0.03941074085895035,0.040125513872155676,0.0408473506666529,0.04157857468200809,0.04232119859888072,0.0430769587915023,0.04384734757203112,0.04463364283631676,0.045436934953734014,0.04625815090123763],[0.9723380505051661,0.029847611548182048,0.031756355214555214,0.03415922897118583,0.036991386795951035,0.0401943434968428,0.04371609127935327,0.04751138055386583,0.05154202073513269,0.055777089770038694,0.06019297571455894,0.064773208397491,0.06950807160107318,0.05634947577332782,0.05807658328139275,0.060541035852027296,0.06316020258116771,0.06594682496929759,0.06891547251850903,0.07125555705003526,0.07280930540481,0.0743281303407528,0.07582214973061994,0.07730058918741366,0.07877176357758796,0.080243095650792,0.08172115911523468,0.08321173658444668,0.08471988537135465,0.08625000613310839,0.08780591094107758,0.08939088853502318,0.09100776539433751,0.09265896188817367,0.09434654320565493,0.09607226506595888],[1.1099103862338888,0.03416784929654692,0.03637814617740109,0.039110761883824,0.04230598303193455,0.04590995360094862,0.049874782273899625,0.05415880101899972,0.058726842080353496,0.06355043092140565,0.06860782451106749,0.07388385631137238,0.07936957915454233,0.061505961510589506,0.06308297159459596,0.0656285477485936,0.0683782503843091,0.07134381249756137,0.07453865039744077,0.07704049900557618,0.0786680880712156,0.08027119854483276,0.08185914745764176,0.08344043020471846,0.08502270352105555,0.0866128026370747,0.08821678094427908,0.08983996335560417,0.09148700689174526,0.09316196389273255,0.09486834470001825,0.09660917774578646,0.09838706579028454,0.10020423762761597,0.10206259498478508,0.10396375461377348],[0.7317187456417552,0.02267128493280279,0.024127031563485387,0.025903516273610313,0.027969415761964763,0.030296479270339512,0.032859584890554176,0.03563687520587488,0.03860990258963936,0.04176373041573877,0.045086953142099644,0.0485716149971902,0.05221302264740601,0.038954987325628514,0.03977728999036544,0.041304900903095236,0.04298251929233431,0.04481629982794199,0.04681328017991281,0.0483672469165679,0.04935805746667742,0.05034137527832038,0.051322087701004986,0.05230465108607562,0.053293081856688566,0.05429096550687084,0.055301477408614456,0.05632741080258973,0.05737120857935495,0.05843499643767646,0.05952061576517175,0.06062965515865625,0.06176347992418884,0.06292325919981188,0.0641099905569864,0.06532452208046811],[0.5439932819132517,0.016971588188958938,0.01804396418240017,0.019342917092524555,0.02084918138524516,0.0225453813076093,0.02441606551959263,0.026447790520982336,0.028629210017945713,0.03095113717296982,0.03340655695725236,0.03599057613858058,0.03870030806148516,0.028159329066408386,0.028664103064948595,0.029724427119388604,0.030903973301023676,0.03220652706660942,0.03363641696597907,0.03474390636354085,0.03543936697019134,0.036133577395708986,0.03682954362588164,0.03753000655916149,0.03823743651429989,0.038954038765114156,0.0396817663381177,0.04042233722825416,0.041177253946096386,0.04194782391203277,0.042735179679586725,0.04354029832220751,0.04436401957737556,0.04520706252862804,0.046070040736632116,0.04695347581963815],[1.4282337788698252,0.04524220095200348,0.04797161172668218,0.051248822338446624,0.05503906846633421,0.05931099586661514,0.06403672286512972,0.06919199089976756,0.07475632578077394,0.08071315001975686,0.08704980511938042,0.09375746132726025,0.10083090972385843,0.0707535157634611,0.07167053477843764,0.07415753564164883,0.07698773967983417,0.08016797768380755,0.08370606044641259,0.0864252206518845,0.0880889818129633,0.08976644026600676,0.09146302026003549,0.0931836676986597,0.09493284022897973,0.09671451722930645,0.0985322229019334,0.1003890573388335,0.10228773179421367,0.10423060548537987,0.10621972208542328,0.10825684470648154,0.11034348864013886,0.11248095146011215,0.11467034032599431,0.11691259648882645],[1.5624170827173063,0.05114478052480686,0.05387571965824577,0.057129880769577916,0.0608944777981577,0.06515797888453843,0.06991012935472705,0.0751420070886286,0.080846081830358,0.08701625650202914,0.09364787540175,0.10073769101175499,0.10828378752987476,0.0722662522768278,0.07264488461693029,0.07489073833641545,0.07755999566669568,0.08065516892220835,0.08417913085494043,0.0868515922019517,0.08841214028964249,0.09001474460584812,0.0916614001494178,0.09335392598710211,0.09509396160866322,0.09688297060005845,0.09872224913686932,0.10061293741009701,0.1025560325989434,0.10455240240618567,0.10660279847971131,0.10870786927905572,0.11086817211743315,0.11308418423274079,0.115356312830162,0.11768490409492748],[0.8450157288016388,0.028664819806056615,0.029969655977893025,0.03152512193329814,0.03333487166767623,0.035402200751269534,0.03773003976078559,0.04032093845620754,0.043177048831071645,0.04630011330593397,0.04969146238542343,0.05335202414389605,0.05728234607856252,0.0368997477955073,0.03685810779651932,0.037873393692195105,0.039137623293767014,0.04065007863302705,0.04240993873604015,0.04372808289256013,0.044463024496878216,0.04523203025638844,0.046034530041063164,0.046870003998738856,0.047737983596672244,0.048638050571816464,0.04956983450369367,0.05053300954888273,0.05152729073395345,0.05255243008715737,0.05360821280281857,0.05469445356444246,0.05581099310330017,0.05695769503449454,0.05813444298710201,0.059341138028468514],[0.8269230807078484,0.02892921578070484,0.030047235521422296,0.0313888356261025,0.03296456048143103,0.034783920161579156,0.03685537147357509,0.03918627229623572,0.04178283266810911,0.04465008071699161,0.04779185589916989,0.05121083637207668,0.05490860205613623,0.03464507102134284,0.03445229089627854,0.035313998531562245,0.03643238547072646,0.03780537986253973,0.03943061261082769,0.04063615180284951,0.041283166295565714,0.041970967267063834,0.04269790948515916,0.04346249280493363,0.04426336517478723,0.04509931960716828,0.04596928717418435,0.046872327585103506,0.04780761848783487,0.04877444430673172,0.04977218517415682,0.050800306319531245,0.051858348138821946,0.05294591706422835,0.05406267728250746,0.05520834330221102],[1.5942991666055137,0.05892026952291295,0.060484903091658763,0.06242046620969321,0.06476621322743957,0.06755754798540624,0.07082595325038986,0.07459882072954692,0.0788992689823491,0.083746016583492,0.08915335695445535,0.09513126026538553,0.10168560820036053,0.06273277935676179,0.06198491554620399,0.06328684652578652,0.06511882492067399,0.06747313770070427,0.07034096526026355,0.07243432568665041,0.0734847198015398,0.07463394783588127,0.07587588496496787,0.07720494649083375,0.07861609903329202,0.0801048492525158,0.08166721777334017,0.08329970410761332,0.08499924682561043,0.08676318200241882,0.08858920201171382,0.09047531602451019,0.09241981303964318,0.09442122789382433,0.09647831043076581,0.09858999783098542],[1.7958370250042321,0.07321147072905697,0.07364372367759929,0.07439860819347376,0.07554924761478697,0.0771615925169291,0.07929428926580905,0.08199836336667853,0.08531688026881133,0.08928470909252793,0.09392847574497186,0.0992667527439277,0.10531049654058487,0.06422941920545176,0.06291082192540774,0.06382458591332528,0.06538829236565256,0.06758757338417219,0.07040599973241334,0.07240659895816746,0.07328614252314479,0.0743077614071188,0.07546004623439505,0.07673259378209883,0.07811602782685244,0.07960197813686419,0.08118303189836594,0.08285266837205628,0.08460518470077626,0.08643561850233981,0.08833967111093342,0.09031363399323576,0.09235431988196384,0.094458999458201,0.09662534392036191,0.09885137343917892],[1.1176899752643614,0.050756970425919416,0.04999166462851789,0.04937508120934008,0.04896772866162812,0.04882418012229905,0.04899296460178348,0.04951630495962211,0.05042983722555449,0.05176241508680323,0.053536071092290076,0.05576617372895098,0.05846178929994971,0.036453362220577816,0.035464835362089435,0.03574374960031212,0.03645394553141345,0.03758353392960689,0.03911891984200632,0.04017484818924321,0.04056257862230205,0.04105460336000898,0.041641481310914046,0.04231460396005104,0.043066212619770276,0.04388938104557027,0.044777975242491046,0.045726599393988814,0.046730534469229916,0.04778567416953549,0.04888846141162694,0.0500358274385908,0.05122513483323043,0.052454125124071986,0.05372087126187263,0.055023734966826325],[0.7926758909256092,0.039286699765229464,0.03807886992266684,0.036951319698160116,0.035953780177779386,0.03513110426103649,0.034523177264222486,0.0341647015663633,0.034084965922787085,0.034307684776380125,0.03485096637153084,0.035727441853184765,0.03694456268934187,0.024148194148760457,0.023415664495536778,0.02348003711033275,0.023862068926992382,0.02455198835682548,0.025538621897765786,0.026199351380787658,0.026400534061169264,0.02668285004390913,0.02703853982755877,0.02746052819397615,0.02794243838590926,0.028478577819783798,0.029063905050733748,0.029693985332470692,0.030364940159364192,0.031073394621867752,0.0318164252029609,0.03259150973403634,0.03339648055882271,0.034229481471101934,0.03508892865592283,0.03597347563409591],[1.904204843369017,0.11081825375533148,0.10455067146932916,0.09838347292666237,0.0924586820377029,0.08690439140387428,0.08183450701514382,0.07734813323366029,0.07352891399125248,0.07044457388781743,0.06814682713045704,0.0666717462189914,0.06604061133674353,0.05174737726476985,0.05015184668224836,0.049854833017360704,0.050357653818999364,0.05163240301580085,0.05364717089929804,0.05492999661978714,0.05516186919333332,0.05561207315912763,0.056258448640697616,0.057080789963112714,0.05806088614286508,0.05918248008498849,0.06043117424113386,0.06179430369579108,0.06326079206639433,0.06482100115890697,0.06646658188317466,0.06819033133519613,0.06998605904017995,0.07184846397470322,0.07377302302030307,0.07575589085080646],[1.7348211048592737,0.13738793933087787,0.12413439513154632,0.11083623134266361,0.09764913572927945,0.08471352444242396,0.07215426215433228,0.060079987872399425,0.04858239275473019,0.037735717058261724,0.027596650317233348,0.018204735499208532,0.009583300114123004,0.037912269937715674,0.037483037621940156,0.036654327639833,0.03659008238089622,0.03725971098284652,0.038628233763771995,0.03940238899310077,0.03929802681169114,0.03941900981874368,0.03974104617745055,0.04024198626268748,0.0409018670462764,0.04170286736860173,0.042629204520087775,0.04366699511740001,0.04480409713984645,0.046029945120913844,0.04733538672002612,0.0487125260552732,0.05015457707793213,0.05165572876278101,0.05321102283089107,0.054816244004261876],[0.7557548366641286,0.08324830918085267,0.07259181565828941,0.06185864398977258,0.05112312688153641,0.040452305648519975,0.02990579659380765,0.01953546912035264,0.009385100925807242,-0.0005098621781005618,-0.010122353925178905,-0.01943349463156707,-0.028432146640175567,0.01262189078541853,0.01338246296428913,0.012856983531945863,0.012667515123977678,0.0127994522151873,0.013236093850264473,0.01344262222783854,0.013300284470968647,0.01326192712913876,0.013315952129933526,0.013451784194270287,0.013659892027829022,0.013931766965692203,0.014259873595461768,0.0146375833330028,0.015059099003129182,0.015519376152041351,0.01601404501941239,0.016539335737424384,0.017092008325361615,0.01766928832493075,0.018268808418979706,0.01888855603443584],[0.5938103852991351,0.08887294371840103,0.07558292194211534,0.062191614705230595,0.04875832113294675,0.03533652362256844,0.021973781247336174,0.008711472969177068,-0.004415477430635749,-0.017378792956262764,-0.03015688141780126,-0.04273468149439629,-0.05510330808884278,0.007116533510808764,0.008821531087529698,0.008348996945943375,0.008132610454428145,0.008160720014177334,0.008420002391173574,0.008517758819776232,0.00836620251030684,0.008296113757602084,0.008298240166898728,0.008364145279565525,0.008486225478685048,0.00865769295310148,0.008872536306289367,0.009125467566675203,0.009411862021413418,0.009727695443409344,0.010069481843975934,0.010434213800618151,0.010819306609484157,0.011222546938769893,0.011642046254437764,0.0120761990207896],[0.6596350122727811,0.19676899135014556,0.16140071008144605,0.1257953725894216,0.09000643160665377,0.054082096617986235,0.01806523777404667,-0.018006845579308536,-0.05410267285046721,-0.09019675491639355,-0.12626962839466047,-0.16230771688340614,-0.19830301128085412,-0.000629663709386996,0.006342542179529786,0.005870313689973371,0.005618646487389078,0.005577037722273025,0.00573347771882382,0.00576345021571889,0.005593853653698132,0.005496405558687022,0.005462765743790675,0.005485329513898129,0.00555724290462578,0.00567238732537234,0.005825344052724723,0.006011346464338984,0.006226225805008311,0.006466354602283174,0.006728590556696722,0.007010222752063199,0.007308921314622018,0.0076226911281622725,0.007949829852444521,0.008288890243737688]],"type":"heatmap"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmapgl":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmapgl"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"#E5ECF6","showlakes":true,"showland":true,"subunitcolor":"white"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","gridwidth":2,"linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"bgcolor":"#E5ECF6","caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","zerolinewidth":2}}},"title":{"text":"SINK_FLOAT Heatmap"},"xaxis":{"title":{"text":"size"},"type":"log"},"yaxis":{"title":{"text":"density"}}},                        {"responsive": true}                    )                };                            </script>        </div>
+</body>
+</html>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>(38, 36, 6)
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.781 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-examples-02-interval-sample-06-resampling-interval-data-2d-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/d5920d47634e2f0fa44f2869608531cb/06_resampling_interval_data_2d.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">06_resampling_interval_data_2d.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/5a35a799bf5602c37c7c37acb076cdaf/06_resampling_interval_data_2d.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">06_resampling_interval_data_2d.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="05_resampling_interval_data.html" class="btn btn-neutral float-left" title="Resampling Interval Data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../03_flowsheet/01_flowsheet_basics.html" class="btn btn-neutral float-right" title="Flowsheet Basics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

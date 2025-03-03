@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math Operations &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Plot Demo" href="03_plot_demo.html" />
+    <link rel="prev" title="Create Sample" href="01_create_sample.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#getting-started">Getting Started</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01_create_sample.html">Create Sample</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Math Operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#load-data">Load Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-sample">Create Sample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#split-the-sample">Split the Sample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operands">Operands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03_plot_demo.html">Plot Demo</a></li>
+<li class="toctree-l3"><a class="reference internal" href="04_filtering.html">Filtering</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#interval-samples">Interval Samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#flowsheets">Flowsheets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#block-models">Block Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mass-balancing">Mass Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#spatial">Spatial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Example Gallery</a></li>
+      <li class="breadcrumb-item active">Math Operations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/auto_examples/examples/01_getting_started/02_math_operations.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-examples-01-getting-started-02-math-operations-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="math-operations">
+<span id="sphx-glr-auto-examples-examples-01-getting-started-02-math-operations-py"></span><h1>Math Operations<a class="headerlink" href="#math-operations" title="Link to this heading"></a></h1>
+<p>Demonstrate splitting and math operations that preserve the mass balance of components.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">sample_data</span>
+</pre></div>
+</div>
+<section id="load-data">
+<h2>Load Data<a class="headerlink" href="#load-data" title="Link to this heading"></a></h2>
+<p>We get some demo data in the form of a pandas DataFrame</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">df_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">sample_data</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">df_data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>       wet_mass  mass_dry    FE  SIO2  al2o3  LOI  group
+index
+0         100.0      90.0  57.0   5.2    3.0  5.0  grp_1
+1          90.0      80.0  59.0   3.1    1.7  4.0  grp_1
+2         110.0      90.0  61.0   2.2    0.9  3.0  grp_2
+</pre></div>
+</div>
+</section>
+<section id="create-sample">
+<h2>Create Sample<a class="headerlink" href="#create-sample" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">Sample</span><span class="p">(</span><span class="n">df_data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;sample&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: sample
+{&#39;wet_mass&#39;: {0: 300.0}, &#39;mass_dry&#39;: {0: 260.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.0}, &#39;SiO2&#39;: {0: 3.5153846153846153}, &#39;Al2O3&#39;: {0: 1.8730769230769235}, &#39;LOI&#39;: {0: 4.0}}
+</pre></div>
+</div>
+</section>
+<section id="split-the-sample">
+<h2>Split the Sample<a class="headerlink" href="#split-the-sample" title="Link to this heading"></a></h2>
+<p>Split the Sample and return the complement of the split fraction.
+Splitting does not modify the absolute grade of the input.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl_split</span><span class="p">,</span> <span class="n">obj_smpl_comp</span> <span class="o">=</span> <span class="n">obj_smpl</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">fraction</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">include_supplementary_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_split</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: sample_1
+{&#39;wet_mass&#39;: {0: 30.0}, &#39;mass_dry&#39;: {0: 26.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.0}, &#39;SiO2&#39;: {0: 3.5153846153846153}, &#39;Al2O3&#39;: {0: 1.873076923076923}, &#39;LOI&#39;: {0: 4.0}}
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_comp</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: sample_2
+{&#39;wet_mass&#39;: {0: 270.0}, &#39;mass_dry&#39;: {0: 234.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.0}, &#39;SiO2&#39;: {0: 3.515384615384616}, &#39;Al2O3&#39;: {0: 1.873076923076923}, &#39;LOI&#39;: {0: 4.000000000000001}}
+</pre></div>
+</div>
+</section>
+<section id="operands">
+<h2>Operands<a class="headerlink" href="#operands" title="Link to this heading"></a></h2>
+<p>The math operands +, -, / are supported for the Sample object.
+We’ll add the split and complement parts.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl_sum</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">obj_smpl_split</span> <span class="o">+</span> <span class="n">obj_smpl_comp</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_sum</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: None
+{&#39;wet_mass&#39;: {0: 300.0}, &#39;mass_dry&#39;: {0: 260.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.00000000000001}, &#39;SiO2&#39;: {0: 3.5153846153846153}, &#39;Al2O3&#39;: {0: 1.8730769230769235}, &#39;LOI&#39;: {0: 4.000000000000001}}
+</pre></div>
+</div>
+<p>Notice the name of the resultant sample object is None.
+We’ll confirm the sum of the splits is materially equivalent to the starting object.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_frame_equal</span><span class="p">(</span><span class="n">obj_smpl</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">obj_smpl_sum</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Add finally add and then subtract the split portion to the original object, and check the output.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl_sum</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">obj_smpl</span> <span class="o">+</span> <span class="n">obj_smpl_split</span>
+<span class="n">obj_smpl_minus</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">obj_smpl_sum</span> <span class="o">-</span> <span class="n">obj_smpl_split</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_frame_equal</span><span class="p">(</span><span class="n">obj_smpl_minus</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">obj_smpl</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_minus</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: None
+{&#39;wet_mass&#39;: {0: 300.0}, &#39;mass_dry&#39;: {0: 260.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.0}, &#39;SiO2&#39;: {0: 3.5153846153846153}, &#39;Al2O3&#39;: {0: 1.8730769230769235}, &#39;LOI&#39;: {0: 4.0}}
+</pre></div>
+</div>
+<p>Demonstrate division.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl_div</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">obj_smpl_split</span> <span class="o">/</span> <span class="n">obj_smpl</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_div</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: None
+{&#39;wet_mass&#39;: {0: 0.30000000000000004}, &#39;mass_dry&#39;: {0: 0.30000000000000004}, &#39;H2O&#39;: {0: 0.0}, &#39;Fe&#39;: {0: 100.0}, &#39;SiO2&#39;: {0: 100.0}, &#39;Al2O3&#39;: {0: 99.99999999999997}, &#39;LOI&#39;: {0: 99.99999999999997}}
+</pre></div>
+</div>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Link to this heading"></a></h2>
+<p>Performing math operations with methods allows the resultant objects to be renamed.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl_sum_renamed</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">obj_smpl</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj_smpl_split</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Summed object&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_sum_renamed</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: Summed object
+{&#39;wet_mass&#39;: {0: 330.0}, &#39;mass_dry&#39;: {0: 286.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.00000000000001}, &#39;SiO2&#39;: {0: 3.5153846153846153}, &#39;Al2O3&#39;: {0: 1.8730769230769235}, &#39;LOI&#39;: {0: 4.000000000000001}}
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">obj_smpl_sub_renamed</span><span class="p">:</span> <span class="n">Sample</span> <span class="o">=</span> <span class="n">obj_smpl</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">obj_smpl_split</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Subtracted object&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">obj_smpl_sub_renamed</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Sample: Subtracted object
+{&#39;wet_mass&#39;: {0: 270.0}, &#39;mass_dry&#39;: {0: 234.0}, &#39;H2O&#39;: {0: 13.333333333333334}, &#39;Fe&#39;: {0: 59.0}, &#39;SiO2&#39;: {0: 3.515384615384616}, &#39;Al2O3&#39;: {0: 1.8730769230769235}, &#39;LOI&#39;: {0: 4.0}}
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.827 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-examples-01-getting-started-02-math-operations-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/c43c34806597da4b663f776317060a2f/02_math_operations.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">02_math_operations.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/36199c621c166c5acf73eacda1f30709/02_math_operations.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">02_math_operations.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_create_sample.html" class="btn btn-neutral float-left" title="Create Sample" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_plot_demo.html" class="btn btn-neutral float-right" title="Plot Demo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

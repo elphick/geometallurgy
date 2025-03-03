@@ -1,0 +1,63 @@
+elphick.geomet.flowsheet.stream.Stream
+======================================
+
+.. currentmodule:: elphick.geomet.flowsheet.stream
+
+.. autoclass:: Stream
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Stream.__init__
+      ~Stream.add
+      ~Stream.balance_composition
+      ~Stream.clip_composition
+      ~Stream.clip_recovery
+      ~Stream.compare
+      ~Stream.create_congruent_object
+      ~Stream.div
+      ~Stream.filter_by_index
+      ~Stream.from_dict
+      ~Stream.from_mass_dataframe
+      ~Stream.get_mass_data
+      ~Stream.plot_comparison
+      ~Stream.plot_parallel
+      ~Stream.plot_ternary
+      ~Stream.query
+      ~Stream.reset_index
+      ~Stream.set_child_node
+      ~Stream.set_moisture
+      ~Stream.set_nodes
+      ~Stream.set_parent_node
+      ~Stream.split
+      ~Stream.sub
+      ~Stream.to_stream
+      ~Stream.update_mass_data
+      ~Stream.weight_average
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Stream.aggregate
+      ~Stream.composition_columns
+      ~Stream.data
+      ~Stream.data_columns
+      ~Stream.mass_columns
+      ~Stream.mass_data
+      ~Stream.moisture_column
+      ~Stream.supplementary_columns
+      ~Stream.variable_map
+   
+   

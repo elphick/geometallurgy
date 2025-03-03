@@ -1,0 +1,6 @@
+elphick.geomet.utils.partition.load\_partition\_function
+========================================================
+
+.. currentmodule:: elphick.geomet.utils.partition
+
+.. autofunction:: load_partition_function

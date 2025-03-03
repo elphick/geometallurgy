@@ -1,0 +1,30 @@
+﻿elphick.geomet.sample
+=====================
+
+.. automodule:: elphick.geomet.sample
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Sample
+   
+   
+
+   
+   
+   
+
+
+

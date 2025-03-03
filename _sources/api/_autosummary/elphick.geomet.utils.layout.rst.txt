@@ -1,0 +1,31 @@
+elphick.geomet.utils.layout
+===========================
+
+.. automodule:: elphick.geomet.utils.layout
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      digraph_linear_layout
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

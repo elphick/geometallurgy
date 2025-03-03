@@ -1,0 +1,6 @@
+elphick.geomet.utils.amenability.pairwise
+=========================================
+
+.. currentmodule:: elphick.geomet.utils.amenability
+
+.. autofunction:: pairwise

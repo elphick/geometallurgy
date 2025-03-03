@@ -1,0 +1,31 @@
+elphick.geomet.utils.estimates
+==============================
+
+.. automodule:: elphick.geomet.utils.estimates
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      coerce_estimates
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

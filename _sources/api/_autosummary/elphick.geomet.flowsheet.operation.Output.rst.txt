@@ -1,0 +1,41 @@
+elphick.geomet.flowsheet.operation.Output
+=========================================
+
+.. currentmodule:: elphick.geomet.flowsheet.operation
+
+.. autoclass:: Output
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Output.__init__
+      ~Output.check_balance
+      ~Output.from_dict
+      ~Output.get_input_mass
+      ~Output.get_output_mass
+      ~Output.solve
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Output.has_empty_input
+      ~Output.has_empty_output
+      ~Output.inputs
+      ~Output.is_balanced
+      ~Output.node_type
+      ~Output.outputs
+      ~Output.unbalanced_records
+   
+   

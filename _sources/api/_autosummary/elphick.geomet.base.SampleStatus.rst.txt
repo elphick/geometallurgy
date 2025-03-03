@@ -1,0 +1,31 @@
+elphick.geomet.base.SampleStatus
+================================
+
+.. currentmodule:: elphick.geomet.base
+
+.. autoclass:: SampleStatus
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SampleStatus.__init__
+      ~SampleStatus.get_sample_status
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SampleStatus.ok
+   
+   

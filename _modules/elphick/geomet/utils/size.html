@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.utils.size &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.utils.size</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for elphick.geomet.utils.size</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntervalIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.arrays</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntervalArray</span>
+
+
+<div class="viewcode-block" id="mean_size">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.size.mean_size.html#elphick.geomet.utils.size.mean_size">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_size</span><span class="p">(</span><span class="n">size_intervals</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">IntervalArray</span><span class="p">,</span> <span class="n">IntervalIndex</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Geometric mean size</span>
+
+<span class="sd">    Size calculations are performed using the geometric mean, not the arithmetic mean</span>
+
+<span class="sd">    NOTE: If geometric mean is used for the pan fraction (0.0mm retained) it will return zero, which is an</span>
+<span class="sd">    edge size not mean size.  So the mean ratio of the geometric mean to the arithmetic mean for all other</span>
+<span class="sd">    fractions is used for the bottom fraction.</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        size_intervals: A pandas IntervalArray or IntervalIndex</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">intervals</span> <span class="o">=</span> <span class="n">size_intervals</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">intervals</span><span class="o">.</span><span class="n">left</span> <span class="o">*</span> <span class="n">intervals</span><span class="o">.</span><span class="n">right</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="n">geomean_mean_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">intervals</span><span class="o">.</span><span class="n">mid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">size_intervals</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">size_intervals</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span> <span class="o">=</span> <span class="n">size_intervals</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">mid</span> <span class="o">*</span> <span class="n">geomean_mean_ratio</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<span class="c1"># REF: https://www.globalgilson.com/blog/sieve-sizes</span>
+
+<span class="n">sizes_iso_565</span> <span class="o">=</span> <span class="p">[</span><span class="mf">63.0</span><span class="p">,</span> <span class="mf">56.0</span><span class="p">,</span> <span class="mf">53.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">37.5</span><span class="p">,</span> <span class="mf">35.5</span><span class="p">,</span> <span class="mf">31.5</span><span class="p">,</span> <span class="mf">28.0</span><span class="p">,</span> <span class="mf">26.5</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">22.4</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span>
+                 <span class="mf">19.0</span><span class="p">,</span> <span class="mf">18.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">,</span> <span class="mf">13.2</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span> <span class="mf">11.2</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">7.1</span><span class="p">,</span> <span class="mf">6.7</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span>
+                 <span class="mf">5.0</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.55</span><span class="p">,</span> <span class="mf">3.35</span><span class="p">,</span> <span class="mf">3.15</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">2.36</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">,</span>
+                 <span class="mf">1.18</span><span class="p">,</span> <span class="mf">1.12</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.900</span><span class="p">,</span> <span class="mf">0.850</span><span class="p">,</span> <span class="mf">0.800</span><span class="p">,</span> <span class="mf">0.710</span><span class="p">,</span> <span class="mf">0.630</span><span class="p">,</span> <span class="mf">0.600</span><span class="p">,</span> <span class="mf">0.560</span><span class="p">,</span> <span class="mf">0.500</span><span class="p">,</span> <span class="mf">0.450</span><span class="p">,</span> <span class="mf">0.425</span><span class="p">,</span>
+                 <span class="mf">0.400</span><span class="p">,</span> <span class="mf">0.355</span><span class="p">,</span> <span class="mf">0.315</span><span class="p">,</span> <span class="mf">0.300</span><span class="p">,</span> <span class="mf">0.280</span><span class="p">,</span> <span class="mf">0.250</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.212</span><span class="p">,</span> <span class="mf">0.200</span><span class="p">,</span> <span class="mf">0.180</span><span class="p">,</span> <span class="mf">0.160</span><span class="p">,</span> <span class="mf">0.150</span><span class="p">,</span> <span class="mf">0.140</span><span class="p">,</span>
+                 <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.112</span><span class="p">,</span> <span class="mf">0.106</span><span class="p">,</span> <span class="mf">0.100</span><span class="p">,</span> <span class="mf">0.090</span><span class="p">,</span> <span class="mf">0.080</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">,</span> <span class="mf">0.071</span><span class="p">,</span> <span class="mf">0.063</span><span class="p">,</span> <span class="mf">0.056</span><span class="p">,</span> <span class="mf">0.053</span><span class="p">,</span> <span class="mf">0.050</span><span class="p">,</span> <span class="mf">0.045</span><span class="p">,</span>
+                 <span class="mf">0.040</span><span class="p">,</span> <span class="mf">0.038</span><span class="p">,</span> <span class="mf">0.036</span><span class="p">,</span> <span class="mf">0.032</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+<span class="n">sizes_astm_e11</span> <span class="o">=</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">90.0</span><span class="p">,</span> <span class="mf">75.0</span><span class="p">,</span> <span class="mf">63.0</span><span class="p">,</span> <span class="mf">53.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">,</span> <span class="mf">45.0</span><span class="p">,</span> <span class="mf">37.5</span><span class="p">,</span> <span class="mf">31.5</span><span class="p">,</span> <span class="mf">26.5</span><span class="p">,</span> <span class="mf">25.0</span><span class="p">,</span> <span class="mf">22.4</span><span class="p">,</span> <span class="mf">19.0</span><span class="p">,</span> <span class="mf">16.0</span><span class="p">,</span>
+                  <span class="mf">13.2</span><span class="p">,</span> <span class="mf">12.5</span><span class="p">,</span> <span class="mf">11.2</span><span class="p">,</span> <span class="mf">9.5</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">,</span> <span class="mf">6.7</span><span class="p">,</span> <span class="mf">6.3</span><span class="p">,</span> <span class="mf">5.6</span><span class="p">,</span> <span class="mf">4.75</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mf">3.35</span><span class="p">,</span> <span class="mf">2.8</span><span class="p">,</span> <span class="mf">2.36</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.7</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span>
+                  <span class="mf">1.18</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.850</span><span class="p">,</span> <span class="mf">0.710</span><span class="p">,</span> <span class="mf">0.600</span><span class="p">,</span> <span class="mf">0.500</span><span class="p">,</span> <span class="mf">0.425</span><span class="p">,</span> <span class="mf">0.355</span><span class="p">,</span> <span class="mf">0.300</span><span class="p">,</span> <span class="mf">0.250</span><span class="p">,</span> <span class="mf">0.212</span><span class="p">,</span> <span class="mf">0.180</span><span class="p">,</span> <span class="mf">0.150</span><span class="p">,</span>
+                  <span class="mf">0.125</span><span class="p">,</span> <span class="mf">0.106</span><span class="p">,</span> <span class="mf">0.090</span><span class="p">,</span> <span class="mf">0.075</span><span class="p">,</span> <span class="mf">0.063</span><span class="p">,</span> <span class="mf">0.053</span><span class="p">,</span> <span class="mf">0.045</span><span class="p">,</span> <span class="mf">0.038</span><span class="p">,</span> <span class="mf">0.032</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.020</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+<span class="n">sizes_all</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sizes_astm_e11</span><span class="p">)</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">sizes_iso_565</span><span class="p">))),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

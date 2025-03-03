@@ -1,0 +1,6 @@
+elphick.geomet.base.filter\_kwargs
+==================================
+
+.. currentmodule:: elphick.geomet.base
+
+.. autofunction:: filter_kwargs

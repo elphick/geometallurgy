@@ -1,0 +1,6 @@
+elphick.geomet.utils.moisture.detect\_moisture\_column
+======================================================
+
+.. currentmodule:: elphick.geomet.utils.moisture
+
+.. autofunction:: detect_moisture_column

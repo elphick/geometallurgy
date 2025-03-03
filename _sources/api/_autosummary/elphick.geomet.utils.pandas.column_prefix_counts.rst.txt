@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.column\_prefix\_counts
+==================================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: column_prefix_counts

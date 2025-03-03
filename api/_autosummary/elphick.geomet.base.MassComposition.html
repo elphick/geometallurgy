@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.base.MassComposition &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="elphick.geomet.base.OutOfRangeStatus" href="elphick.geomet.base.OutOfRangeStatus.html" />
+    <link rel="prev" title="elphick.geomet.base.filter_kwargs" href="elphick.geomet.base.filter_kwargs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="elphick.geomet.base.html">elphick.geomet.base</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="elphick.geomet.base.filter_kwargs.html">elphick.geomet.base.filter_kwargs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">elphick.geomet.base.MassComposition</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#elphick.geomet.base.MassComposition"><code class="docutils literal notranslate"><span class="pre">MassComposition</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="elphick.geomet.base.OutOfRangeStatus.html">elphick.geomet.base.OutOfRangeStatus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="elphick.geomet.base.SampleStatus.html">elphick.geomet.base.SampleStatus</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.sample.html">elphick.geomet.sample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.interval_sample.html">elphick.geomet.interval_sample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.block_model.html">elphick.geomet.block_model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.utils.html">elphick.geomet.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.flowsheet.html">elphick.geomet.flowsheet.flowsheet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.stream.html">elphick.geomet.flowsheet.stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.operation.html">elphick.geomet.flowsheet.operation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="elphick.geomet.flowsheet.loader.html">elphick.geomet.flowsheet.loader</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../modules.html">API Reference</a></li>
+          <li class="breadcrumb-item"><a href="elphick.geomet.base.html">elphick.geomet.base</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.base.MassComposition</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/elphick.geomet.base.MassComposition.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="elphick-geomet-base-masscomposition">
+<h1>elphick.geomet.base.MassComposition<a class="headerlink" href="#elphick-geomet-base-masscomposition" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">elphick.geomet.base.</span></span><span class="sig-name descname"><span class="pre">MassComposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_in_scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_wet_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_dry_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components_as_symbols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition" title="Link to this definition"></a></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_in_scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_wet_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_dry_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components_as_symbols</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ranges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</span>) – The input data</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the sample</p></li>
+<li><p><strong>moisture_in_scope</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether the moisture is in scope.  If False, only dry mass is processed.</p></li>
+<li><p><strong>mass_wet_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the wet mass column</p></li>
+<li><p><strong>mass_dry_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the dry mass column</p></li>
+<li><p><strong>moisture_var</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the moisture column</p></li>
+<li><p><strong>component_vars</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – The names of the chemical columns</p></li>
+<li><p><strong>components_as_symbols</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, convert the composition variables to symbols, e.g. Fe</p></li>
+<li><p><strong>ranges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>]]</span>) – The range of valid data for each column in the data</p></li>
+<li><p><strong>config_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – The configuration file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.__init__" title="elphick.geomet.base.MassComposition.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([data, name, moisture_in_scope, ...])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.add" title="elphick.geomet.base.MassComposition.add"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add</span></code></a>(other[, name, include_supplementary_data])</p></td>
+<td><p>Add two objects together</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.balance_composition" title="elphick.geomet.base.MassComposition.balance_composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">balance_composition</span></code></a>([epsilon])</p></td>
+<td><p>Balance the composition data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.clip_composition" title="elphick.geomet.base.MassComposition.clip_composition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_composition</span></code></a>([ranges, epsilon])</p></td>
+<td><p>Clip the components</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.clip_recovery" title="elphick.geomet.base.MassComposition.clip_recovery"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip_recovery</span></code></a>(other[, recovery_bounds, ...])</p></td>
+<td><p>Clip the recovery to the specified bounds and recalculate the estimate.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare</span></code>(other[, comparisons, explicit_names])</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.create_congruent_object" title="elphick.geomet.base.MassComposition.create_congruent_object"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_congruent_object</span></code></a>(name[, ...])</p></td>
+<td><p>Create an object with the same attributes</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.div" title="elphick.geomet.base.MassComposition.div"><code class="xref py py-obj docutils literal notranslate"><span class="pre">div</span></code></a>(other[, name, include_supplementary_data])</p></td>
+<td><p>Divide two objects</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.filter_by_index" title="elphick.geomet.base.MassComposition.filter_by_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filter_by_index</span></code></a>(index)</p></td>
+<td><p>Update the data by index</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.from_mass_dataframe" title="elphick.geomet.base.MassComposition.from_mass_dataframe"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mass_dataframe</span></code></a>(mass_df[, mass_wet, ...])</p></td>
+<td><p>Class method to create a MassComposition object from a mass dataframe.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.get_mass_data" title="elphick.geomet.base.MassComposition.get_mass_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_mass_data</span></code></a>([include_moisture])</p></td>
+<td><p>Get the mass data</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.plot_comparison" title="elphick.geomet.base.MassComposition.plot_comparison"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_comparison</span></code></a>(other[, color, ...])</p></td>
+<td><p>Create an interactive parallel plot</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.plot_parallel" title="elphick.geomet.base.MassComposition.plot_parallel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_parallel</span></code></a>([color, vars_include, ...])</p></td>
+<td><p>Create an interactive parallel plot</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.plot_ternary" title="elphick.geomet.base.MassComposition.plot_ternary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_ternary</span></code></a>(variables[, color, title])</p></td>
+<td><p>Plot a ternary diagram</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.query" title="elphick.geomet.base.MassComposition.query"><code class="xref py py-obj docutils literal notranslate"><span class="pre">query</span></code></a>(expr[, name])</p></td>
+<td><p>Reduce the data by a query expression</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset_index</span></code>(index_name)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.set_moisture" title="elphick.geomet.base.MassComposition.set_moisture"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_moisture</span></code></a>(moisture[, mass_to_adjust])</p></td>
+<td><p>Set the moisture to the specified value</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.split" title="elphick.geomet.base.MassComposition.split"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split</span></code></a>(fraction[, name_1, name_2, ...])</p></td>
+<td><p>Split the object by mass</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.sub" title="elphick.geomet.base.MassComposition.sub"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sub</span></code></a>(other[, name, include_supplementary_data])</p></td>
+<td><p>Subtract other from self</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_stream</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_mass_data</span></code>(value)</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">weight_average</span></code>([group_by])</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aggregate</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">composition_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">mass_data</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">moisture_column</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">supplementary_columns</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#elphick.geomet.base.MassComposition.variable_map" title="elphick.geomet.base.MassComposition.variable_map"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variable_map</span></code></a></p></td>
+<td><p>A map from lower case standard names to the actual column names</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.__add__">
+<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.__add__" title="Link to this definition"></a></dt>
+<dd><p>Add two objects</p>
+<p>Perform the addition with the mass-composition variables only and then append any attribute variables.
+Presently ignores any attribute vars in other
+:type other: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span>
+:param other: object to add to self</p>
+<p>Returns:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="elphick.geomet.flowsheet.stream.Stream.html#elphick.geomet.flowsheet.stream.Stream" title="elphick.geomet.flowsheet.stream.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_supplementary_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.add"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.add" title="Link to this definition"></a></dt>
+<dd><p>Add two objects together</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span>) – The other object</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the new object</p></li>
+<li><p><strong>include_supplementary_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include the supplementary data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="elphick.geomet.flowsheet.stream.Stream.html#elphick.geomet.flowsheet.stream.Stream" title="elphick.geomet.flowsheet.stream.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The new object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.balance_composition">
+<span class="sig-name descname"><span class="pre">balance_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-06</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.balance_composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.balance_composition" title="Link to this definition"></a></dt>
+<dd><p>Balance the composition data</p>
+<p>For records where the component mass exceeds the dry mass, the component masses are reduced proportionally
+to equal the dry mass.  Records where the component mass is less than the dry mass are left unchanged.</p>
+<p>epsilon: A small float to avoid component sums marginally over 100.0</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The object with balanced composition.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.clip_composition">
+<span class="sig-name descname"><span class="pre">clip_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ranges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.clip_composition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.clip_composition" title="Link to this definition"></a></dt>
+<dd><p>Clip the components</p>
+<p>Clip to the components to within the range provided or the default range for each component.
+This method does not clip moisture - see set_moisture and solve_moisture for that.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ranges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]]</span>) – An optional dict defining a list of [lo, hi] floats for each component.  If not provided,</p></li>
+<li><p><strong>used.</strong> (<em>the default range from the config file will be</em>)</p></li>
+<li><p><strong>epsilon</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – A small float to ensure the clipped values lie marginally inside the specified range.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The object with clipped composition.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.clip_recovery">
+<span class="sig-name descname"><span class="pre">clip_recovery</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recovery_bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.01,</span> <span class="pre">0.99)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_moisture_coercion</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.clip_recovery"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.clip_recovery" title="Link to this definition"></a></dt>
+<dd><p>Clip the recovery to the specified bounds and recalculate the estimate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span>) – The other MassComposition object, from which the recovery of self is calculated.</p></li>
+<li><p><strong>recovery_bounds</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – The bounds for the recovery between 0.0 and 1.0</p></li>
+<li><p><strong>allow_moisture_coercion</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – if True, allow the wet mass to be modified to maintain the moisture (in the</p></li>
+<li><p><strong>recovery</strong><strong>)</strong> (<em>case that dry mass is clipped to manage</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The MassComposition object with the recovery clipped to the bounds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.create_congruent_object">
+<span class="sig-name descname"><span class="pre">create_congruent_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_mc_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_supp_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.create_congruent_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.create_congruent_object" title="Link to this definition"></a></dt>
+<dd><p>Create an object with the same attributes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.div">
+<span class="sig-name descname"><span class="pre">div</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_supplementary_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.div"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.div" title="Link to this definition"></a></dt>
+<dd><p>Divide two objects</p>
+<p>Divides self by other, with optional name of the returned object
+:type other: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span>
+:param other: the denominator (or reference) object
+:type name: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>
+:param name: name of the returned object
+:type include_supplementary_data: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>
+:param include_supplementary_data: Whether to include the supplementary data</p>
+<p>Returns:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.filter_by_index">
+<span class="sig-name descname"><span class="pre">filter_by_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.filter_by_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.filter_by_index" title="Link to this definition"></a></dt>
+<dd><p>Update the data by index</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.from_mass_dataframe">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mass_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mass_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_wet</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mass_wet'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_dry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mass_dry'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moisture_column_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">component_columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">composition_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'%'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.from_mass_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.from_mass_dataframe" title="Link to this definition"></a></dt>
+<dd><p>Class method to create a MassComposition object from a mass dataframe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mass_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – DataFrame with mass data.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments to pass to the MassComposition constructor.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new MassComposition object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.get_mass_data">
+<span class="sig-name descname"><span class="pre">get_mass_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_moisture</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.get_mass_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.get_mass_data" title="Link to this definition"></a></dt>
+<dd><p>Get the mass data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>include_moisture</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True (and moisture is in scope), include the moisture mass column</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.plot_comparison">
+<span class="sig-name descname"><span class="pre">plot_comparison</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">facet_col_wrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trendline</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trendline_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.plot_comparison"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.plot_comparison" title="Link to this definition"></a></dt>
+<dd><p>Create an interactive parallel plot</p>
+<p>Useful to compare the difference in component values between two objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span>) – the object to compare with self.</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional color variable</p></li>
+<li><p><strong>vars_include</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional List of variables to include in the plot</p></li>
+<li><p><strong>vars_exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional List of variables to exclude in the plot</p></li>
+<li><p><strong>trendline</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True and trendlines</p></li>
+<li><p><strong>trendline_kwargs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span>) – Allows customising the trendline: ref: <a class="reference external" href="https://plotly.com/python/linear-fits/">https://plotly.com/python/linear-fits/</a></p></li>
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional plot title</p></li>
+<li><p><strong>facet_col_wrap</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – The number of subplot columns per row.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.plot_parallel">
+<span class="sig-name descname"><span class="pre">plot_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_include</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars_exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_dims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_interval_edges</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.plot_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.plot_parallel" title="Link to this definition"></a></dt>
+<dd><p>Create an interactive parallel plot</p>
+<p>Useful to explore multidimensional data like mass-composition data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional color variable</p></li>
+<li><p><strong>vars_include</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of variables to include in the plot</p></li>
+<li><p><strong>vars_exclude</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional list of variables to exclude in the plot</p></li>
+<li><p><strong>title</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Optional plot title</p></li>
+<li><p><strong>include_dims</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – Optional boolean or list of dimension to include in the plot.  True will show all dims.</p></li>
+<li><p><strong>plot_interval_edges</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, interval edges will be plotted instead of interval mid</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.plot_ternary">
+<span class="sig-name descname"><span class="pre">plot_ternary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.plot_ternary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.plot_ternary" title="Link to this definition"></a></dt>
+<dd><p>Plot a ternary diagram</p>
+<p>variables: List of 3 components to plot
+color: Optional color variable
+title: Optional plot title</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.query">
+<span class="sig-name descname"><span class="pre">query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.query" title="Link to this definition"></a></dt>
+<dd><p>Reduce the data by a query expression</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A pandas query expression</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – name of the new object</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new object with the reduced data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.set_moisture">
+<span class="sig-name descname"><span class="pre">set_moisture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">moisture</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mass_to_adjust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'wet'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.set_moisture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.set_moisture" title="Link to this definition"></a></dt>
+<dd><p>Set the moisture to the specified value</p>
+<p>A convenience method for an mc object that modifies the concrete mass to deliver the specified moisture.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>moisture</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – The moisture value to set.  Can be a constant or series.</p></li>
+<li><p><strong>mass_to_adjust</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Literal</span></code>[<code class="docutils literal notranslate"><span class="pre">'wet'</span></code>, <code class="docutils literal notranslate"><span class="pre">'dry'</span></code>]</span>) – The mass to adjust, either ‘wet’ or ‘dry’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span></p>
+</dd>
+</dl>
+<p>Returns:</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.split">
+<span class="sig-name descname"><span class="pre">split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fraction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_supplementary_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.split" title="Link to this definition"></a></dt>
+<dd><p>Split the object by mass</p>
+<p>A simple mass split maintaining the same composition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fraction</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – A constant in the range [0.0, 1.0]</p></li>
+<li><p><strong>name_1</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the reference object created by the split</p></li>
+<li><p><strong>name_2</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the complement object created by the split</p></li>
+<li><p><strong>include_supplementary_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to inherit the supplementary variables</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="elphick.geomet.flowsheet.stream.Stream.html#elphick.geomet.flowsheet.stream.Stream" title="elphick.geomet.flowsheet.stream.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>, <a class="reference internal" href="elphick.geomet.flowsheet.stream.Stream.html#elphick.geomet.flowsheet.stream.Stream" title="elphick.geomet.flowsheet.stream.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple of two objects, the first with the mass fraction specified, the other the complement</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.sub">
+<span class="sig-name descname"><span class="pre">sub</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_supplementary_data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/elphick/geomet/base.html#MassComposition.sub"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#elphick.geomet.base.MassComposition.sub" title="Link to this definition"></a></dt>
+<dd><p>Subtract other from self</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>other</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">MC</span></code>, bound= MassComposition)</span>) – The other object</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the new object</p></li>
+<li><p><strong>include_supplementary_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include the supplementary data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="elphick.geomet.flowsheet.stream.Stream.html#elphick.geomet.flowsheet.stream.Stream" title="elphick.geomet.flowsheet.stream.Stream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The new object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="elphick.geomet.base.MassComposition.variable_map">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variable_map</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#elphick.geomet.base.MassComposition.variable_map" title="Link to this definition"></a></dt>
+<dd><p>A map from lower case standard names to the actual column names</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="elphick.geomet.base.filter_kwargs.html" class="btn btn-neutral float-left" title="elphick.geomet.base.filter_kwargs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="elphick.geomet.base.OutOfRangeStatus.html" class="btn btn-neutral float-right" title="elphick.geomet.base.OutOfRangeStatus" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

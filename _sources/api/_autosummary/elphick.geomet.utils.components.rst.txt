@@ -1,0 +1,36 @@
+elphick.geomet.utils.components
+===============================
+
+.. automodule:: elphick.geomet.utils.components
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      elements
+      get_components
+      is_compositional
+      is_element
+      is_oxide
+      oxides
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

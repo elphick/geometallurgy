@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.cumulate
+====================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: cumulate

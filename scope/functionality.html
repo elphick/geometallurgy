@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Functionality &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Functionality</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/scope/functionality.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="functionality">
+<h1>Functionality<a class="headerlink" href="#functionality" title="Link to this heading"></a></h1>
+<p>In part, this page is used to document the planned functionality of the package.  It is also used to document the
+progress of the package development.</p>
+<p>The package provides an api that supports the following requirements:</p>
+<section id="sample-object">
+<h2>Sample Object<a class="headerlink" href="#sample-object" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>the fundamental object is a <cite>Sample</cite> object containing mass (wet, dry, h2o) and assay data</p></li>
+<li><p>the <cite>Sample</cite> object is created from a <cite>pandas.DataFrame</cite> object, and underlying data is stored as a <cite>pandas.DataFrame</cite></p></li>
+<li><p>the records in a <cite>Sample</cite> object can represent:</p>
+<ul>
+<li><p>time-series samples</p></li>
+<li><p>drill-hole data</p></li>
+<li><p>a sample fraction (e.g. a sieve size fraction)</p></li>
+<li><p>block in a block model</p></li>
+</ul>
+</li>
+<li><p>mass-weighted math operations on <cite>Sample</cite> objects</p></li>
+<li><p><cite>Sample</cite> objects can represent drill-hole data, sample fractions, or process streams</p></li>
+<li><p><cite>Sample</cite> objects can be combined to form composite samples</p></li>
+<li><p><cite>Sample</cite> objects can be split by the following:</p>
+<ul>
+<li><p>mass</p></li>
+<li><p>partition model</p></li>
+<li><p>machine learning model</p></li>
+</ul>
+</li>
+<li><p>the mass-moisture of a <cite>Sample</cite> must always balance</p></li>
+<li><p>moisture is always calculated on a wet basis</p></li>
+<li><p>the chemistry of a <cite>Sample</cite> is always based on the dry mass</p></li>
+<li><p>the concrete data of a sample will be in mass units to simplify math operations</p></li>
+<li><p>the <cite>Sample</cite> object will have a <cite>name</cite> attribute to identify the sample</p></li>
+<li><p>when math operations on <cite>Sample</cite> objects, the relationships are preserved using hidden src_node and dst_node
+attributes.  This allows conversion to a flowsheet object without mapping the relationships again.</p></li>
+<li><p>an <cite>IntervalSample</cite> object is a subclass of <cite>Sample</cite> that represents a sample with an interval index.  It is used
+to represent a drill-hole intervals, or samples fractionated by size (sieved samples), etc.</p></li>
+</ul>
+</section>
+<section id="stream-and-flowsheet-objects">
+<h2>Stream and Flowsheet Objects<a class="headerlink" href="#stream-and-flowsheet-objects" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><cite>Stream</cite> objects represent a <cite>Sample</cite> assigned to the edge of a Directional Acyclic Graph (DAG) a.k.a a Flowsheet</p></li>
+<li><p><cite>Stream</cite> is a subclass of <cite>Sample</cite> with additional attributes for the <cite>src_node</cite> and <cite>dst_node</cite></p></li>
+<li><p>nodes in the <cite>Flowsheet</cite> are (unit) <cite>Operation</cite> objects that report the mass balance status across that node.</p></li>
+<li><p>a special <cite>Stream</cite> object is the <cite>WaterStream</cite> object that represents a water ony flow in a flowsheet.
+It has no chemistry.  It is a subclass of <cite>Stream</cite>.</p></li>
+<li><p>flowsheet visualisations include network and sankey plots, with tabular summaries of mass and chemistry for each
+stream</p></li>
+<li><p>and empty <cite>Stream</cite> is a <cite>Stream</cite> object with no data, but with a name.  It is used to represent a stream that is
+expected to have data, but does not yet.</p></li>
+<li><p>the <cite>solve</cite> method on a <cite>Node</cite> object will back-calculate any empty streams.</p></li>
+</ul>
+</section>
+<section id="blockmodel-object">
+<h2>BlockModel Object<a class="headerlink" href="#blockmodel-object" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>subclasses Sample.  Requires a pd.MultiIndex with x, y, z.</p></li>
+<li><p>provides 3D plotting of the block model by leveraging the pyvista package.</p></li>
+</ul>
+</section>
+<section id="operation-object">
+<h2>Operation Object<a class="headerlink" href="#operation-object" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><cite>Operation</cite> objects are nodes in a <cite>Flowsheet</cite> object</p></li>
+<li><p><cite>Operation</cite> objects have a <cite>name</cite> attribute</p></li>
+<li><p><cite>Operation</cite> objects have a <cite>solve</cite> method that back-calculates any missing data in the input streams</p></li>
+<li><p><cite>Operation</cite> objects have a <cite>summary</cite> method that provides a tabular summary of the mass and chemistry of the input
+and output streams</p></li>
+<li><p><cite>Operation</cite> objects have a <cite>plot</cite> method that provides a visualisation of the mass and chemistry of the input and
+output streams</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

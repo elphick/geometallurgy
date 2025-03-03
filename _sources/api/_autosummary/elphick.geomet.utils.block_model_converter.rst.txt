@@ -1,0 +1,33 @@
+elphick.geomet.utils.block\_model\_converter
+============================================
+
+.. automodule:: elphick.geomet.utils.block_model_converter
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      get_volume_shape
+      volume_grid_geom_to_vtk
+      volume_to_vtk
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

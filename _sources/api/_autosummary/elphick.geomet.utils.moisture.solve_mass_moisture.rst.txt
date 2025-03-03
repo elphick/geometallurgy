@@ -1,0 +1,6 @@
+elphick.geomet.utils.moisture.solve\_mass\_moisture
+===================================================
+
+.. currentmodule:: elphick.geomet.utils.moisture
+
+.. autofunction:: solve_mass_moisture

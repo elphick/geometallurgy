@@ -1,0 +1,6 @@
+elphick.geomet.utils.pandas.parse\_vars\_from\_expr
+===================================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autofunction:: parse_vars_from_expr

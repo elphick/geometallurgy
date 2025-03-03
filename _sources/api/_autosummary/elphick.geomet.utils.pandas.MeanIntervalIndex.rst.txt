@@ -1,0 +1,149 @@
+elphick.geomet.utils.pandas.MeanIntervalIndex
+=============================================
+
+.. currentmodule:: elphick.geomet.utils.pandas
+
+.. autoclass:: MeanIntervalIndex
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MeanIntervalIndex.__init__
+      ~MeanIntervalIndex.all
+      ~MeanIntervalIndex.any
+      ~MeanIntervalIndex.append
+      ~MeanIntervalIndex.argmax
+      ~MeanIntervalIndex.argmin
+      ~MeanIntervalIndex.argsort
+      ~MeanIntervalIndex.asof
+      ~MeanIntervalIndex.asof_locs
+      ~MeanIntervalIndex.astype
+      ~MeanIntervalIndex.contains
+      ~MeanIntervalIndex.copy
+      ~MeanIntervalIndex.delete
+      ~MeanIntervalIndex.diff
+      ~MeanIntervalIndex.difference
+      ~MeanIntervalIndex.drop
+      ~MeanIntervalIndex.drop_duplicates
+      ~MeanIntervalIndex.droplevel
+      ~MeanIntervalIndex.dropna
+      ~MeanIntervalIndex.duplicated
+      ~MeanIntervalIndex.equals
+      ~MeanIntervalIndex.factorize
+      ~MeanIntervalIndex.fillna
+      ~MeanIntervalIndex.format
+      ~MeanIntervalIndex.from_arrays
+      ~MeanIntervalIndex.from_breaks
+      ~MeanIntervalIndex.from_tuples
+      ~MeanIntervalIndex.get_indexer
+      ~MeanIntervalIndex.get_indexer_for
+      ~MeanIntervalIndex.get_indexer_non_unique
+      ~MeanIntervalIndex.get_level_values
+      ~MeanIntervalIndex.get_loc
+      ~MeanIntervalIndex.get_slice_bound
+      ~MeanIntervalIndex.groupby
+      ~MeanIntervalIndex.holds_integer
+      ~MeanIntervalIndex.identical
+      ~MeanIntervalIndex.infer_objects
+      ~MeanIntervalIndex.insert
+      ~MeanIntervalIndex.intersection
+      ~MeanIntervalIndex.is_
+      ~MeanIntervalIndex.is_boolean
+      ~MeanIntervalIndex.is_categorical
+      ~MeanIntervalIndex.is_floating
+      ~MeanIntervalIndex.is_integer
+      ~MeanIntervalIndex.is_interval
+      ~MeanIntervalIndex.is_numeric
+      ~MeanIntervalIndex.is_object
+      ~MeanIntervalIndex.isin
+      ~MeanIntervalIndex.isna
+      ~MeanIntervalIndex.isnull
+      ~MeanIntervalIndex.item
+      ~MeanIntervalIndex.join
+      ~MeanIntervalIndex.map
+      ~MeanIntervalIndex.max
+      ~MeanIntervalIndex.memory_usage
+      ~MeanIntervalIndex.min
+      ~MeanIntervalIndex.notna
+      ~MeanIntervalIndex.notnull
+      ~MeanIntervalIndex.nunique
+      ~MeanIntervalIndex.overlaps
+      ~MeanIntervalIndex.putmask
+      ~MeanIntervalIndex.ravel
+      ~MeanIntervalIndex.reindex
+      ~MeanIntervalIndex.rename
+      ~MeanIntervalIndex.repeat
+      ~MeanIntervalIndex.round
+      ~MeanIntervalIndex.searchsorted
+      ~MeanIntervalIndex.set_closed
+      ~MeanIntervalIndex.set_names
+      ~MeanIntervalIndex.shift
+      ~MeanIntervalIndex.slice_indexer
+      ~MeanIntervalIndex.slice_locs
+      ~MeanIntervalIndex.sort
+      ~MeanIntervalIndex.sort_values
+      ~MeanIntervalIndex.sortlevel
+      ~MeanIntervalIndex.symmetric_difference
+      ~MeanIntervalIndex.take
+      ~MeanIntervalIndex.to_flat_index
+      ~MeanIntervalIndex.to_frame
+      ~MeanIntervalIndex.to_list
+      ~MeanIntervalIndex.to_numpy
+      ~MeanIntervalIndex.to_series
+      ~MeanIntervalIndex.to_tuples
+      ~MeanIntervalIndex.tolist
+      ~MeanIntervalIndex.transpose
+      ~MeanIntervalIndex.union
+      ~MeanIntervalIndex.unique
+      ~MeanIntervalIndex.value_counts
+      ~MeanIntervalIndex.view
+      ~MeanIntervalIndex.where
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MeanIntervalIndex.T
+      ~MeanIntervalIndex.array
+      ~MeanIntervalIndex.closed
+      ~MeanIntervalIndex.closed_left
+      ~MeanIntervalIndex.closed_right
+      ~MeanIntervalIndex.dtype
+      ~MeanIntervalIndex.empty
+      ~MeanIntervalIndex.has_duplicates
+      ~MeanIntervalIndex.hasnans
+      ~MeanIntervalIndex.inferred_type
+      ~MeanIntervalIndex.is_empty
+      ~MeanIntervalIndex.is_monotonic_decreasing
+      ~MeanIntervalIndex.is_monotonic_increasing
+      ~MeanIntervalIndex.is_non_overlapping_monotonic
+      ~MeanIntervalIndex.is_overlapping
+      ~MeanIntervalIndex.is_unique
+      ~MeanIntervalIndex.left
+      ~MeanIntervalIndex.length
+      ~MeanIntervalIndex.mean
+      ~MeanIntervalIndex.mid
+      ~MeanIntervalIndex.name
+      ~MeanIntervalIndex.names
+      ~MeanIntervalIndex.nbytes
+      ~MeanIntervalIndex.ndim
+      ~MeanIntervalIndex.nlevels
+      ~MeanIntervalIndex.open_left
+      ~MeanIntervalIndex.open_right
+      ~MeanIntervalIndex.right
+      ~MeanIntervalIndex.shape
+      ~MeanIntervalIndex.size
+      ~MeanIntervalIndex.values
+   
+   

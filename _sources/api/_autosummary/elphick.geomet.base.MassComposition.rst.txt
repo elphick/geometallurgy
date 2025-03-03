@@ -1,0 +1,59 @@
+elphick.geomet.base.MassComposition
+===================================
+
+.. currentmodule:: elphick.geomet.base
+
+.. autoclass:: MassComposition
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MassComposition.__init__
+      ~MassComposition.add
+      ~MassComposition.balance_composition
+      ~MassComposition.clip_composition
+      ~MassComposition.clip_recovery
+      ~MassComposition.compare
+      ~MassComposition.create_congruent_object
+      ~MassComposition.div
+      ~MassComposition.filter_by_index
+      ~MassComposition.from_mass_dataframe
+      ~MassComposition.get_mass_data
+      ~MassComposition.plot_comparison
+      ~MassComposition.plot_parallel
+      ~MassComposition.plot_ternary
+      ~MassComposition.query
+      ~MassComposition.reset_index
+      ~MassComposition.set_moisture
+      ~MassComposition.split
+      ~MassComposition.sub
+      ~MassComposition.to_stream
+      ~MassComposition.update_mass_data
+      ~MassComposition.weight_average
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MassComposition.aggregate
+      ~MassComposition.composition_columns
+      ~MassComposition.data
+      ~MassComposition.data_columns
+      ~MassComposition.mass_columns
+      ~MassComposition.mass_data
+      ~MassComposition.moisture_column
+      ~MassComposition.supplementary_columns
+      ~MassComposition.variable_map
+   
+   

@@ -1,0 +1,31 @@
+elphick.geomet.utils.interp2
+============================
+
+.. automodule:: elphick.geomet.utils.interp2
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+      :nosignatures:
+   
+      mass_preserving_interp_2d
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

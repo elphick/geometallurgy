@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.utils.interp &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.utils.interp</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for elphick.geomet.utils.interp</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">pchip_interpolate</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">composition_to_mass</span><span class="p">,</span> <span class="n">mass_to_composition</span><span class="p">,</span> <span class="n">weight_average</span>
+
+
+<div class="viewcode-block" id="mass_preserving_interp">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.interp.mass_preserving_interp.html#elphick.geomet.utils.interp.mass_preserving_interp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mass_preserving_interp</span><span class="p">(</span><span class="n">df_intervals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">interval_edges</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                           <span class="n">include_original_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                           <span class="n">mass_wet</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mass_wet&#39;</span><span class="p">,</span> <span class="n">mass_dry</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mass_dry&#39;</span><span class="p">,</span>
+                           <span class="n">interval_data_as_mass</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate with zero mass loss using pchip</span>
+
+<span class="sd">    This interpolates data_vars independently for a single dimension (coord) at a time.</span>
+
+<span class="sd">    The function will:</span>
+<span class="sd">    - convert from relative composition (%) to absolute (mass) (subject to interval_data_as_mass argument)</span>
+<span class="sd">    - convert the index from interval to a float representing the right edge of the interval</span>
+<span class="sd">    - cumsum to provide monotonic increasing data</span>
+<span class="sd">    - interpolate with a pchip spline to preserve mass</span>
+<span class="sd">    - diff to recover the original fractional data</span>
+<span class="sd">    - reconstruct the interval index from the right edges</span>
+<span class="sd">    - convert from absolute to relative composition</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        df_intervals: A pd.DataFrame with a single interval index, with mass, composition context.</span>
+<span class="sd">        interval_edges: The values of the new grid (interval edges).  If an int, will up-sample by that factor, for</span>
+<span class="sd">         example the value of 10 will automatically define edges that create 10 x the resolution (up-sampled).</span>
+<span class="sd">        include_original_edges: If True include the original index edges in the result</span>
+<span class="sd">        precision: Number of decimal places to round the index (edge) values.</span>
+<span class="sd">        mass_wet: The wet mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.</span>
+<span class="sd">        mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.</span>
+<span class="sd">        interval_data_as_mass: If True, the data is assumed to be mass data, not composition data, negating the need</span>
+<span class="sd">            to convert to mass.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The index `</span><span class="si">{</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">` of the dataframe is not a pd.Interval. &quot;</span>
+                                  <span class="sa">f</span><span class="s2">&quot;Only 1D interval indexes are valid&quot;</span><span class="p">)</span>
+
+    <span class="n">composition_in</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df_intervals</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval_edges</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">grid_vals</span> <span class="o">=</span> <span class="n">_upsample_grid_by_factor</span><span class="p">(</span><span class="n">indx</span><span class="o">=</span><span class="n">composition_in</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="n">interval_edges</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">grid_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">interval_edges</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">precision</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">composition_in</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">precision</span><span class="p">),</span>
+                                                            <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">precision</span><span class="p">),</span>
+                                                            <span class="n">closed</span><span class="o">=</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">closed</span><span class="p">,</span>
+                                                            <span class="n">name</span><span class="o">=</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">grid_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">grid_vals</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">include_original_edges</span><span class="p">:</span>
+        <span class="n">original_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">right</span><span class="p">])</span>
+        <span class="n">grid_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">grid_vals</span><span class="p">,</span> <span class="n">original_edges</span><span class="p">])))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">grid_vals</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">grid_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid_vals</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">interval_data_as_mass</span><span class="p">:</span>
+        <span class="c1"># convert from relative composition (%) to absolute (mass)</span>
+        <span class="n">mass_in</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">composition_to_mass</span><span class="p">(</span><span class="n">composition_in</span><span class="p">,</span> <span class="n">mass_wet</span><span class="o">=</span><span class="n">mass_wet</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mass_in</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">composition_in</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1"># convert the index from interval to a float representing the right edge of the interval</span>
+    <span class="n">mass_in</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">mass_in</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">right</span>
+    <span class="c1"># add a row of zeros</span>
+    <span class="n">mass_in</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">mass_in</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">mass_in</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">composition_in</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">],</span>
+        <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># cumsum to provide monotonic increasing data</span>
+    <span class="n">mass_cum</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">mass_in</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+    <span class="c1"># if the new grid extrapolates (on the coarse side), mass will be lost, so we assume that when extrapolating.</span>
+    <span class="c1"># the mass in the extrapolated fractions is zero.  By inserting these records the spline will conform.</span>
+    <span class="n">x_extra</span> <span class="o">=</span> <span class="n">grid_vals</span><span class="p">[</span><span class="n">grid_vals</span> <span class="o">&gt;</span> <span class="n">mass_cum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_extra</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">cum_max</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">mass_cum</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">mass_cum</span> <span class="o">=</span> <span class="n">mass_cum</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">mass_cum</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">x_extra</span><span class="p">)))</span>  <span class="c1"># reindex to enable insert</span>
+        <span class="n">mass_cum</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">x_extra</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">cum_max</span><span class="o">.</span><span class="n">values</span>
+    <span class="c1">#  interpolate with a pchip spline to preserve mass</span>
+    <span class="n">chunks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">mass_cum</span><span class="p">:</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">mass_cum</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>  <span class="c1"># drop any missing values</span>
+        <span class="n">new_vals</span> <span class="o">=</span> <span class="n">pchip_interpolate</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">tmp</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">grid_vals</span><span class="p">)</span>
+        <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_vals</span><span class="p">)</span>
+    <span class="n">mass_cum_upsampled</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">mass_in</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">grid_vals</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># diff to recover the original fractional data</span>
+    <span class="n">mass_fractions_upsampled</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">mass_cum_upsampled</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># reconstruct the interval index from the grid</span>
+    <span class="n">mass_fractions_upsampled</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">grid_vals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                                  <span class="n">right</span><span class="o">=</span><span class="n">grid_vals</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                                                                  <span class="n">closed</span><span class="o">=</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">closed</span><span class="p">,</span>
+                                                                  <span class="n">name</span><span class="o">=</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">interval_spans</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">interval</span><span class="p">:</span> <span class="n">interval</span><span class="o">.</span><span class="n">right</span> <span class="o">-</span> <span class="n">interval</span><span class="o">.</span><span class="n">left</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span>
+                                                <span class="n">mass_fractions_upsampled</span><span class="o">.</span><span class="n">index</span><span class="p">}</span>
+    <span class="n">zero_spans</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">interval_spans</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">zero_spans</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The interpolated index contains zero width intervals on left edges: </span><span class="si">{</span><span class="n">zero_spans</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># convert from absolute to relative composition</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mass_to_composition</span><span class="p">(</span><span class="n">mass_fractions_upsampled</span><span class="p">,</span> <span class="n">mass_wet</span><span class="o">=</span><span class="n">mass_wet</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span>
+        <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># confirm the weight average is preserved</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">mass_in</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">mass_fractions_upsampled</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The mass is not preserved in the interpolation&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_upsample_grid_by_factor</span><span class="p">(</span><span class="n">indx</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+    <span class="c1"># TODO: must be a better way than this - vectorised?</span>
+    <span class="n">grid_vals</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[</span><span class="n">indx</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">min</span><span class="p">()]</span>
+    <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="n">indx</span><span class="p">:</span>
+        <span class="n">increment</span> <span class="o">=</span> <span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">right</span> <span class="o">-</span> <span class="n">interval</span><span class="o">.</span><span class="n">left</span><span class="p">)</span> <span class="o">/</span> <span class="n">factor</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
+            <span class="n">grid_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">interval</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">increment</span><span class="p">)</span>
+    <span class="n">grid_vals</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">grid_vals</span>
+
+
+<div class="viewcode-block" id="mass_preserving_interp_2d">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.interp.mass_preserving_interp_2d.html#elphick.geomet.utils.interp.mass_preserving_interp_2d">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mass_preserving_interp_2d</span><span class="p">(</span><span class="n">intervals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">interval_edges</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">],</span>
+                              <span class="n">include_original_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">precision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">mass_dry</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mass_dry&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolate 2D interval data with zero mass loss using pchip</span>
+
+<span class="sd">    This function applies mass-preserving up-sampling to 2D interval data.  The function will:</span>
+<span class="sd">    - resample the first dimension using the mass_preserving_interp function</span>
+<span class="sd">    - resample the second dimension using the mass_preserving_interp function at each of the new first</span>
+<span class="sd">        dimension intervals</span>
+<span class="sd">    - apply the upsampled mass proportions of the second dimension to the first dimension to create the final result</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        intervals: Dataframe with two pd.IntervalIndexes, in mass-composition space.</span>
+<span class="sd">        interval_edges: Dict of the values of the new grid (interval edges) for each dimension, keyed by</span>
+<span class="sd">         index name (dimension).</span>
+<span class="sd">        include_original_edges: If True include the original index edges in the result</span>
+<span class="sd">        precision: Number of decimal places to round the index (edge) values.</span>
+<span class="sd">        mass_dry: The dry mass column, not optional.  Consider solve_mass_moisture prior to this call if needed.</span>
+
+<span class="sd">    Returns:</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># reduce the dataframe to the first dimension</span>
+    <span class="n">dim_1_name</span><span class="p">,</span> <span class="n">dim_2_name</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dim_1</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">dim_1_name</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">weight_average</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">:</span> <span class="n">mass_dry</span><span class="p">})</span>
+
+    <span class="c1"># interpolate the first dimension</span>
+    <span class="n">dim_1_interp</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">mass_preserving_interp</span><span class="p">(</span><span class="n">dim_1</span><span class="p">,</span> <span class="n">interval_edges</span><span class="o">=</span><span class="n">interval_edges</span><span class="p">[</span><span class="n">dim_1_name</span><span class="p">],</span>
+                                                        <span class="n">include_original_edges</span><span class="o">=</span><span class="n">include_original_edges</span><span class="p">,</span>
+                                                        <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span>
+
+    <span class="n">chunks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1"># iterate the original dim_1 fractions</span>
+    <span class="k">for</span> <span class="n">dim_1_interval</span> <span class="ow">in</span> <span class="n">dim_1</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="c1"># reduce the dataframe to the second dimension for the current dim1 interval</span>
+        <span class="n">dim_2</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">intervals</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dim_1_interval</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="c1"># interpolate the second dimension</span>
+        <span class="n">dim_2_interp</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">mass_preserving_interp</span><span class="p">(</span><span class="n">dim_2</span><span class="p">,</span> <span class="n">interval_edges</span><span class="o">=</span><span class="n">interval_edges</span><span class="p">[</span><span class="n">dim_2_name</span><span class="p">],</span>
+                                                            <span class="n">include_original_edges</span><span class="o">=</span><span class="n">include_original_edges</span><span class="p">,</span>
+                                                            <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span>
+        <span class="c1"># convert to recovery to enable proportioning of the interpolated dim_1 values</span>
+        <span class="n">dim_2_mass</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">composition_to_mass</span><span class="p">(</span><span class="n">dim_2_interp</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span>
+        <span class="n">dim_2_deportment</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">dim_2_mass</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">dim_2_mass</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Filter the intervals from dim_1_interp that fall within the provided dim_1_interval, convert to mass</span>
+        <span class="n">filtered_intervals_mass</span> <span class="o">=</span> <span class="n">composition_to_mass</span><span class="p">(</span>
+            <span class="n">dim_1_interp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dim_1_interp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">overlaps</span><span class="p">(</span><span class="n">dim_1_interval</span><span class="p">))]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span>
+
+        <span class="c1"># expand the dimensions of the interpolated dim_1 data to include the second upsampled dimension</span>
+        <span class="k">for</span> <span class="n">dim_1_interp_interval</span> <span class="ow">in</span> <span class="n">filtered_intervals_mass</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="c1"># proportion the dim_1 interpolated values by the dim_2 recovery</span>
+            <span class="n">new_vals</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">dim_2_deportment</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">filtered_intervals_mass</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dim_1_interp_interval</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="c1"># create a multiindex by combining the dim_1 and dim_2 intervals</span>
+            <span class="n">new_index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">([</span><span class="n">dim_1_interp_interval</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_vals</span><span class="p">)),</span> <span class="n">new_vals</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
+            <span class="n">new_vals</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">new_index</span>
+            <span class="n">chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_vals</span><span class="p">)</span>
+
+    <span class="c1"># concatenate the results</span>
+    <span class="n">res</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">dim_1_name</span><span class="p">,</span> <span class="n">dim_2_name</span><span class="p">]</span>
+    <span class="c1"># convert to composition</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mass_to_composition</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="n">mass_dry</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

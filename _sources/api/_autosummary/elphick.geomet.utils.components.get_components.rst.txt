@@ -1,0 +1,6 @@
+elphick.geomet.utils.components.get\_components
+===============================================
+
+.. currentmodule:: elphick.geomet.utils.components
+
+.. autofunction:: get_components

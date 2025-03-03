@@ -1,0 +1,6 @@
+elphick.geomet.utils.components.is\_compositional
+=================================================
+
+.. currentmodule:: elphick.geomet.utils.components
+
+.. autofunction:: is_compositional

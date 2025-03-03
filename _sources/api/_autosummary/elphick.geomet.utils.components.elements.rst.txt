@@ -1,0 +1,6 @@
+elphick.geomet.utils.components.elements
+========================================
+
+.. currentmodule:: elphick.geomet.utils.components
+
+.. autofunction:: elements

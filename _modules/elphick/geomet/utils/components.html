@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.utils.components &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.utils.components</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for elphick.geomet.utils.components</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Managing components/composition</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">periodictable</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">periodictable.formulas</span><span class="w"> </span><span class="kn">import</span> <span class="n">Formula</span>
+
+<span class="n">custom_components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;LOI&#39;</span><span class="p">,</span> <span class="s1">&#39;Ash&#39;</span><span class="p">]</span>
+
+<span class="c1"># Kudos: pyrolite</span>
+<span class="n">DEFAULT_CHARGES</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">H</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Li</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Be</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">B</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">C</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">O</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">F</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Na</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Mg</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Al</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Si</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">P</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Cl</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Ca</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Sc</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Ti</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">V</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Cr</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Mn</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Fe</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Co</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Ni</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Cu</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Zn</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Br</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Rb</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Sr</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Y</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Zr</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">Nb</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">Sn</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">I</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Cs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">Ba</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">La</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Ce</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Pr</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Nd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Sm</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Eu</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Gd</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Tb</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Dy</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Ho</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Er</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Tm</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Yb</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Lu</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Hf</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">Pb</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">Th</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+    <span class="n">U</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="elements">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.components.elements.html#elphick.geomet.utils.components.elements">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">elements</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="n">res</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">el</span><span class="o">.</span><span class="n">symbol</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">pt</span><span class="o">.</span><span class="n">elements</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="is_element">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.components.is_element.html#elphick.geomet.utils.components.is_element">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_element</span><span class="p">(</span><span class="n">candidates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">elements</span><span class="p">()))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">e_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">symbol</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">e</span><span class="o">.</span><span class="n">symbol</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">pt</span><span class="o">.</span><span class="n">elements</span><span class="p">}</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">e_map</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">e_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+
+
+
+<div class="viewcode-block" id="oxides">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.components.oxides.html#elphick.geomet.utils.components.oxides">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">oxides</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Formula</span><span class="p">]:</span>
+    <span class="c1"># cats = {e for e in [el for el in pt.elements if str(el) in DEFAULT_CHARGES.keys()] if DEFAULT_CHARGES[str(e)] &gt; 0}</span>
+    <span class="n">cats</span> <span class="o">=</span> <span class="p">{</span><span class="n">el</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">pt</span><span class="o">.</span><span class="n">elements</span> <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="ow">in</span> <span class="n">DEFAULT_CHARGES</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="ow">and</span> <span class="p">(</span><span class="n">DEFAULT_CHARGES</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">el</span><span class="p">)]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)}</span>
+
+    <span class="n">res</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Formula</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cats</span><span class="p">:</span>
+        <span class="n">charge</span> <span class="o">=</span> <span class="n">DEFAULT_CHARGES</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">charge</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">formula</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;O&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">charge</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pt</span><span class="o">.</span><span class="n">formula</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;O&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">charge</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="is_oxide">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.components.is_oxide.html#elphick.geomet.utils.components.is_oxide">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_oxide</span><span class="p">(</span><span class="n">candidates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+        <span class="n">oxs</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">oxides</span><span class="p">()}</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">oxs</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">o_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">oxides</span><span class="p">()}</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">o_map</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">o_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+
+
+
+<div class="viewcode-block" id="is_compositional">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.components.is_compositional.html#elphick.geomet.utils.components.is_compositional">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_compositional</span><span class="p">(</span><span class="n">candidates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a list of candidates are compositional components (elements or oxides)</span>
+<span class="sd">    Args:</span>
+<span class="sd">        candidates: list of string candidates</span>
+<span class="sd">        strict: If True, the candidates must be in the list of known compositional components (elements or oxides)</span>
+<span class="sd">        as chemical symbols.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        If strict, a list of compositional components, otherwise a dict of the original candidates (keys) and</span>
+<span class="sd">        their compositional component symbols (values)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">strict</span><span class="p">:</span>
+        <span class="n">comps</span> <span class="o">=</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">oxides</span><span class="p">()}</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">elements</span><span class="p">()))</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">custom_components</span><span class="p">))</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">comps</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">comp_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="nb">str</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="k">for</span> <span class="n">o</span> <span class="ow">in</span> <span class="n">oxides</span><span class="p">()},</span>
+                                    <span class="o">**</span><span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">elements</span><span class="p">()},</span>
+                                    <span class="o">**</span><span class="p">{</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">custom_components</span><span class="p">}}</span>
+        <span class="n">matches</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">comp_map</span><span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">candidates</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">comp_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()}</span>
+
+    <span class="k">return</span> <span class="n">matches</span></div>
+
+
+
+<div class="viewcode-block" id="get_components">
+<a class="viewcode-back" href="../../../../api/_autosummary/elphick.geomet.utils.components.get_components.html#elphick.geomet.utils.components.get_components">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_components</span><span class="p">(</span><span class="n">candidates</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">is_compositional</span><span class="p">(</span><span class="n">candidates</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="n">strict</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

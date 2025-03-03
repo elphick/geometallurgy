@@ -1,0 +1,6 @@
+elphick.geomet.utils.layout.digraph\_linear\_layout
+===================================================
+
+.. currentmodule:: elphick.geomet.utils.layout
+
+.. autofunction:: digraph_linear_layout

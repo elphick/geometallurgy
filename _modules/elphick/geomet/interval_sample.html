@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>elphick.geomet.interval_sample &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../auto_examples/examples/index.html">Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">elphick.geomet.interval_sample</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for elphick.geomet.interval_sample</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntervalIndex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pandas.core.indexes.frozen</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrozenList</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.graph_objects</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">go</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">plotly.express</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">px</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">elphick.geomet.flowsheet.stream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.amenability</span><span class="w"> </span><span class="kn">import</span> <span class="n">amenability_index</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.interp</span><span class="w"> </span><span class="kn">import</span> <span class="n">mass_preserving_interp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.interp2</span><span class="w"> </span><span class="kn">import</span> <span class="n">mass_preserving_interp_2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.pandas</span><span class="w"> </span><span class="kn">import</span> <span class="n">MeanIntervalIndex</span><span class="p">,</span> <span class="n">weight_average</span><span class="p">,</span> <span class="n">calculate_recovery</span><span class="p">,</span> <span class="n">calculate_partition</span><span class="p">,</span> \
+    <span class="n">cumulate</span><span class="p">,</span> <span class="n">mass_to_composition</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">MassComposition</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.flowsheet.stream</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>
+
+
+<div class="viewcode-block" id="IntervalSample">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntervalSample</span><span class="p">(</span><span class="n">MassComposition</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to represent a sample of data with an interval index.</span>
+<span class="sd">    This exposes methods to split the sample by a partition definition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="IntervalSample.__init__">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">data</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">moisture_in_scope</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">mass_wet_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mass_dry_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">moisture_var</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">component_vars</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">composition_units</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;%&#39;</span><span class="p">,</span> <span class="s1">&#39;ppm&#39;</span><span class="p">,</span> <span class="s1">&#39;ppb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;%&#39;</span><span class="p">,</span>
+                 <span class="n">components_as_symbols</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">ranges</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">config_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">moisture_in_scope</span><span class="o">=</span><span class="n">moisture_in_scope</span><span class="p">,</span>
+                         <span class="n">mass_wet_var</span><span class="o">=</span><span class="n">mass_wet_var</span><span class="p">,</span> <span class="n">mass_dry_var</span><span class="o">=</span><span class="n">mass_dry_var</span><span class="p">,</span>
+                         <span class="n">moisture_var</span><span class="o">=</span><span class="n">moisture_var</span><span class="p">,</span> <span class="n">component_vars</span><span class="o">=</span><span class="n">component_vars</span><span class="p">,</span>
+                         <span class="n">composition_units</span><span class="o">=</span><span class="n">composition_units</span><span class="p">,</span> <span class="n">components_as_symbols</span><span class="o">=</span><span class="n">components_as_symbols</span><span class="p">,</span>
+                         <span class="n">ranges</span><span class="o">=</span><span class="n">ranges</span><span class="p">,</span> <span class="n">config_file</span><span class="o">=</span><span class="n">config_file</span><span class="p">)</span>
+
+        <span class="c1"># manage the interval indexes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_interval_indexes</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_interval_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="n">original_indexes</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+        <span class="n">interval_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;intervals&#39;</span><span class="p">][</span><span class="s1">&#39;suffixes&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">!=</span> <span class="n">FrozenList</span><span class="p">([</span><span class="kc">None</span><span class="p">]):</span>
+                <span class="n">suffix_candidates</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="p">:</span> <span class="n">n</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">}</span>
+                <span class="n">suffixes</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">suffix_candidates</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">}</span>
+                <span class="k">if</span> <span class="n">suffixes</span><span class="p">:</span>
+                    <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">suffixes</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">num_interval_indexes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">suffixes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_interval_indexes</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                        <span class="n">keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">suffixes</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>
+                        <span class="n">base_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">index</span> <span class="o">=</span> <span class="n">IntervalIndex</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">right</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                                                          <span class="n">closed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;intervals&#39;</span><span class="p">][</span><span class="s1">&#39;closed&#39;</span><span class="p">])</span>
+                        <span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">base_name</span>
+                        <span class="c1"># left and right names are only preserved for a single interval index.</span>
+                        <span class="c1"># when a multiindex is used, the names are not preserved.</span>
+                        <span class="n">index</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">index</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">interval_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+                        <span class="c1"># drop the index columns from the dataframe columns</span>
+                        <span class="n">data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">keys</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">interval_indexes</span><span class="p">:</span>
+            <span class="n">new_indexes</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Use dict to preserve order and uniqueness</span>
+            <span class="c1"># we need to set the index to include the new interval index, but respect the order of the original.</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">original_indexes</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="n">ii</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">interval_indexes</span><span class="p">]:</span>
+                    <span class="n">new_indexes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Find the corresponding interval index and append it to the new_indexes list</span>
+                    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">interval_indexes</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">ii</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">i</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]:</span>
+                            <span class="n">new_indexes</span><span class="p">[</span><span class="n">ii</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">ii</span>
+                            <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_indexes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_frame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">new_indexes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="n">new_indexes</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">new_indexes</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="IntervalSample.split_by_partition">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.split_by_partition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_by_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partition_definition</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span> <span class="n">name_1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;preferred&#39;</span><span class="p">,</span>
+                           <span class="n">name_2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;complement&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Split the sample into two samples based on the partition definition.</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            K = \\frac{{m_{preferred}}}{{m_{feed}}}</span>
+
+<span class="sd">        :param partition_definition: A function that takes a data frame and returns a boolean series with a</span>
+<span class="sd">         range [0, 1]. A 1D function must have an argument that matches the dimension of the interval index.</span>
+<span class="sd">         A 2D function must have two arguments that match the dimensions of the interval index.</span>
+<span class="sd">        :param name_1: The name of the first sample.</span>
+<span class="sd">        :param name_2: The name of the second sample.</span>
+<span class="sd">        :return: A tuple of two IntervalSamples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check that the partition definition has the correct number of arguments and that the names match</span>
+        <span class="n">sample_fraction_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="k">if</span>
+                                <span class="n">col</span> <span class="o">!=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">col</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">)]</span>
+        <span class="n">fraction_means</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()[</span><span class="n">sample_fraction_dims</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">MeanIntervalIndex</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Get the function from the partial object if necessary</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">partition_definition</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
+            <span class="n">partition_func</span> <span class="o">=</span> <span class="n">partition_definition</span><span class="o">.</span><span class="n">func</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">partition_definition</span><span class="p">,</span>
+                                                                     <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">)</span> <span class="k">else</span> <span class="n">partition_definition</span>
+            <span class="c1"># Check that the required argument names are present in the IntervalIndex levels</span>
+            <span class="n">required_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">partition_func</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">sample_fraction_dims</span><span class="p">]</span>
+            <span class="n">pn</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">partition_definition</span><span class="p">(</span><span class="o">**</span><span class="n">fraction_means</span><span class="p">[</span><span class="n">required_args</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;K&#39;</span><span class="p">,</span>
+                                      <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_mass_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">partition_definition</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+            <span class="n">required_args</span> <span class="o">=</span> <span class="n">partition_definition</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+            <span class="n">pn</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">partition_definition</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The partition definition must be a function or a pandas Series:&quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot; type = </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">partition_definition</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">required_args</span><span class="p">,</span> <span class="n">sample_fraction_dims</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">arg</span> <span class="o">!=</span> <span class="n">dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The partition definition argument name does not match the index name. &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">dim</span><span class="si">}</span><span class="s2">, found </span><span class="si">{</span><span class="n">arg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_stream</span><span class="p">()</span>
+        <span class="bp">self</span><span class="p">:</span> <span class="s1">&#39;Stream&#39;</span>
+
+        <span class="n">sample_1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_congruent_object</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name_1</span><span class="p">)</span><span class="o">.</span><span class="n">to_stream</span><span class="p">()</span>
+        <span class="n">sample_1</span><span class="o">.</span><span class="n">mass_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">pn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sample_1</span><span class="o">.</span><span class="n">set_nodes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()])</span>
+        <span class="n">sample_2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_congruent_object</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name_2</span><span class="p">)</span>
+        <span class="n">sample_2</span><span class="o">.</span><span class="n">mass_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">multiply</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">pn</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sample_2</span><span class="o">.</span><span class="n">set_nodes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()])</span>
+
+        <span class="k">return</span> <span class="n">sample_1</span><span class="p">,</span> <span class="n">sample_2</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.is_2d_grid">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.is_2d_grid">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_2d_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the sample is a 2d grid.</span>
+<span class="sd">        :return: True if the sample has 2 levels of intervals, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># get the type of the index levels</span>
+            <span class="n">level_types</span> <span class="o">=</span> <span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">level</span><span class="p">)</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">]</span>
+            <span class="c1"># get the counts of each type</span>
+            <span class="n">level_counts</span> <span class="o">=</span> <span class="p">{</span><span class="n">level_type</span><span class="p">:</span> <span class="n">level_types</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">level_type</span><span class="p">)</span> <span class="k">for</span> <span class="n">level_type</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">level_types</span><span class="p">)}</span>
+            <span class="c1"># check if there are 2 levels of intervals</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">level_counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Interval</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_rectilinear_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;If rectilinear we can plot with a simple heatmap&quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Get the midpoints of the intervals for X and Y</span>
+            <span class="n">x_midpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mid</span>
+            <span class="n">y_midpoints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mid</span>
+
+            <span class="c1"># Get unique midpoints for X and Y</span>
+            <span class="n">unique_x_midpoints</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">x_midpoints</span><span class="p">)</span>
+            <span class="n">unique_y_midpoints</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">y_midpoints</span><span class="p">)</span>
+
+            <span class="c1"># Check if the grid is full (i.e., no steps in the lines that define the grid edges)</span>
+            <span class="c1"># todo: fix this logic - it is not correct</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_x_midpoints</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_midpoints</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_y_midpoints</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_midpoints</span><span class="p">):</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+<div class="viewcode-block" id="IntervalSample.ideal_incremental_separation">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_separation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ideal_incremental_separation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard_from</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lowest&quot;</span><span class="p">,</span> <span class="s2">&quot;highest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;lowest&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Incrementally separate a fractionated sample.</span>
+
+<span class="sd">        This method sorts by the provided direction prior to incrementally removing and discarding the first fraction</span>
+<span class="sd">         (of the remaining fractions) and recalculating the mass-composition and recovery of the portion remaining.</span>
+<span class="sd">         This is equivalent to incrementally applying a perfect separation (partition) at every interval edge.</span>
+
+<span class="sd">        This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</span>
+
+<span class="sd">        See also: ideal_incremental_composition, ideal_incremental_recovery.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            discard_from: Defines the discarded direction.  discard_from = &quot;lowest&quot; will discard the lowest value</span>
+<span class="sd">             first, then the next lowest, etc.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_one_dim_interval</span><span class="p">()</span>
+
+        <span class="n">sample</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="n">is_decreasing</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
+        <span class="k">if</span> <span class="n">discard_from</span> <span class="o">==</span> <span class="s2">&quot;lowest&quot;</span><span class="p">:</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">new_index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">left</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">new_index</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">right</span><span class="p">)</span>
+        <span class="n">new_index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sample</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_cut-point&quot;</span>
+
+        <span class="n">aggregated_chunks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">recovery_chunks</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">head</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">weight_average</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">indx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sample</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+            <span class="n">tmp_composition</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">weight_average</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">aggregated_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_composition</span><span class="p">)</span>
+            <span class="n">recovery_chunks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_composition</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">calculate_recovery</span><span class="p">,</span> <span class="n">df_ref</span><span class="o">=</span><span class="n">head</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+
+        <span class="n">res_composition</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">aggregated_chunks</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s2">&quot;composition&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+            <span class="n">new_index</span><span class="p">)</span>
+        <span class="n">res_recovery</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">recovery_chunks</span><span class="p">)</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s2">&quot;recovery&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+            <span class="n">new_index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_decreasing</span><span class="p">:</span>
+            <span class="n">res_composition</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">res_recovery</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">res</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res_composition</span><span class="p">,</span> <span class="n">res_recovery</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">new_index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s1">&#39;attribute&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_one_dim_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This object is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensional. &quot;</span>
+                                      <span class="sa">f</span><span class="s2">&quot;Only 1D interval objects are valid&quot;</span><span class="p">)</span>
+        <span class="n">index_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">index_var</span><span class="si">}</span><span class="s2"> of this object is not a pd.Interval. &quot;</span>
+                                      <span class="sa">f</span><span class="s2">&quot; Only 1D interval objects are valid&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_two_dim_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;This object is </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2"> dimensional. &quot;</span>
+                                      <span class="sa">f</span><span class="s2">&quot;Only 2D interval objects are valid&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">indx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">indx</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The </span><span class="si">{</span><span class="n">indx</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> of this object is not a pd.Interval. &quot;</span>
+                                          <span class="sa">f</span><span class="s2">&quot; Only 1D interval objects are valid&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IntervalSample.ideal_incremental_composition">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_composition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ideal_incremental_composition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard_from</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lowest&quot;</span><span class="p">,</span> <span class="s2">&quot;highest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;lowest&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Incrementally separate a fractionated sample.</span>
+
+<span class="sd">        This method sorts by the provided direction prior to incrementally removing and discarding the first fraction</span>
+<span class="sd">         (of the remaining fractions) and recalculating the mass-composition of the portion remaining.</span>
+<span class="sd">         This is equivalent to incrementally applying a perfect separation (partition) at every interval edge.</span>
+
+<span class="sd">        This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</span>
+
+<span class="sd">        See also: ideal_incremental_separation, ideal_incremental_recovery.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            discard_from: Defines the discarded direction.  discard_from = &quot;lowest&quot; will discard the lowest value</span>
+<span class="sd">             first, then the next lowest, etc.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_incremental_separation</span><span class="p">(</span><span class="n">discard_from</span><span class="o">=</span><span class="n">discard_from</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s1">&#39;attribute==&quot;composition&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="s1">&#39;attribute&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.ideal_incremental_recovery">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.ideal_incremental_recovery">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ideal_incremental_recovery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">discard_from</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lowest&quot;</span><span class="p">,</span> <span class="s2">&quot;highest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;lowest&quot;</span><span class="p">,</span>
+                                   <span class="n">apply_closure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Incrementally separate a fractionated sample.</span>
+
+<span class="sd">        This method sorts by the provided direction prior to incrementally removing and discarding the first fraction</span>
+<span class="sd">         (of the remaining fractions) and recalculating the recovery of the portion remaining.</span>
+<span class="sd">         This is equivalent to incrementally applying a perfect separation (partition) at every interval edge.</span>
+
+<span class="sd">        This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</span>
+
+<span class="sd">        See also: ideal_incremental_separation, ideal_incremental_composition.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            discard_from: Defines the discarded direction.  discard_from = &quot;lowest&quot; will discard the lowest value</span>
+<span class="sd">             first, then the next lowest, etc.</span>
+<span class="sd">            apply_closure: If True, Add the missing record (zero recovery) that closes the recovery envelope.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A pandas DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">columns_to_drop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mass_wet&#39;</span><span class="p">,</span> <span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">moisture_in_scope</span> <span class="k">else</span> <span class="p">[]</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_incremental_separation</span><span class="p">(</span><span class="n">discard_from</span><span class="o">=</span><span class="n">discard_from</span><span class="p">)</span><span class="o">.</span><span class="n">query</span><span class="p">(</span>
+            <span class="s1">&#39;attribute==&quot;recovery&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="s1">&#39;attribute&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">:</span> <span class="s1">&#39;mass&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">columns_to_drop</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">apply_closure</span><span class="p">:</span>
+            <span class="c1"># add zero recovery record to close the envelope.</span>
+            <span class="n">indx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="k">if</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="mf">0.0</span>
+            <span class="n">indx_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">indx</span><span class="p">)</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="p">])</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">indx_name</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.plot_heatmap">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.plot_heatmap">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_heatmap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">components</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the sample as a heatmap.</span>
+<span class="sd">        :param components: The list of components to plot.</span>
+<span class="sd">        :param kwargs: Additional keyword arguments to pass to the plot method.</span>
+<span class="sd">        :return: The axis with the plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if not self.is_rectilinear_grid:</span>
+        <span class="c1">#     raise ValueError(&#39;The sample is not a rectilinear grid.&#39;)</span>
+
+        <span class="c1"># convert IntervalIndex to nominal values df.index = df.index.map(lambda x: x.mid)</span>
+
+        <span class="n">x_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">z_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># create a pivot table for the heatmap</span>
+        <span class="n">pivot_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="p">[</span><span class="n">components</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+
+        <span class="c1"># Get the midpoints of the intervals for X and Y</span>
+        <span class="n">x_midpoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">mid</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">x_label</span><span class="p">)]</span>
+        <span class="n">y_midpoints</span> <span class="o">=</span> <span class="p">[</span><span class="n">interval</span><span class="o">.</span><span class="n">mid</span> <span class="k">for</span> <span class="n">interval</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">y_label</span><span class="p">)]</span>
+
+        <span class="c1"># Get interval edges for x and y axes</span>
+        <span class="n">x_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unique_edges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">x_label</span><span class="p">))</span>
+        <span class="n">y_edges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_unique_edges</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">y_label</span><span class="p">))</span>
+
+        <span class="c1"># Create hover text</span>
+        <span class="n">hover_text</span> <span class="o">=</span> <span class="p">[[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">x_label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">x_mid</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">y_mid</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">z_label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">z_val</span><span class="si">}</span><span class="s2">&quot;</span>
+                       <span class="k">for</span> <span class="n">x_mid</span><span class="p">,</span> <span class="n">z_val</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">x_midpoints</span><span class="p">,</span> <span class="n">z_values</span><span class="p">)]</span>
+                      <span class="k">for</span> <span class="n">y_mid</span><span class="p">,</span> <span class="n">z_values</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">y_midpoints</span><span class="p">,</span> <span class="n">pivot_df</span><span class="o">.</span><span class="n">values</span><span class="p">)]</span>
+
+        <span class="c1"># plot the heatmap</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">go</span><span class="o">.</span><span class="n">Heatmap</span><span class="p">(</span>
+            <span class="n">z</span><span class="o">=</span><span class="n">pivot_df</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="n">x_edges</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">y_edges</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="n">hover_text</span><span class="p">,</span>
+            <span class="n">hoverinfo</span><span class="o">=</span><span class="s1">&#39;text&#39;</span><span class="p">))</span>
+
+        <span class="c1"># update the layout to use logarithmic x-axis</span>
+        <span class="k">if</span> <span class="n">x_label</span> <span class="o">==</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">xaxis_type</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">y_label</span> <span class="o">==</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">yaxis_type</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set the title and x and y labels dynamically</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> Heatmap&#39;</span><span class="p">,</span>
+                          <span class="n">xaxis_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                          <span class="n">yaxis_title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.plot_intervals">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.plot_intervals">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_intervals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                       <span class="n">variables</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+                       <span class="n">cumulative</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="n">direction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;descending&#39;</span><span class="p">,</span>
+                       <span class="n">show_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                       <span class="n">min_x</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot &quot;The Grade-Tonnage&quot; curve.</span>
+
+<span class="sd">        Mass and grade by bins for a cut-off variable.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            variables: List of variables to include in the plot</span>
+<span class="sd">            cumulative: If True, the results are cumulative weight averaged.</span>
+<span class="sd">            direction: &#39;ascending&#39;|&#39;descending&#39;, if cumulative is True, the direction of accumulation</span>
+<span class="sd">            show_edges: If True, show the edges on the plot.  Applicable to cumulative plots only.</span>
+<span class="sd">            min_x: Optional minimum value for the x-axis, useful to set reasonable visual range with a log</span>
+<span class="sd">            scaled x-axis when plotting size data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">res</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">variables</span><span class="p">]</span>
+
+        <span class="n">plot_kwargs</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">line_shape</span><span class="o">=</span><span class="s1">&#39;vh&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cumulative</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">cumulate</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="n">direction</span><span class="p">)</span><span class="o">.</span><span class="n">pipe</span><span class="p">(</span><span class="n">mass_to_composition</span><span class="p">)</span>
+            <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">line_shape</span><span class="o">=</span><span class="s1">&#39;spline&#39;</span><span class="p">)</span>
+
+        <span class="n">interval_data</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">res</span>
+
+        <span class="c1"># Get the first IntervalIndex - TODO: specify or check...</span>
+        <span class="n">interval_index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">nlevels</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">level</span><span class="p">),</span> <span class="n">pd</span><span class="o">.</span><span class="n">IntervalIndex</span><span class="p">):</span>
+                <span class="n">interval_index</span> <span class="o">=</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">level</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">interval_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No IntervalIndex found in the index levels&quot;</span><span class="p">)</span>
+        <span class="n">left_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s1">&#39;left&#39;</span>
+        <span class="n">right_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s1">&#39;right&#39;</span>
+        <span class="n">left</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">interval_index</span><span class="o">.</span><span class="n">left</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">left_name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">interval_index</span><span class="p">)</span>
+        <span class="n">right</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">interval_index</span><span class="o">.</span><span class="n">right</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">right_name</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">interval_index</span><span class="p">)</span>
+        <span class="n">df_intervals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">interval_data</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)</span>
+        <span class="n">x_var</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cumulative</span><span class="p">:</span>
+            <span class="c1"># append on the largest fraction right edge for display purposes</span>
+            <span class="n">is_ascending</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
+            <span class="n">df_end</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df_intervals</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df_intervals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_frame</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">df_end</span><span class="p">[</span><span class="n">left_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_end</span><span class="p">[</span><span class="n">right_name</span><span class="p">]</span>
+            <span class="n">df_end</span><span class="p">[</span><span class="n">right_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_end</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="n">df_intervals</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span>
+            <span class="n">df</span><span class="p">[</span><span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">left_name</span><span class="p">]</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="n">is_ascending</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;ascending&#39;</span><span class="p">:</span>
+                <span class="n">x_var</span> <span class="o">=</span> <span class="n">right_name</span>
+            <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;descending&#39;</span><span class="p">:</span>
+                <span class="n">x_var</span> <span class="o">=</span> <span class="n">left_name</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df_intervals</span>
+
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">min_x</span><span class="p">:</span>
+                <span class="n">min_x</span> <span class="o">=</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">right</span> <span class="o">/</span> <span class="mf">2.0</span>
+            <span class="c1"># set zero to the minimum x value (for display only) to enable the tooltips on that point.</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">df</span><span class="p">[</span><span class="n">x_var</span><span class="p">]</span> <span class="o">==</span> <span class="n">df</span><span class="p">[</span><span class="n">x_var</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x_var</span><span class="p">]</span> <span class="o">=</span> <span class="n">min_x</span>
+            <span class="n">hover_data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;component&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># add other column, default formatting</span>
+                          <span class="n">x_var</span><span class="p">:</span> <span class="s1">&#39;:.3f&#39;</span><span class="p">,</span>  <span class="c1"># add other column, customized formatting</span>
+                          <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="s1">&#39;:.2f&#39;</span>
+                          <span class="p">}</span>
+            <span class="n">plot_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">plot_kwargs</span><span class="p">,</span>
+                           <span class="o">**</span><span class="nb">dict</span><span class="p">(</span><span class="n">log_x</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                  <span class="n">range_x</span><span class="o">=</span><span class="p">[</span><span class="n">min_x</span><span class="p">,</span> <span class="n">interval_data</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">right</span><span class="p">],</span>
+                                  <span class="n">hover_data</span><span class="o">=</span><span class="n">hover_data</span><span class="p">)}</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[[</span><span class="n">x_var</span><span class="p">]</span> <span class="o">+</span> <span class="n">variables</span><span class="p">]</span><span class="o">.</span><span class="n">melt</span><span class="p">(</span><span class="n">id_vars</span><span class="o">=</span><span class="p">[</span><span class="n">x_var</span><span class="p">],</span> <span class="n">var_name</span><span class="o">=</span><span class="s1">&#39;component&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">cumulative</span> <span class="ow">and</span> <span class="n">show_edges</span><span class="p">:</span>
+            <span class="n">plot_kwargs</span><span class="p">[</span><span class="s1">&#39;markers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x_var</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;value&#39;</span><span class="p">,</span> <span class="n">facet_row</span><span class="o">=</span><span class="s1">&#39;component&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">for_each_annotation</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">a</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;component=&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)))</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_yaxes</span><span class="p">(</span><span class="n">matches</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_unique_edges</span><span class="p">(</span><span class="n">interval_index</span><span class="p">):</span>
+        <span class="c1"># Get the left and right edges of the intervals</span>
+        <span class="n">left_edges</span> <span class="o">=</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">right_edges</span> <span class="o">=</span> <span class="n">interval_index</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="c1"># Concatenate the two lists</span>
+        <span class="n">all_edges</span> <span class="o">=</span> <span class="n">left_edges</span> <span class="o">+</span> <span class="n">right_edges</span>
+
+        <span class="c1"># Get the unique edges</span>
+        <span class="n">unique_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">all_edges</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">unique_edges</span>
+
+<div class="viewcode-block" id="IntervalSample.plot_grade_recovery">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.plot_grade_recovery">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_grade_recovery</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_analyte</span><span class="p">,</span>
+                            <span class="n">discard_from</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lowest&quot;</span><span class="p">,</span> <span class="s2">&quot;highest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;lowest&quot;</span><span class="p">,</span>
+                            <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                            <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The grade-recovery plot.</span>
+
+<span class="sd">        The grade recovery curve is generated by assuming an ideal separation (for the chosen property, or dimension)</span>
+<span class="sd">        at each fractional interval.  It defines the theoretical maximum performance, which can only be improved if</span>
+<span class="sd">        liberation is improved by comminution.</span>
+
+<span class="sd">        This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target_analyte: The analyte of value.</span>
+<span class="sd">            discard_from: Defines the discarded direction.  discard_from = &quot;lowest&quot; will discard the lowest value</span>
+<span class="sd">             first, then the next lowest, etc.</span>
+<span class="sd">            title: Optional plot title</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A plotly.GraphObjects figure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">title</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;Ideal Grade - Recovery&#39;</span>
+        <span class="n">cols_to_drop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mass_wet&#39;</span><span class="p">,</span> <span class="s1">&#39;mass_dry&#39;</span><span class="p">,</span> <span class="s1">&#39;H2O&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">moisture_in_scope</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">]</span>
+
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_incremental_separation</span><span class="p">(</span><span class="n">discard_from</span><span class="o">=</span><span class="n">discard_from</span><span class="p">)</span>
+        <span class="n">df_recovery</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;recovery&#39;</span><span class="p">),</span> <span class="p">[</span><span class="n">target_analyte</span><span class="p">,</span> <span class="s1">&#39;mass_dry&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span>
+            <span class="s1">&#39;attribute&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">:</span> <span class="s1">&#39;Yield&#39;</span><span class="p">,</span> <span class="n">target_analyte</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_analyte</span><span class="si">}</span><span class="s2">_recovery&quot;</span><span class="p">})</span>
+        <span class="n">df_composition</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="s1">&#39;composition&#39;</span><span class="p">),</span> <span class="p">:]</span><span class="o">.</span><span class="n">droplevel</span><span class="p">(</span><span class="s1">&#39;attribute&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+            <span class="n">columns</span><span class="o">=</span><span class="n">cols_to_drop</span><span class="p">)</span>
+
+        <span class="n">df_plot</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df_recovery</span><span class="p">,</span> <span class="n">df_composition</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">px</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">df_plot</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">target_analyte</span><span class="p">,</span>
+                      <span class="n">y</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">target_analyte</span><span class="si">}</span><span class="s2">_recovery&quot;</span><span class="p">,</span>
+                      <span class="n">hover_data</span><span class="o">=</span><span class="n">df_plot</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span>
+                      <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">)</span>
+        <span class="c1"># fig.update_layout(xaxis_title=f&quot;Grade of {target_analyte}&quot;, yaxis_title=f&quot;Recovery of {target_analyte}&quot;,</span>
+        <span class="c1">#                   title=title)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.plot_amenability">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.plot_amenability">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_amenability</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_analyte</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                         <span class="n">discard_from</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;lowest&quot;</span><span class="p">,</span> <span class="s2">&quot;highest&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;lowest&quot;</span><span class="p">,</span>
+                         <span class="n">gangue_analytes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">title</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The yield-recovery plot.</span>
+
+<span class="sd">        The yield recovery curve provides an understanding of the amenability of a sample.</span>
+
+<span class="sd">        This method is only applicable to a 1D object where the single dimension is a pd.Interval type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            target_analyte: The analyte of value.</span>
+<span class="sd">            discard_from: Defines the discarded direction.  discard_from = &quot;lowest&quot; will discard the lowest value</span>
+<span class="sd">             first, then the next lowest, etc.</span>
+<span class="sd">            gangue_analytes: The analytes to be rejected</span>
+<span class="sd">            title: Optional plot title</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A plotly.GraphObjects figure</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">title</span> <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;Amenability Plot&#39;</span>
+        <span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ideal_incremental_recovery</span><span class="p">(</span><span class="n">discard_from</span><span class="o">=</span><span class="n">discard_from</span><span class="p">)</span>
+        <span class="n">amenability_indices</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span> <span class="o">=</span> <span class="n">amenability_index</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">col_target</span><span class="o">=</span><span class="n">target_analyte</span><span class="p">,</span> <span class="n">col_mass_recovery</span><span class="o">=</span><span class="s1">&#39;mass&#39;</span><span class="p">)</span>
+
+        <span class="n">analytes</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">col</span> <span class="o">!=</span> <span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">gangue_analytes</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span>
+            <span class="n">target_analyte</span> <span class="o">+</span> <span class="n">gangue_analytes</span><span class="p">]</span>
+
+        <span class="n">mass_rec</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">analytes</span><span class="p">]</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">analyte</span> <span class="ow">in</span> <span class="n">analytes</span><span class="p">:</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span>
+                <span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">mass_rec</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">df</span><span class="p">[</span><span class="n">analyte</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span>
+                           <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">analyte</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><span class="n">amenability_indices</span><span class="p">[</span><span class="n">analyte</span><span class="p">],</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+                           <span class="n">customdata</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span><span class="p">,</span>
+                           <span class="n">hovertemplate</span><span class="o">=</span><span class="s1">&#39;&lt;b&gt;Recovery: %</span><span class="si">{y:.3f}</span><span class="s1">&lt;/b&gt;&lt;br&gt;Cut-point: %</span><span class="si">{customdata:.3f}</span><span class="s1"> &#39;</span><span class="p">))</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">add_trace</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Scatter</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;lines&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;y=x&#39;</span><span class="p">,</span>
+                                 <span class="n">line</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">dash</span><span class="o">=</span><span class="s1">&#39;dash&#39;</span><span class="p">),</span>
+                                 <span class="p">))</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">update_layout</span><span class="p">(</span><span class="n">xaxis_title</span><span class="o">=</span><span class="s1">&#39;Yield (Mass Recovery)&#39;</span><span class="p">,</span> <span class="n">yaxis_title</span><span class="o">=</span><span class="s1">&#39;Recovery&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                          <span class="n">hovermode</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.calculate_partition">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.calculate_partition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_partition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preferred</span><span class="p">:</span> <span class="s1">&#39;MassComposition&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the partition number (K) [0, 1] of the preferred stream relative to self</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            K = \\frac{{m_{preferred}}}{{m_{feed}}}</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_one_dim_interval</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">calculate_partition</span><span class="p">(</span><span class="n">df_feed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">df_preferred</span><span class="o">=</span><span class="n">preferred</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+                                   <span class="n">col_mass_dry</span><span class="o">=</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.resample_1d">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.resample_1d">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resample_1d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval_edges</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Iterable</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+                    <span class="n">precision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                    <span class="n">include_original_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;IntervalSample&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resample a 1D fractional dim/index</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            interval_edges: The values of the new grid (interval edges).  If an int, will up-sample by that factor, for</span>
+<span class="sd">             example the value of 10 will automatically define edges that create 10 x the resolution (up-sampled).</span>
+<span class="sd">            precision: Optional integer for the number of decimal places to round the grid values to.</span>
+<span class="sd">            include_original_edges: If True include the original edges in the grid.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new IntervalSample object interpolated onto the new grid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: add support for supplementary variables</span>
+
+        <span class="c1"># test the index contains a single interval index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_one_dim_interval</span><span class="p">()</span>
+
+        <span class="n">df_upsampled</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">mass_preserving_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="p">,</span>
+                                                            <span class="n">interval_edges</span><span class="o">=</span><span class="n">interval_edges</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span>
+                                                            <span class="n">include_original_edges</span><span class="o">=</span><span class="n">include_original_edges</span><span class="p">,</span>
+                                                            <span class="n">mass_wet</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mass_dry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">,</span>
+                                                            <span class="n">interval_data_as_mass</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="p">:</span> <span class="n">IntervalSample</span> <span class="o">=</span> <span class="n">IntervalSample</span><span class="p">(</span><span class="n">df_upsampled</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">moisture_in_scope</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                             <span class="n">mass_dry_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">ranges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">ranges</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+<div class="viewcode-block" id="IntervalSample.resample_2d">
+<a class="viewcode-back" href="../../../api/_autosummary/elphick.geomet.interval_sample.IntervalSample.html#elphick.geomet.interval_sample.IntervalSample.resample_2d">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resample_2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval_edges</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">],</span>
+                    <span class="n">precision</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;IntervalSample&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resample a 2D fractional dim/index</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            interval_edges: A dict keyed by index name containing the grid the data is resampled to.</span>
+<span class="sd">            precision: Optional integer for the number of decimal places to round the grid values to.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new IntervalSample object interpolated onto the new grid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># TODO: add support for supplementary variables</span>
+
+        <span class="c1"># test the index contains a single interval index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_two_dim_interval</span><span class="p">()</span>
+
+        <span class="n">df_upsampled_specific_mass</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">mass_preserving_interp_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_specific_mass</span><span class="p">(),</span>
+                                                                             <span class="n">interval_edges</span><span class="o">=</span><span class="n">interval_edges</span><span class="p">,</span>
+                                                                             <span class="n">precision</span><span class="o">=</span><span class="n">precision</span><span class="p">,</span>
+                                                                             <span class="n">mass_dry</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">)</span>
+
+        <span class="c1"># convert from specific mass to mass</span>
+        <span class="n">df_upsampled</span> <span class="o">=</span> <span class="n">df_upsampled_specific_mass</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">df_upsampled</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">composition_columns</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_upsampled</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">composition_columns</span><span class="p">]</span><span class="o">.</span><span class="n">div</span><span class="p">(</span>
+            <span class="n">df_upsampled</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">composition_factor</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="p">:</span> <span class="n">IntervalSample</span> <span class="o">=</span> <span class="n">IntervalSample</span><span class="p">(</span><span class="n">df_upsampled</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">moisture_in_scope</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                             <span class="n">mass_dry_var</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;nodes&#39;</span><span class="p">):</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">ranges</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">ranges</span>
+        <span class="k">return</span> <span class="n">obj</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_specific_mass</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the specific mass of the sample</span>
+
+<span class="sd">        Specific mass is the mass of the sample fractions divided by the mass of all fractions.</span>
+<span class="sd">        The sum of the specific mass (for mass_dry) is 1.0 by definition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_data</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_dry_var</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">moisture_in_scope</span><span class="p">:</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mass_wet_var</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

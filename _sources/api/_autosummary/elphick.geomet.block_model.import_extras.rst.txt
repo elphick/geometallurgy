@@ -1,0 +1,6 @@
+elphick.geomet.block\_model.import\_extras
+==========================================
+
+.. currentmodule:: elphick.geomet.block_model
+
+.. autofunction:: import_extras

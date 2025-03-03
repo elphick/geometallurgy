@@ -1,0 +1,26 @@
+elphick.geomet.flowsheet.operation.NodeType
+===========================================
+
+.. currentmodule:: elphick.geomet.flowsheet.operation
+
+.. autoclass:: NodeType
+   :members:
+   :special-members: __add__, __mul__
+
+   
+   .. automethod:: __init__
+
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NodeType.SOURCE
+      ~NodeType.SINK
+      ~NodeType.BALANCE
+   
+   

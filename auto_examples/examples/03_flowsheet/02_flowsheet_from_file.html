@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flowsheet from File &mdash; geometallurgy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=1a8b2067" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Filtering Flowsheets" href="03_filtering_flowsheet.html" />
+    <link rel="prev" title="Flowsheet Basics" href="01_flowsheet_basics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            geometallurgy
+          </a>
+              <div class="version">
+                0.4.13
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../scope/scope.html">Project Scope</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Example Gallery</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../index.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#interval-samples">Interval Samples</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html#flowsheets">Flowsheets</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="01_flowsheet_basics.html">Flowsheet Basics</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Flowsheet from File</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#yaml-file">YAML file</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#create-flowsheet">Create Flowsheet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#load-the-data">Load the data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#solve-the-flowsheet">Solve the flowsheet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plot-the-mass-balance">Plot the mass balance</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="03_filtering_flowsheet.html">Filtering Flowsheets</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#block-models">Block Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#mass-balancing">Mass Balancing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#spatial">Spatial</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../todo.html">To Do</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../glossary/glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/modules.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../license/license.html">License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">geometallurgy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Example Gallery</a></li>
+      <li class="breadcrumb-item active">Flowsheet from File</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../../_sources/auto_examples/examples/03_flowsheet/02_flowsheet_from_file.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-auto-examples-examples-03-flowsheet-02-flowsheet-from-file-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="flowsheet-from-file">
+<span id="sphx-glr-auto-examples-examples-03-flowsheet-02-flowsheet-from-file-py"></span><h1>Flowsheet from File<a class="headerlink" href="#flowsheet-from-file" title="Link to this heading"></a></h1>
+<p>It is possible to create a Flowsheet object from a file.  This example demonstrates how to create a Flowsheet object
+from a file.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.flowsheet</span><span class="w"> </span><span class="kn">import</span> <span class="n">Flowsheet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.flowsheet.stream</span><span class="w"> </span><span class="kn">import</span> <span class="n">Stream</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">elphick.geomet.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">sample_data</span>
+
+<span class="vm">__file__</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">getfile</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()))</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="yaml-file">
+<h2>YAML file<a class="headerlink" href="#yaml-file" title="Link to this heading"></a></h2>
+<p>The yaml file needs to follow this structure.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">yaml_filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="s1">&#39;elphick/geomet/config/flowsheet_example_simple.yaml&#39;</span>
+<span class="n">yaml_config</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">yaml_filepath</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+<span class="n">yaml_config</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;FLOWSHEET:\n  flowsheet:\n    name: Flowsheet\n  streams:  # graph edges\n    Feed:\n      name: Feed\n      node_in: feed\n      node_out: screen\n    Coarse:\n      name: Coarse\n      node_in: screen\n      node_out: lump\n    Fine:\n      name: Fine\n      node_in: screen\n      node_out: fines\n  operations:  # graph nodes\n    feed:\n      name: feed\n    screen:\n      name: screen\n    lump:\n      name: lump\n    fines:\n      name: fines\n&#39;
+</pre></div>
+</div>
+</section>
+<section id="create-flowsheet">
+<h2>Create Flowsheet<a class="headerlink" href="#create-flowsheet" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span><span class="p">:</span> <span class="n">Flowsheet</span> <span class="o">=</span> <span class="n">Flowsheet</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">(</span><span class="n">yaml_filepath</span><span class="p">)</span>
+<span class="n">fs</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;elphick.geomet.flowsheet.flowsheet.Flowsheet object at 0x7f36e710a9c0&gt;
+</pre></div>
+</div>
+<p>The Flowsheet object can be visualized as a network.
+The streams are not yet populated, so are shown in red.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_02_flowsheet_from_file_001.png" srcset="../../../_images/sphx_glr_02_flowsheet_from_file_001.png" alt="Flowsheet Nodes Healthy: True, Streams Healthy: False" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;module &#39;matplotlib.pyplot&#39; from &#39;/home/runner/work/geometallurgy/geometallurgy/.venv/lib/python3.12/site-packages/matplotlib/pyplot.py&#39;&gt;
+</pre></div>
+</div>
+</section>
+<section id="load-the-data">
+<h2>Load the data<a class="headerlink" href="#load-the-data" title="Link to this heading"></a></h2>
+<p>Load data onto two of the three streams.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">df_feed</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">sample_data</span><span class="p">()</span>
+<span class="n">obj_feed</span><span class="p">:</span> <span class="n">Stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">df_feed</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Feed&#39;</span><span class="p">)</span>
+
+<span class="c1"># assume the Coarse stream is 0.4 of the Feed stream mass</span>
+<span class="n">df_coarse</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">df_feed</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">df_coarse</span><span class="p">[</span><span class="s1">&#39;wet_mass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_coarse</span><span class="p">[</span><span class="s1">&#39;wet_mass&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.4</span>
+<span class="n">df_coarse</span><span class="p">[</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_coarse</span><span class="p">[</span><span class="s1">&#39;mass_dry&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mf">0.4</span>
+<span class="n">obj_coarse</span><span class="p">:</span> <span class="n">Stream</span> <span class="o">=</span> <span class="n">Stream</span><span class="p">(</span><span class="n">df_coarse</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Coarse&#39;</span><span class="p">)</span>
+
+<span class="n">fs</span><span class="o">.</span><span class="n">set_stream_data</span><span class="p">(</span><span class="n">stream_data</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;Feed&#39;</span><span class="p">:</span> <span class="n">obj_feed</span><span class="p">,</span> <span class="s1">&#39;Coarse&#39;</span><span class="p">:</span> <span class="n">obj_coarse</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_02_flowsheet_from_file_002.png" srcset="../../../_images/sphx_glr_02_flowsheet_from_file_002.png" alt="Flowsheet Nodes Healthy: False, Streams Healthy: False" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;module &#39;matplotlib.pyplot&#39; from &#39;/home/runner/work/geometallurgy/geometallurgy/.venv/lib/python3.12/site-packages/matplotlib/pyplot.py&#39;&gt;
+</pre></div>
+</div>
+</section>
+<section id="solve-the-flowsheet">
+<h2>Solve the flowsheet<a class="headerlink" href="#solve-the-flowsheet" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+<span class="n">fs</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+<span class="n">plt</span>
+</pre></div>
+</div>
+<img src="../../../_images/sphx_glr_02_flowsheet_from_file_003.png" srcset="../../../_images/sphx_glr_02_flowsheet_from_file_003.png" alt="Flowsheet Nodes Healthy: True, Streams Healthy: True" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&lt;module &#39;matplotlib.pyplot&#39; from &#39;/home/runner/work/geometallurgy/geometallurgy/.venv/lib/python3.12/site-packages/matplotlib/pyplot.py&#39;&gt;
+</pre></div>
+</div>
+</section>
+<section id="plot-the-mass-balance">
+<h2>Plot the mass balance<a class="headerlink" href="#plot-the-mass-balance" title="Link to this heading"></a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">table_plot</span><span class="p">(</span><span class="n">plot_type</span><span class="o">=</span><span class="s1">&#39;network&#39;</span><span class="p">)</span>
+<span class="n">fig</span>
+</pre></div>
+</div>
+<div class="output_subarea output_html rendered_html output_result">
+<div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>                <div id="72f6bbf3-3e57-4bcf-a46f-a82a30532a8a" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script type="text/javascript">                                    window.PLOTLYENV=window.PLOTLYENV || {};                                    if (document.getElementById("72f6bbf3-3e57-4bcf-a46f-a82a30532a8a")) {                    Plotly.newPlot(                        "72f6bbf3-3e57-4bcf-a46f-a82a30532a8a",                        [{"cells":{"align":"left","fill":{"color":[["whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke","whitesmoke","lightgray","whitesmoke"]]},"format":["%s",".0f",".0f",".1f",".2f",".2f",".2f",".2f"],"values":[["Feed","Coarse","Fine"],[300.0,120.0,180.0],[260.0,104.0,156.0],[13.333333333333334,13.333333333333334,13.333333333333334],[59.0,59.0,59.0],[3.5153846153846153,3.5153846153846153,3.5153846153846153],[1.8730769230769235,1.873076923076923,1.8730769230769235],[4.0,4.0,4.0]]},"columnwidth":[2,1,1,1,1,1,1,1],"header":{"align":"center","fill":{"color":"cornflowerblue"},"font":{"color":"black","size":12},"values":["name","wet_mass","mass_dry","H2O","Fe","SiO2","Al2O3","LOI"]},"type":"table","domain":{"x":[0.0,0.36000000000000004],"y":[0.0,1.0]}},{"hoverinfo":"none","line":{"color":"grey","width":2},"marker":{"angleref":"previous","color":"grey","size":16,"standoff":15,"symbol":"arrow"},"mode":"lines+markers","text":"Feed","x":[-1.0,-0.2],"y":[0.0,0.0],"type":"scatter","xaxis":"x","yaxis":"y"},{"hoverinfo":"none","line":{"color":"grey","width":2},"marker":{"angleref":"previous","color":"grey","size":16,"standoff":15,"symbol":"arrow"},"mode":"lines+markers","text":"Coarse","x":[-0.2,0.6000000000000001],"y":[0.0,-0.4],"type":"scatter","xaxis":"x","yaxis":"y"},{"hoverinfo":"none","line":{"color":"grey","width":2},"marker":{"angleref":"previous","color":"grey","size":16,"standoff":15,"symbol":"arrow"},"mode":"lines+markers","text":"Fine","x":[-0.2,0.6000000000000001],"y":[0.0,0.4],"type":"scatter","xaxis":"x","yaxis":"y"},{"customdata":["feed","screen","lump","fines"],"hoverinfo":"none","hovertemplate":"%{customdata}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["grey","green","grey","grey"],"line":{"width":2},"size":30},"mode":"markers+text","text":["0","1","2","3"],"x":[-1.0,-0.2,0.6000000000000001,0.6000000000000001],"y":[0.0,0.0,-0.4,0.4],"type":"scatter","xaxis":"x","yaxis":"y"},{"hoverinfo":"text","marker":{"color":"grey","line":{"width":1},"size":3},"mode":"markers","text":["Feed","Coarse","Fine"],"x":[-0.6,0.20000000000000004,0.20000000000000004],"y":[0.0,-0.2,0.2],"type":"scatter","xaxis":"x","yaxis":"y"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmapgl":[{"type":"heatmapgl","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.4600000000000001,1.0],"showgrid":false,"zeroline":false,"showticklabels":false},"yaxis":{"anchor":"x","domain":[0.0,1.0],"showgrid":false,"zeroline":false,"showticklabels":false},"showlegend":false,"hovermode":"closest","paper_bgcolor":"rgba(0,0,0,0)","plot_bgcolor":"rgba(0,0,0,0)","title":{"text":"Flowsheet\u003cbr\u003e\u003csup\u003eNodes Healthy: \u003cspan style='color: black'\u003eTrue\u003c\u002fspan\u003e, Streams Healthy: \u003cspan style='color: black'\u003eTrue\u003c\u002fspan\u003e\u003c\u002fsup\u003e"},"font":{"size":12}},                        {"responsive": true}                    )                };                            </script>        </div>
+</div>
+<br />
+<br /><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.091 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-examples-03-flowsheet-02-flowsheet-from-file-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/01118407fa21d56ec756ac218e0c83f5/02_flowsheet_from_file.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">02_flowsheet_from_file.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/206f0fd79cb02886f7bbca5ac804e1d0/02_flowsheet_from_file.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">02_flowsheet_from_file.py</span></code></a></p>
+</div>
+</div>
+<p class="sphx-glr-signature"><a class="reference external" href="https://sphinx-gallery.github.io">Gallery generated by Sphinx-Gallery</a></p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="01_flowsheet_basics.html" class="btn btn-neutral float-left" title="Flowsheet Basics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="03_filtering_flowsheet.html" class="btn btn-neutral float-right" title="Filtering Flowsheets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Greg Elphick.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
