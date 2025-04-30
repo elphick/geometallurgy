@@ -163,6 +163,7 @@ cython_debug/
 /docs/source/auto_examples/
 /towncrier/newsfragments/
 /docs/source/api/_autosummary/
+/docs/source/sg_execution_times.rst
 /Geoscience_ANALYST_demo_workspace_and_data/
 /tests/data/
 /migration/

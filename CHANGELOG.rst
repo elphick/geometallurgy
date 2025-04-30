@@ -1,3 +1,12 @@
+Geomet 0.4.16 (2025-04-30)
+==========================
+
+Bugfix
+------
+
+- Fixed node balance bug. Indexed unhealthy dataframes for streams and operations by original index plus stream/node. (#65)
+
+
 Geomet 0.4.15 (2025-04-08)
 ==========================
 

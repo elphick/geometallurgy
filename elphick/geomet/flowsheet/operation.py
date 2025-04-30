@@ -102,9 +102,8 @@ class Operation:
             return None
 
         input_mass, output_mass = self.get_input_mass(), self.get_output_mass()
-        is_balanced = np.all(np.isclose(input_mass.fillna(0.0), output_mass.fillna(0.0)))
-        self._unbalanced_records = (input_mass - output_mass).loc[~np.isclose(input_mass, output_mass).any(axis=1)]
-        self._is_balanced = is_balanced
+        self._unbalanced_records = (input_mass - output_mass).loc[(~np.isclose(input_mass, output_mass)).any(axis=1)]
+        self._is_balanced = self._unbalanced_records.shape[0] == 0
 
     @property
     def is_balanced(self) -> Optional[bool]:
