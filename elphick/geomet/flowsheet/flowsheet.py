@@ -264,6 +264,8 @@ class Flowsheet:
         records.columns = [f"{col[0]}_{col[1]}" for col in records.columns]
 
         result = unhealthy_data.merge(records, left_index=True, right_index=True, how='left')
+        # add stream to the index
+        result.set_index('stream', append=True, inplace=True)
         return result
 
     def unhealthy_node_records(self) -> pd.DataFrame:
@@ -278,9 +280,9 @@ class Flowsheet:
                                'mc'].is_balanced]
         unhealthy_data: pd.DataFrame = pd.concat(
             [self.graph.nodes[n]['mc'].unbalanced_records.assign(node=self.graph.nodes[n]['mc'].name) for n in
-             unhealthy_nodes], axis=1)
-        # move the last column to the front
-        unhealthy_data = unhealthy_data[[unhealthy_data.columns[-1]] + list(unhealthy_data.columns[:-1])]
+             unhealthy_nodes], axis=0)
+        # add the node to the index
+        unhealthy_data = unhealthy_data.set_index('node', append=True)
 
         # todo: append  the streams around the node
 
