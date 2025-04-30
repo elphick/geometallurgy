@@ -1,3 +1,12 @@
+Geomet 0.4.17 (2025-04-30)
+==========================
+
+Feature
+-------
+
+- Added absolute and relative tolerance to config for flowsheet nodes (Operation). (#67)
+
+
 Geomet 0.4.16 (2025-04-30)
 ==========================
 

@@ -1,10 +1,12 @@
 from copy import copy
 from enum import Enum
 from functools import reduce
+from pathlib import Path
 from typing import Optional, TypeVar, TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+import yaml
 
 from elphick.geomet.base import MC
 from elphick.geomet.flowsheet.stream import Stream
@@ -25,12 +27,21 @@ class NodeType(Enum):
 
 
 class Operation:
-    def __init__(self, name):
+    def __init__(self, name, config_file: Optional[Path] = None):
         self.name = name
         self._inputs = []
         self._outputs = []
         self._is_balanced: Optional[bool] = None
         self._unbalanced_records: Optional[pd.DataFrame] = None
+
+        # Load configuration
+        if config_file is None:
+            config_file = Path(__file__).parent / '.././config/mc_config.yml'
+
+        with open(config_file, 'r') as file:
+            config = yaml.safe_load(file)
+        self.tol_abs = config['flowsheet']['operation'].get('tol_abs', 1e-6)
+        self.tol_rel = config['flowsheet']['operation'].get('tol_rel', 1e-6)
 
     @property
     def has_empty_input(self) -> bool:
@@ -102,7 +113,8 @@ class Operation:
             return None
 
         input_mass, output_mass = self.get_input_mass(), self.get_output_mass()
-        self._unbalanced_records = (input_mass - output_mass).loc[(~np.isclose(input_mass, output_mass)).any(axis=1)]
+        mask = ~np.isclose(input_mass, output_mass, atol=self.tol_abs, rtol=self.tol_rel)
+        self._unbalanced_records = (input_mass - output_mass).loc[mask.any(axis=1)]
         self._is_balanced = self._unbalanced_records.shape[0] == 0
 
     @property

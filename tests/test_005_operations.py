@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+import yaml
 
 from elphick.geomet import Sample, IntervalSample
 from elphick.geomet.flowsheet.operation import Operation, PartitionOperation
@@ -231,3 +232,47 @@ def test_solve_by_partition():
     expected_output_data['mass_dry'] *= napier_munn_size_1mm(MeanIntervalIndex(expected_output_data.index).mean)
     pd.testing.assert_frame_equal(partition_op.outputs[0].mass_data[['mass_dry']], expected_output_data)
 
+
+def test_operation_config_loading(tmp_path):
+    # Create a temporary YAML configuration file
+    config_data = {
+        'flowsheet': {
+            'operation': {
+                'tol_abs': 1e-3,
+                'tol_rel': 1e-5
+            }
+        }
+    }
+    config_file = tmp_path / "mc_config.yml"
+    with open(config_file, 'w') as file:
+        yaml.dump(config_data, file)
+
+    # Initialize the Operation with the temporary config file
+    op = Operation(name="test_operation", config_file=config_file)
+
+    # Assert that the tolerances are loaded correctly
+    assert op.tol_abs == 1e-3
+    assert op.tol_rel == 1e-5
+
+
+def test_operation_tolerance_adjustment():
+    # Create input and output data with a subtle difference exceeding default tolerances
+    input_data = pd.DataFrame({'mass_wet': [1000.001, 2000.001], 'mass_dry': [800.001, 1600.001]})
+    output_data = pd.DataFrame({'mass_wet': [1000.0, 2000.0], 'mass_dry': [800.0, 1600.0]})
+
+    # Create an Operation instance with default tolerances
+    op = Operation(name="test_operation")
+    op.inputs = [Sample(data=input_data, name="input")]
+    op.outputs = [Sample(data=output_data, name="output")]
+
+    # Assert that the operation is not balanced with default tolerances
+    assert not op.is_balanced
+    assert not op.unbalanced_records.empty
+
+    # Adjust tolerances to make the operation pass
+    op.tol_abs = 1.0e-03
+    op.check_balance()
+
+    # Assert that the operation is now balanced
+    assert op.is_balanced
+    assert op.unbalanced_records.empty

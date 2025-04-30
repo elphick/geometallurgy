@@ -32,4 +32,8 @@ MC:
     recovery: 'rec'
     difference: 'diff'
     divide: 'ur'
+flowsheet:
+  operation:
+    tol_abs: 1.0e-4
+    tol_rel: 1.0e-6
 
