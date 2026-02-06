@@ -3907,4 +3907,4 @@ validation = ["pandera"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "3d39d31b2d4f39b27b721ae6d2dd6ddd31c7556a7903792b167691ee4b75efe1"
+content-hash = "98b26602d7883a610c3f3847353e3ca56b36ac5b894d41cb7d5a263fc9949ba2"
