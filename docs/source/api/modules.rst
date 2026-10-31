@@ -12,10 +12,10 @@ API Reference
     sample
     interval_sample
     block_model
+    dag
     utils
 
     flowsheet.flowsheet
     flowsheet.stream
     flowsheet.operation
     flowsheet.loader
-

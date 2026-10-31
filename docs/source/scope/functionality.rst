@@ -47,6 +47,7 @@ Stream and Flowsheet Objects
   It has no chemistry.  It is a subclass of `Stream`.
 - flowsheet visualisations include network and sankey plots, with tabular summaries of mass and chemistry for each
   stream
+- `DAG` provides a reusable graph for running user-defined operations on named mass-composition streams
 - and empty `Stream` is a `Stream` object with no data, but with a name.  It is used to represent a stream that is
   expected to have data, but does not yet.
 - the `solve` method on a `Node` object will back-calculate any empty streams.
