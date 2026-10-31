@@ -1,7 +1,7 @@
 import pytest
 
 from elphick.geomet import Sample
-from elphick.geomet.dag import DAG
+from elphick.geomet.flowsheet.dag import DAG
 from fixtures import sample_data
 
 

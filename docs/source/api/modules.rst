@@ -12,9 +12,9 @@ API Reference
     sample
     interval_sample
     block_model
-    dag
     utils
 
+    flowsheet.dag
     flowsheet.flowsheet
     flowsheet.stream
     flowsheet.operation
