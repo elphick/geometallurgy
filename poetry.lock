@@ -1390,7 +1390,7 @@ version = "3.4.2"
 description = "Python package for creating and manipulating graphs and networks"
 optional = false
 python-versions = ">=3.10"
-groups = ["dev"]
+groups = ["main", "dev"]
 files = [
     {file = "networkx-3.4.2-py3-none-any.whl", hash = "sha256:df5d4365b724cf81b8c6a7312509d0c22386097011ad1abe274afd5e9d3bbc5f"},
     {file = "networkx-3.4.2.tar.gz", hash = "sha256:307c3669428c5362aab27c8a1260aa8f47c4e91d3891f48be0141738d8d053e1"},
@@ -3907,4 +3907,4 @@ validation = ["pandera"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.13"
-content-hash = "98b26602d7883a610c3f3847353e3ca56b36ac5b894d41cb7d5a263fc9949ba2"
+content-hash = "2f84736074fd6ca95748f9035690bb350e6ca1256702756060bac593e9621b5d"

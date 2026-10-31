@@ -14,8 +14,8 @@ API Reference
     block_model
     utils
 
+    flowsheet.dag
     flowsheet.flowsheet
     flowsheet.stream
     flowsheet.operation
     flowsheet.loader
-
