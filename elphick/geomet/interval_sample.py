@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import functools
+import inspect
 import uuid
 from pathlib import Path
 from typing import Optional, Literal, Callable, Union, Iterable, TYPE_CHECKING
@@ -116,30 +116,57 @@ class IntervalSample(MassComposition):
         :return: A tuple of two IntervalSamples.
         """
 
-        # Check that the partition definition has the correct number of arguments and that the names match
-        sample_fraction_dims = [col for col in self.mass_data.index.names if
-                                col != isinstance(self.mass_data.index.get_level_values(col), pd.IntervalIndex)]
-        fraction_means: pd.DataFrame = self.mass_data.index.to_frame()[sample_fraction_dims].apply(
-            lambda x: MeanIntervalIndex(x).mean, axis=0)
+        sample_fraction_dims = list(self.mass_data.index.names)
+        if not sample_fraction_dims or any(dim is None for dim in sample_fraction_dims):
+            raise ValueError("Every fraction index dimension must have a name")
+        for dim in sample_fraction_dims:
+            level = self.mass_data.index.levels[self.mass_data.index._get_level_number(dim)] \
+                if isinstance(self.mass_data.index, pd.MultiIndex) else self.mass_data.index
+            if not isinstance(level, pd.IntervalIndex):
+                raise ValueError(f"Fraction dimension '{dim}' is not an interval index")
 
-        # Get the function from the partial object if necessary
         if isinstance(partition_definition, Callable):
-            partition_func = partition_definition.func if isinstance(partition_definition,
-                                                                     functools.partial) else partition_definition
-            # Check that the required argument names are present in the IntervalIndex levels
-            required_args = [col for col in partition_func.__code__.co_varnames if col in sample_fraction_dims]
-            pn: pd.Series = pd.Series(partition_definition(**fraction_means[required_args]), name='K',
-                                      index=self._mass_data.index)
+            try:
+                function_args = inspect.signature(partition_definition).parameters
+            except (TypeError, ValueError) as exc:
+                raise ValueError("Could not inspect partition function arguments") from exc
+            required_args = [
+                parameter.name for parameter in function_args.values()
+                if parameter.default is inspect.Parameter.empty
+                and parameter.kind in (inspect.Parameter.POSITIONAL_ONLY,
+                                       inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                                       inspect.Parameter.KEYWORD_ONLY)
+            ]
+            if set(required_args) != set(sample_fraction_dims):
+                raise ValueError(
+                    f"Partition function dimensions {required_args} do not match sample dimensions "
+                    f"{sample_fraction_dims}; configure all non-dimension parameters in 'args'")
+            fraction_means = {
+                dim: MeanIntervalIndex(self.mass_data.index.get_level_values(dim)).mean
+                for dim in sample_fraction_dims
+            }
+            partition_values = partition_definition(**fraction_means)
+            if isinstance(partition_values, pd.Series):
+                if partition_values.index.names != self.mass_data.index.names \
+                        or not partition_values.index.equals(self.mass_data.index):
+                    raise ValueError("Partition result index does not match the input fraction index")
+                pn = partition_values.rename('K')
+            else:
+                values = np.asarray(partition_values)
+                if values.ndim != 1 or len(values) != len(self.mass_data.index):
+                    raise ValueError("Partition result must contain one value for every input fraction")
+                pn = pd.Series(values, name='K', index=self.mass_data.index)
         elif isinstance(partition_definition, pd.Series):
-            required_args = partition_definition.index.names
-            pn: pd.Series = partition_definition
+            if partition_definition.index.names != self.mass_data.index.names \
+                    or not partition_definition.index.equals(self.mass_data.index):
+                raise ValueError("Partition result index does not match the input fraction index")
+            pn = partition_definition
         else:
             raise TypeError(f"The partition definition must be a function or a pandas Series:"
                             f" type = {type(partition_definition)}")
-        for arg, dim in zip(required_args, sample_fraction_dims):
-            if arg != dim:
-                raise ValueError(f"The partition definition argument name does not match the index name. "
-                                 f"Expected {dim}, found {arg}")
+        values = pn.to_numpy(dtype=float)
+        if not np.isfinite(values).all() or ((values < 0) | (values > 1)).any():
+            raise ValueError("Partition values must be finite and within [0, 1]")
 
         self.to_stream()
         self: 'Stream'

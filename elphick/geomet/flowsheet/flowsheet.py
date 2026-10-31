@@ -22,7 +22,9 @@ from plotly.subplots import make_subplots
 from elphick.geomet import Sample
 from elphick.geomet.base import MC
 from elphick.geomet.config.config_read import get_column_config
-from elphick.geomet.flowsheet.operation import NodeType, OP, PartitionOperation, Operation
+from elphick.geomet.flowsheet.operation import (
+    Input, NodeType, OP, Operation, Output, PartitionOperation, Passthrough
+)
 from elphick.geomet.plot import parallel_plot, comparison_plot
 from elphick.geomet.utils.layout import digraph_linear_layout
 from elphick.geomet.flowsheet.loader import streams_from_dataframe
@@ -38,6 +40,8 @@ class Flowsheet:
     def __init__(self, name: str = 'Flowsheet'):
         self.graph: nx.DiGraph = nx.DiGraph(name=name)
         self._logger: logging.Logger = logging.getLogger(__class__.__name__)
+        self._input_stream_names: set[str] = set()
+        self._derived_stream_names: set[str] = set()
 
     @property
     def name(self) -> str:
@@ -111,6 +115,7 @@ class Flowsheet:
             graph.nodes[node]['mc'].name = str(node)
         obj = cls()
         obj.graph = graph
+        obj._refresh_stream_metadata()
         return obj
 
     @classmethod
@@ -143,46 +148,93 @@ class Flowsheet:
             A Flowsheet object with no data on the edges
         """
 
-        from elphick.geomet.flowsheet.operation import Operation
-
-        if 'FLOWSHEET' not in config:
-            raise ValueError("Dictionary does not contain 'FLOWSHEET' root node")
-
+        if not isinstance(config, dict) or not isinstance(config.get('FLOWSHEET'), dict):
+            raise ValueError("Configuration must contain a 'FLOWSHEET' mapping")
         flowsheet_config = config['FLOWSHEET']
+        flowsheet_meta = flowsheet_config.get('flowsheet')
+        stream_configs = flowsheet_config.get('streams')
+        operation_configs = flowsheet_config.get('operations')
+        if not isinstance(flowsheet_meta, dict) or not isinstance(flowsheet_meta.get('name'), str):
+            raise ValueError("'FLOWSHEET.flowsheet.name' must be a string")
+        if not isinstance(stream_configs, dict) or not stream_configs:
+            raise ValueError("'FLOWSHEET.streams' must be a non-empty mapping")
+        if not isinstance(operation_configs, dict) or not operation_configs:
+            raise ValueError("'FLOWSHEET.operations' must be a non-empty mapping")
 
-        # create the Stream objects
-        bunch_of_edges: list = []
-        for stream, stream_config in flowsheet_config['streams'].items():
-            bunch_of_edges.append(
-                (stream_config['node_in'], stream_config['node_out'], {'mc': None, 'name': stream_config['name']}))
+        graph = nx.DiGraph(name=flowsheet_meta['name'])
+        stream_names = set()
+        edge_pairs = set()
+        for stream_key, stream_config in stream_configs.items():
+            if not isinstance(stream_config, dict):
+                raise ValueError(f"Stream '{stream_key}' configuration must be a mapping")
+            stream_name = stream_config.get('name')
+            node_in = stream_config.get('node_in')
+            node_out = stream_config.get('node_out')
+            if not isinstance(stream_name, str) or not stream_name:
+                raise ValueError(f"Stream '{stream_key}' requires a non-empty 'name'")
+            if stream_name in stream_names:
+                raise ValueError(f"Duplicate stream name '{stream_name}'")
+            stream_names.add(stream_name)
+            if not isinstance(node_in, str) or not node_in or not isinstance(node_out, str) or not node_out:
+                raise ValueError(f"Stream '{stream_name}' requires string 'node_in' and 'node_out' references")
+            edge = (node_in, node_out)
+            if edge in edge_pairs:
+                raise ValueError(
+                    f"Streams cannot share source/target edge {node_in!r} -> {node_out!r}; "
+                    "the flowsheet uses a DiGraph")
+            edge_pairs.add(edge)
+            graph.add_edge(node_in, node_out, mc=None, name=stream_name)
 
-        graph = nx.DiGraph(name=flowsheet_config['flowsheet']['name'])
-        graph.add_edges_from(bunch_of_edges)
-        operation_objects: dict = {}
+        graph_nodes = set(graph.nodes)
+        configured_nodes = set(operation_configs)
+        if configured_nodes != graph_nodes:
+            missing = sorted(graph_nodes - configured_nodes)
+            extra = sorted(configured_nodes - graph_nodes)
+            raise ValueError(f"Operation definitions must match stream node references; missing={missing}, extra={extra}")
+        if not is_directed_acyclic_graph(graph):
+            raise ValueError("Flowsheet configuration must be acyclic; recycle loops are not supported")
+
+        operation_types = {
+            'Operation': Operation,
+            'Input': Input,
+            'Output': Output,
+            'Passthrough': Passthrough,
+            'PartitionOperation': PartitionOperation,
+        }
+        operation_objects = {}
         for node in graph.nodes:
-            # create the correct type of node object
-            if node in flowsheet_config['operations']:
-                operation_type = flowsheet_config['operations'][node].get('type', 'Operation')
-                if operation_type == 'PartitionOperation':
-                    # get the output stream names from the graph
-                    output_stream_names = [d['name'] for u, v, d in graph.out_edges(node, data=True)]
-                    node_config = flowsheet_config['operations'][node]
-                    node_config['output_stream_names'] = output_stream_names
-                    operation_objects[node] = PartitionOperation.from_dict(node_config)
-                else:
-                    operation_objects[node] = Operation.from_dict(flowsheet_config['operations'][node])
-
-                # set the input and output streams on the operation object for the selected node
-                operation_objects[node].inputs = [graph.get_edge_data(e[0], e[1])['mc'] for e in graph.in_edges(node)]
-                operation_objects[node].outputs = [graph.get_edge_data(e[0], e[1])['mc'] for e in graph.out_edges(node)]
+            node_config = operation_configs[node]
+            if not isinstance(node_config, dict):
+                raise ValueError(f"Operation '{node}' configuration must be a mapping")
+            operation_type = node_config.get('type', 'Operation')
+            if not isinstance(operation_type, str) or operation_type not in operation_types:
+                raise ValueError(f"Operation '{node}' has unknown type '{operation_type}'")
+            operation_class = operation_types[operation_type]
+            if operation_class is PartitionOperation:
+                operation = PartitionOperation.from_dict(node_config)
+                operation.output_stream_names = [data['name'] for _, _, data in graph.out_edges(node, data=True)]
+                inputs = graph.in_degree(node)
+                outputs = graph.out_degree(node)
+                if inputs != 1 or outputs != 2:
+                    raise ValueError(
+                        f"Partition operation '{node}' must have one input and two output streams")
+                partition_stream = operation.partition.get('partition_stream') if operation.partition else None
+                if partition_stream not in operation.output_stream_names:
+                    raise ValueError(
+                        f"Partition operation '{node}' partition.partition_stream must name one of "
+                        f"{operation.output_stream_names}, found {partition_stream!r}")
+            else:
+                operation = operation_class.from_dict(node_config)
+                if graph.in_degree(node) == 0 and graph.out_degree(node) == 0:
+                    raise ValueError(f"Operation '{node}' is not connected to any stream")
+            operation.inputs = [graph.edges[e]['mc'] for e in graph.in_edges(node)]
+            operation.outputs = [graph.edges[e]['mc'] for e in graph.out_edges(node)]
+            operation_objects[node] = operation
 
         nx.set_node_attributes(graph, operation_objects, 'mc')
-
-        graph = nx.convert_node_labels_to_integers(graph)
-
-        obj = cls()
-        obj.graph = graph
-
+        obj = cls(name=flowsheet_meta['name'])
+        obj.graph = nx.convert_node_labels_to_integers(graph)
+        obj._refresh_stream_metadata()
         return obj
 
     # @classmethod
@@ -304,67 +356,99 @@ class Flowsheet:
             new_graph.add_edge(u, v, **new_data)
 
         new_flowsheet.graph = new_graph
+        new_flowsheet._refresh_stream_metadata()
+        new_flowsheet._derived_stream_names = self._derived_stream_names.copy()
         return new_flowsheet
 
     def solve(self):
-        """Solve missing streams"""
-
+        """Solve missing streams when operation data is available."""
         if not is_directed_acyclic_graph(self.graph):
-            self._logger.error("Graph is not a Directed Acyclic Graph (DAG), so cannot be solved.")
-            self._logger.debug(f"Graph nodes: {self.graph.nodes(data=True)}")
-            self._logger.debug(f"Graph edges: {self.graph.edges(data=True)}")
-            raise ValueError("Graph is not a Directed Acyclic Graph (DAG), so cannot be solved.")
+            raise ValueError("Flowsheet is not acyclic; recycle loops are not supported")
 
-        # Check the number of missing mc's on edges in the network
-        missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
-        prev_missing_count = missing_count + 1  # Initialize with a value greater than missing_count
-
-        while 0 < missing_count < prev_missing_count:
-            prev_missing_count = missing_count
+        made_progress = True
+        while made_progress:
+            made_progress = False
             for node in nx.topological_sort(self.graph):
-                if self.graph.nodes[node]['mc'].node_type == NodeType.BALANCE:
-                    if self.graph.nodes[node]['mc'].has_empty_input:
-                        mc: MC = self.graph.nodes[node]['mc'].solve()
-                        # copy the solved object to the empty input edges
-                        for predecessor in self.graph.predecessors(node):
-                            edge_data = self.graph.get_edge_data(predecessor, node)
-                            if edge_data and edge_data['mc'] is None:
-                                edge_data['mc'] = mc
-                                edge_data['mc'].name = edge_data['name']
-                                self.set_operation_data(predecessor)
+                operation = self.graph.nodes[node]['mc']
+                self.set_operation_data(node)
+                self._check_compatible_indexes(node, operation.inputs + operation.outputs)
+                if operation.node_type != NodeType.BALANCE:
+                    continue
 
-                    if self.graph.nodes[node]['mc'].has_empty_output:
-                        # There are two cases to be managed, 1. a single output missing,
-                        # 2. a partition operation that returns two outputs
-                        if isinstance(self.graph.nodes[node]['mc'], PartitionOperation):
-                            partition_stream: str = self.graph.nodes[node]['mc'].partition['partition_stream']
-                            mc1, mc2 = self.graph.nodes[node]['mc'].solve()
-                            # copy the solved object to the empty output edges
-                            for successor in self.graph.successors(node):
-                                edge_data = self.graph.get_edge_data(node, successor)
-                                if edge_data and edge_data['mc'] is None:
-                                    edge_data['mc'] = mc1 if edge_data['name'] == partition_stream else mc2
-                                    edge_data['mc'].name = edge_data['name']
-                                    self.set_operation_data(successor)
+                missing_inputs = operation.inputs.count(None)
+                missing_outputs = operation.outputs.count(None)
+                missing_count = missing_inputs + missing_outputs
+                if isinstance(operation, PartitionOperation) and missing_outputs == 2 and missing_inputs == 0:
+                    try:
+                        operation.solve()
+                    except (TypeError, ValueError, IndexError) as exc:
+                        model = operation.partition.get('model', operation.partition.get('function', 'unknown'))
+                        raise ValueError(
+                            f"Partition operation '{operation.name}' model '{model}' failed: {exc}") from exc
+                    products = {stream.name: stream for stream in operation.outputs}
+                    for _, successor, edge_data in self.graph.out_edges(node, data=True):
+                        product = products.get(edge_data['name'])
+                        if product is None:
+                            raise ValueError(
+                                f"Partition operation '{operation.name}' did not produce stream '{edge_data['name']}'")
+                        product.name = edge_data['name']
+                        edge_data['mc'] = product
+                        self._derived_stream_names.add(edge_data['name'])
+                    self.set_operation_data(node)
+                    made_progress = True
+                elif missing_count == 1:
+                    if isinstance(operation, PartitionOperation):
+                        Operation.solve(operation)
+                    else:
+                        operation.solve()
+                    for edge, sample in zip(self.graph.in_edges(node), operation.inputs):
+                        edge_data = self.graph.edges[edge]
+                        if edge_data['mc'] is None and sample is not None:
+                            edge_data['mc'] = sample
+                            sample.name = edge_data['name']
+                            self._derived_stream_names.add(edge_data['name'])
+                    for edge, sample in zip(self.graph.out_edges(node), operation.outputs):
+                        edge_data = self.graph.edges[edge]
+                        if edge_data['mc'] is None and sample is not None:
+                            edge_data['mc'] = sample
+                            sample.name = edge_data['name']
+                            self._derived_stream_names.add(edge_data['name'])
+                    self.set_operation_data(node)
+                    made_progress = True
 
-                        else:
-                            mc: MC = self.graph.nodes[node]['mc'].solve()
-                            # copy the solved object to the empty output edges
-                            for successor in self.graph.successors(node):
-                                edge_data = self.graph.get_edge_data(node, successor)
-                                if edge_data and edge_data['mc'] is None:
-                                    edge_data['mc'] = mc
-                                    edge_data['mc'].name = edge_data['name']
-                                    self.set_operation_data(successor)
-                        self.set_operation_data(node)
-
-            missing_count: int = sum([1 for u, v, d in self.graph.edges(data=True) if d['mc'] is None])
-            self._logger.info(f"Missing count: {missing_count}")
-
-        if missing_count > 0:
-            self._logger.error(f"Failed to solve the flowsheet. Missing count: {missing_count}")
+        unresolved = [data['name'] for _, _, data in self.graph.edges(data=True) if data['mc'] is None]
+        if unresolved:
+            blockers = []
+            for node in self.graph.nodes:
+                operation = self.graph.nodes[node]['mc']
+                missing_inputs = [self.graph.edges[edge]['name'] for edge in self.graph.in_edges(node)
+                                  if self.graph.edges[edge]['mc'] is None]
+                missing_outputs = [self.graph.edges[edge]['name'] for edge in self.graph.out_edges(node)
+                                   if self.graph.edges[edge]['mc'] is None]
+                if any(name in unresolved for name in missing_inputs + missing_outputs):
+                    blockers.append(
+                        f"{operation.name} (inputs={missing_inputs}, outputs={missing_outputs})")
+            missing_feeds = sorted(self._input_stream_names.intersection(unresolved))
             raise ValueError(
-                f"Failed to solve the flowsheet. Some streams are still missing. Missing count: {missing_count}")
+                f"Failed to solve flowsheet; unresolved streams: {unresolved}; "
+                f"missing required feeds: {missing_feeds}; blocking operations: {blockers}")
+
+    def _check_compatible_indexes(self, node, streams):
+        populated = [stream for stream in streams if stream is not None and stream.mass_data is not None]
+        if len(populated) < 2:
+            return
+        reference = populated[0].mass_data.index
+        for stream in populated[1:]:
+            index = stream.mass_data.index
+            if type(index) is not type(reference) or index.names != reference.names or not index.equals(reference):
+                raise ValueError(
+                    f"Operation '{self.graph.nodes[node]['mc'].name}' cannot combine stream "
+                    f"'{stream.name}': fraction indexes and dimensions must match exactly")
+
+    def _refresh_stream_metadata(self):
+        self._input_stream_names = {
+            data['name'] for source, _, data in self.graph.edges(data=True) if self.graph.in_degree(source) == 0
+        }
 
     def query(self, expr: str, stream_name: Optional[str] = None, inplace=False) -> 'Flowsheet':
         """Reduce the Flowsheet Stream records with a query
@@ -616,7 +700,7 @@ class Flowsheet:
         fig = go.Figure(data=[*edge_traces, node_trace, edge_annotation_trace],
                         layout=go.Layout(
                             title=title,
-                            titlefont_size=16,
+                            title_font=dict(size=16),
                             showlegend=False,
                             hovermode='closest',
                             margin=dict(b=20, l=5, r=5, t=40),
@@ -1057,25 +1141,46 @@ class Flowsheet:
 
 
     def set_stream_data(self, stream_data: dict[str, Optional[MC]]):
-        """Set the data (MassComposition) of network edges (streams) with a Dict"""
-        for stream_name, stream_data in stream_data.items():
-            stream_found = False
-            nodes_to_refresh = set()
-            for u, v, data in self.graph.edges(data=True):
-                if 'mc' in data.keys() and (data['mc'].name if data['mc'] is not None else data['name']) == stream_name:
-                    self._logger.info(f'Setting data on stream {stream_name}')
-                    data['mc'] = stream_data
-                    stream_found = True
-                    nodes_to_refresh.update([u, v])
-            if not stream_found:
-                self._logger.warning(f'Stream {stream_name} not found in graph')
-            else:
-                # refresh the node status
-                for node in nodes_to_refresh:
-                    self.graph.nodes[node]['mc'].inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
-                                                           self.graph.in_edges(node)]
-                    self.graph.nodes[node]['mc'].outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in
-                                                            self.graph.out_edges(node)]
+        """Set streams by their configured names and invalidate derived results after feed replacement."""
+        if not isinstance(stream_data, dict):
+            raise TypeError("Stream data must be a mapping of stream names to MassComposition objects")
+        known_streams = {data['name']: data for _, _, data in self.graph.edges(data=True)}
+        unknown = set(stream_data) - set(known_streams)
+        if unknown:
+            raise KeyError(f"Unknown stream name(s): {sorted(unknown)}")
+        from elphick.geomet.base import MassComposition
+        from elphick.geomet import IntervalSample
+        has_partition = any(
+            isinstance(self.graph.nodes[node]['mc'], PartitionOperation) for node in self.graph.nodes)
+        for stream_name, sample in stream_data.items():
+            if sample is not None:
+                if not isinstance(sample, MassComposition):
+                    raise TypeError(f"Stream '{stream_name}' data must be a MassComposition object")
+                if sample.mass_data is None:
+                    raise ValueError(f"Stream '{stream_name}' data is empty")
+                if sample.name and sample.name != stream_name:
+                    raise ValueError(
+                        f"Data for stream '{stream_name}' is named '{sample.name}'; names must match")
+                if has_partition and stream_name in self._input_stream_names \
+                        and not isinstance(sample, IntervalSample):
+                    raise TypeError(
+                        f"Feed stream '{stream_name}' must be an IntervalSample for partition operations")
+
+        replacing_feed = bool(self._input_stream_names.intersection(stream_data))
+        if replacing_feed:
+            for _, _, edge_data in self.graph.edges(data=True):
+                if edge_data['name'] in self._derived_stream_names:
+                    edge_data['mc'] = None
+            self._derived_stream_names.clear()
+
+        for stream_name, sample in stream_data.items():
+            edge_data = known_streams[stream_name]
+            edge_data['mc'] = sample
+            if sample is not None:
+                sample.name = stream_name
+
+        for node in self.graph.nodes:
+            self.set_operation_data(node)
 
 
     def set_operation_data(self, node):
@@ -1083,9 +1188,10 @@ class Flowsheet:
         Uses the data on the edges (streams) connected to the node to refresh the data and check for node balance.
         """
         node_data: Operation = self.graph.nodes[node]['mc']
-        node_data.inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.in_edges(node)]
-        node_data.outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.out_edges(node)]
-        node_data.check_balance()
+        inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.in_edges(node)]
+        outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.out_edges(node)]
+        self._check_compatible_indexes(node, inputs + outputs)
+        node_data.set_streams(inputs, outputs)
 
 
     def streams_to_dict(self) -> Dict[str, MC]:
@@ -1097,8 +1203,8 @@ class Flowsheet:
         """
         streams: Dict[str, MC] = {}
         for u, v, data in self.graph.edges(data=True):
-            if 'mc' in data.keys():
-                streams[data['mc'].name] = data['mc']
+            if data.get('mc') is not None:
+                streams[data['name']] = data['mc']
         return streams
 
 

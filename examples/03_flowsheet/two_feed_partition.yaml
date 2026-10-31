@@ -1,0 +1,67 @@
+FLOWSHEET:
+  flowsheet:
+    name: Two-feed screening circuit
+  streams:
+    Feed A:
+      name: Feed A
+      node_in: feed_a
+      node_out: mixer
+    Feed B:
+      name: Feed B
+      node_in: feed_b
+      node_out: mixer
+    Combined Feed:
+      name: Combined Feed
+      node_in: mixer
+      node_out: screen
+    Coarse:
+      name: Coarse
+      node_in: screen
+      node_out: coarse_product
+    Fine:
+      name: Fine
+      node_in: screen
+      node_out: screen_2
+    Coarse 2:
+      name: Coarse 2
+      node_in: screen_2
+      node_out: coarse_product
+    Fine 2:
+      name: Fine 2
+      node_in: screen_2
+      node_out: fine_sink
+    Coarse Product:
+      name: Coarse Product
+      node_in: coarse_product
+      node_out: coarse_sink
+  operations:
+    feed_a:
+      name: Feed A input
+    feed_b:
+      name: Feed B input
+    mixer:
+      name: Combine feeds
+    screen:
+      name: Primary screen
+      type: PartitionOperation
+      partition:
+        model: napier_munn_size
+        args:
+          d50: 1.0
+          ep: 0.1
+        partition_stream: Coarse
+    screen_2:
+      name: Secondary screen
+      type: PartitionOperation
+      partition:
+        model: napier_munn_size
+        args:
+          d50: 0.5
+          ep: 0.1
+        partition_stream: Coarse 2
+    coarse_product:
+      name: Recombine coarse products
+    coarse_sink:
+      name: Coarse product
+    fine_sink:
+      name: Fine product

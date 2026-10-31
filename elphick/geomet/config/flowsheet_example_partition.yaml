@@ -21,10 +21,11 @@ FLOWSHEET:
       name: screen
       type: PartitionOperation
       partition:
-        module: elphick.geomet.utils.partition
-        function: napier_munn_size_1mm
-        partition_stream: Lump  # the stream that the partition model defines
-        args: null  # e.g. d50, ep if not defined in the (partial) function
+        model: napier_munn_size
+        args:
+          d50: 1.0
+          ep: 0.1
+        partition_stream: Coarse  # the stream that the partition model defines
     lump:
       name: lump
     fines:

@@ -60,9 +60,9 @@ def interval_data_2d() -> pd.DataFrame:
 
     df_sink_float: pd.DataFrame = df_data.dropna(subset=['density_lo', 'density_hi'], how='all').copy()
     # We will fill some nan values with assumptions
-    df_sink_float['size_passing'].fillna(1.0, inplace=True)
-    df_sink_float['density_lo'].fillna(1.5, inplace=True)
-    df_sink_float['density_hi'].fillna(5.0, inplace=True)
+    df_sink_float['size_passing'] = df_sink_float['size_passing'].fillna(1.0)
+    df_sink_float['density_lo'] = df_sink_float['density_lo'].fillna(1.5)
+    df_sink_float['density_hi'] = df_sink_float['density_hi'].fillna(5.0)
 
     # This indicates that the mass_pct column is actually a density_mass_pct column.
     # We'll rename that but also need to get the size_mass_pct values for those sizes from the size dataset
