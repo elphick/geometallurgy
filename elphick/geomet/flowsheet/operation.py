@@ -11,7 +11,7 @@ import yaml
 from elphick.geomet.base import MC
 from elphick.geomet.flowsheet.stream import Stream
 from elphick.geomet.utils.pandas import MeanIntervalIndex
-from elphick.geomet.utils.partition import load_partition_function
+from elphick.geomet.utils.partition import resolve_partition_function
 
 # generic type variable, used for type hinting that play nicely with subclasses
 OP = TypeVar('OP', bound='Operation')
@@ -241,8 +241,9 @@ class PartitionOperation(Operation):
         super().__init__(name)
         self.partition = partition
         self.partition_function = None
-        if self.partition and 'module' in self.partition and 'function' in self.partition:
-            self.partition_function = load_partition_function(self.partition['module'], self.partition['function'])
+        self.output_stream_names = []
+        if self.partition:
+            self.partition_function = resolve_partition_function(self.partition)
 
     def solve(self) -> [MC, MC]:
         if self.partition_function:
@@ -253,11 +254,26 @@ class PartitionOperation(Operation):
 
     def apply_partition(self):
         if len(self.inputs) != 1:
-            raise ValueError("PartitionOperation must have exactly one input")
+            raise ValueError(f"Partition operation '{self.name}' must have exactly one input")
         for input_sample in self.inputs:
             input_sample: 'IntervalSample'
             if input_sample is not None:
-                output, complement = input_sample.split_by_partition(self.partition_function)
+                partition_stream = self.partition.get('partition_stream', self.partition.get('output_stream'))
+                complement_stream = self.partition.get('complement_stream')
+                if self.output_stream_names:
+                    if partition_stream is None:
+                        partition_stream = self.output_stream_names[0]
+                    if partition_stream not in self.output_stream_names:
+                        raise ValueError(
+                            f"Partition operation '{self.name}' routes to unknown stream '{partition_stream}'")
+                    if complement_stream is None:
+                        complement_stream = next(name for name in self.output_stream_names if name != partition_stream)
+                output, complement = input_sample.split_by_partition(
+                    self.partition_function,
+                    name_1=partition_stream or 'preferred',
+                    name_2=complement_stream or 'complement')
+                if output is complement or output.mass_data.index is not input_sample.mass_data.index:
+                    raise ValueError(f"Partition operation '{self.name}' produced invalid output streams")
                 self.outputs = [output, complement]
 
     @classmethod
