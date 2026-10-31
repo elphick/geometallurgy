@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import functools
 import inspect
 import uuid
 from pathlib import Path
@@ -127,23 +126,29 @@ class IntervalSample(MassComposition):
                 raise ValueError(f"Fraction dimension '{dim}' is not an interval index")
 
         if isinstance(partition_definition, Callable):
-            partition_func = partition_definition.func if isinstance(partition_definition, functools.partial) \
-                else partition_definition
             try:
-                function_args = inspect.signature(partition_func).parameters
+                function_args = inspect.signature(partition_definition).parameters
             except (TypeError, ValueError) as exc:
                 raise ValueError("Could not inspect partition function arguments") from exc
-            required_args = [dim for dim in sample_fraction_dims if dim in function_args]
-            if len(required_args) != len(sample_fraction_dims):
-                missing = [dim for dim in sample_fraction_dims if dim not in function_args]
-                raise ValueError(f"Partition function does not accept fraction dimension(s): {missing}")
+            required_args = [
+                parameter.name for parameter in function_args.values()
+                if parameter.default is inspect.Parameter.empty
+                and parameter.kind in (inspect.Parameter.POSITIONAL_ONLY,
+                                       inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                                       inspect.Parameter.KEYWORD_ONLY)
+            ]
+            if set(required_args) != set(sample_fraction_dims):
+                raise ValueError(
+                    f"Partition function dimensions {required_args} do not match sample dimensions "
+                    f"{sample_fraction_dims}; configure all non-dimension parameters in 'args'")
             fraction_means = {
                 dim: MeanIntervalIndex(self.mass_data.index.get_level_values(dim)).mean
                 for dim in sample_fraction_dims
             }
             partition_values = partition_definition(**fraction_means)
             if isinstance(partition_values, pd.Series):
-                if not partition_values.index.equals(self.mass_data.index):
+                if partition_values.index.names != self.mass_data.index.names \
+                        or not partition_values.index.equals(self.mass_data.index):
                     raise ValueError("Partition result index does not match the input fraction index")
                 pn = partition_values.rename('K')
             else:
@@ -152,7 +157,8 @@ class IntervalSample(MassComposition):
                     raise ValueError("Partition result must contain one value for every input fraction")
                 pn = pd.Series(values, name='K', index=self.mass_data.index)
         elif isinstance(partition_definition, pd.Series):
-            if not partition_definition.index.equals(self.mass_data.index):
+            if partition_definition.index.names != self.mass_data.index.names \
+                    or not partition_definition.index.equals(self.mass_data.index):
                 raise ValueError("Partition result index does not match the input fraction index")
             pn = partition_definition
         else:

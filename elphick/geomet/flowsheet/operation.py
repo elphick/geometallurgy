@@ -266,13 +266,25 @@ class PartitionOperation(Operation):
                     if partition_stream not in self.output_stream_names:
                         raise ValueError(
                             f"Partition operation '{self.name}' routes to unknown stream '{partition_stream}'")
-                    if complement_stream is None:
-                        complement_stream = next(name for name in self.output_stream_names if name != partition_stream)
+                    expected_complement = next(
+                        name for name in self.output_stream_names if name != partition_stream)
+                    if complement_stream is not None and complement_stream != expected_complement:
+                        raise ValueError(
+                            f"Partition operation '{self.name}' complement stream must be "
+                            f"'{expected_complement}', found '{complement_stream}'")
+                    complement_stream = expected_complement
+                from elphick.geomet import IntervalSample
+                if not isinstance(input_sample, IntervalSample):
+                    raise TypeError(
+                        f"Partition operation '{self.name}' requires an IntervalSample input")
                 output, complement = input_sample.split_by_partition(
                     self.partition_function,
                     name_1=partition_stream or 'preferred',
                     name_2=complement_stream or 'complement')
-                if output is complement or output.mass_data.index is not input_sample.mass_data.index:
+                if output is complement or output.name == complement.name or any(
+                        sample.mass_data.index.names != input_sample.mass_data.index.names
+                        or not sample.mass_data.index.equals(input_sample.mass_data.index)
+                        for sample in (output, complement)):
                     raise ValueError(f"Partition operation '{self.name}' produced invalid output streams")
                 self.outputs = [output, complement]
 

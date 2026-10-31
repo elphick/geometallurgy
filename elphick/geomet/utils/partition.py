@@ -43,7 +43,9 @@ def resolve_partition_function(partition: dict) -> Callable:
 
     if not callable(function):
         raise TypeError(f"Partition function for model '{model or function_name}' is not callable")
-    args = partition.get('args') or {}
+    args = partition.get('args', {})
+    if args is None:
+        args = {}
     if not isinstance(args, dict):
         raise ValueError("Partition 'args' must be a mapping")
     try:
