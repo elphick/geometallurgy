@@ -13,9 +13,9 @@ def data_2d_regular() -> pd.DataFrame:
     # drop the fractions that do not include density
     data.dropna(subset=['density_lo', 'density_hi'], how='all', inplace=True)
     # add the boundary interval values
-    data['density_lo'].fillna(1.5, inplace=True)
-    data['density_hi'].fillna(5.0, inplace=True)
-    data['size_passing'].fillna(0.5, inplace=True)
+    data['density_lo'] = data['density_lo'].fillna(1.5)
+    data['density_hi'] = data['density_hi'].fillna(5.0)
+    data['size_passing'] = data['size_passing'].fillna(0.5)
     # set the index to be the intervals
     data.set_index(['size_retained', 'size_passing', 'density_lo', 'density_hi'], inplace=True)
     return data
