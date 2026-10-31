@@ -258,6 +258,15 @@ def test_yaml_partition_circuit_registered_model_and_feed_replacement(interval_s
     flowsheet.solve()
     assert flowsheet.streams_to_dict()['Coarse Product'].mass_data['mass_dry'].sum() > old_product_mass
 
+    filtered = flowsheet.filter_by_index(feed_a.mass_data.index[:2], inplace=False)
+    old_filtered_product_mass = filtered.streams_to_dict()['Coarse Product'].mass_data['mass_dry'].sum()
+    filtered.set_stream_data({
+        'Feed A': _make_feed(interval_sample_data.iloc[:2], 'Feed A', scale=5.0),
+    })
+    filtered.solve()
+    assert filtered.streams_to_dict()['Coarse Product'].mass_data['mass_dry'].sum() \
+        > old_filtered_product_mass
+
     changed_config = _two_feed_config()
     changed_config['FLOWSHEET']['operations']['screen']['partition']['args']['fraction'] = 0.25
     changed_flowsheet = Flowsheet.from_dict(changed_config)

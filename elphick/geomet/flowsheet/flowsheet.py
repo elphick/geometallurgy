@@ -356,6 +356,8 @@ class Flowsheet:
             new_graph.add_edge(u, v, **new_data)
 
         new_flowsheet.graph = new_graph
+        new_flowsheet._refresh_stream_metadata()
+        new_flowsheet._derived_stream_names = self._derived_stream_names.copy()
         return new_flowsheet
 
     def solve(self):
@@ -1189,9 +1191,7 @@ class Flowsheet:
         inputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.in_edges(node)]
         outputs = [self.graph.get_edge_data(e[0], e[1])['mc'] for e in self.graph.out_edges(node)]
         self._check_compatible_indexes(node, inputs + outputs)
-        node_data.inputs = inputs
-        node_data.outputs = outputs
-        node_data.check_balance()
+        node_data.set_streams(inputs, outputs)
 
 
     def streams_to_dict(self) -> Dict[str, MC]:

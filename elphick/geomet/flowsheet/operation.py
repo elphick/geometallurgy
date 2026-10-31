@@ -69,6 +69,11 @@ class Operation:
         self._outputs = value
         self.check_balance()
 
+    def set_streams(self, inputs: list[MC], outputs: list[MC]):
+        self._inputs = inputs
+        self._outputs = outputs
+        self.check_balance()
+
     @property
     def node_type(self) -> Optional[NodeType]:
         if self.inputs and not self.outputs:
